@@ -16,14 +16,16 @@ type Array interface {
 	T() Array
 }
 
+type Data [][]float64
+
 // Transpose struct implementing Array interface and return transpose of input Array
 type Matrix struct {
 	Array
-	_array [][]float64  // row-wise
+	_array Data // row-wise
 }
 
-func (t *Matrix) New(array [][]float64) {
-	t._array = array
+func (t *Matrix) Init(array Data) *Matrix {
+	return &Matrix{_array: array}
 }
 
 func (t *Matrix) Dims() (row, col int) {
@@ -38,17 +40,17 @@ func (t *Matrix) Set(i, j int, value float64) {
 	t._array[i][j] = value
 }
 
-func (t *Matrix) T() Matrix {
+func (t *Matrix) T() *Matrix {
 	row, col := t.Dims()
-	ntArray := make([][]float64, col)
-	for i := 0; i < col; i ++ {
+	ntArray := make(Data, col)
+	for i := 0; i < col; i++ {
 		ntArray[i] = make([]float64, row)
-		for j := 0; j < row; j ++ {
+		for j := 0; j < row; j++ {
 			ntArray[i][j] = t._array[j][i]
 		}
 	}
-	copy(ntArray, t._array)
-	var nt Matrix
-	nt.New(ntArray)
+	nt := new(Matrix).Init(ntArray)
 	return nt
 }
+
+// TODO: Max, Min, Rank, Det, Norm, Sum
