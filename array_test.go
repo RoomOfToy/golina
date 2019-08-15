@@ -1,8 +1,22 @@
 package golina
 
 import (
+	"log"
+	"math/rand"
+	"os"
+	"runtime/trace"
 	"testing"
+	"time"
 )
+
+func generateRandomVector(size int) *Vector {
+	slice := make(Vector, size, size)
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < size; i++ {
+		slice[i] = rand.Float64() - rand.Float64()
+	}
+	return &slice
+}
 
 // https://blog.karenuorteva.fi/go-unit-test-setup-and-teardown-db1601a796f2#.2aherx2z5
 
@@ -50,5 +64,29 @@ func TestMatrix_T(t *testing.T) {
 				t.Fail()
 			}
 		}
+	}
+}
+
+func TestConvolve(t *testing.T) {
+	f, err := os.Create("trace.out")
+	if err != nil {
+		log.Fatalf("failed to create trace output file: %v", err)
+	}
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Fatalf("failed to close trace file: %v", err)
+		}
+	}()
+	if err := trace.Start(f); err != nil {
+		log.Fatalf("failed to start trace: %v", err)
+	}
+	defer trace.Stop()
+	size := 10000
+	u := generateRandomVector(size)
+	v := generateRandomVector(size)
+
+	res := Convolve(u, v)
+	if len(*res) != size+size-1 {
+		t.Fail()
 	}
 }
