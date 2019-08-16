@@ -8,6 +8,7 @@ mem:
 	go tool pprof --pdf -alloc_space mem.prof > mem.pdf
 
 trace:
+	go test -test.run TestConvolve
 	go tool trace trace.out
 
 bench:
@@ -31,4 +32,4 @@ docker-run:
 	test/golina:latest
 
 gctrace:
-	GODEBUG=gctrace=1 go run array_test.go 2> stderr.log
+	GODEBUG=gctrace=1 go run matrix_test.go 2> stderr.log
