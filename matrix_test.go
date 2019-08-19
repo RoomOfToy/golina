@@ -137,6 +137,14 @@ func TestZeroMatrix(t *testing.T) {
 	}
 }
 
+func TestOneMatrix(t *testing.T) {
+	a := Data{{1}, {1}}
+	matA := OneMatrix(2, 1)
+	if !Equal(matA, new(Matrix).Init(a)) {
+		t.Fail()
+	}
+}
+
 func TestIdentityMatrix(t *testing.T) {
 	a := Data{{1, 0}, {0, 1}}
 	matA := IdentityMatrix(2)
@@ -239,6 +247,15 @@ func TestMatrix_Mul(t *testing.T) {
 	}
 }
 
+func TestMatrix_MulNum(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	b := Data{{30, 60, 30}, {-60, -90, 30}, {90, 150, 0}}
+	if !Equal(matA.MulNum(3), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
 func TestMatrix_Pow(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
@@ -250,6 +267,113 @@ func TestMatrix_Pow(t *testing.T) {
 	}
 	b := Data{{0, 100, 300}, {700, 1000, -500}, {-700, -900, 800}}
 	if !Equal(matA.Pow(2), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_Trace(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	if matA.Trace() != -20 {
+		t.Fail()
+	}
+}
+
+func TestEigenValues(t *testing.T) {
+	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
+	matA := new(Matrix).Init(a)
+	if !VEqual(EigenValues(matA), &Vector{12.77890686, -1.10871847, -3.67018839}) {
+		t.Fail()
+	}
+}
+
+func TestEigenVector(t *testing.T) {
+	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
+	matA := new(Matrix).Init(a)
+	b := Data{{0.39057517, 0.9184855, -0.06193087}, {0.57537831, -0.29608033, -0.76241474}, {0.71860339, -0.26214659, 0.64411826}}
+	// fmt.Printf("%+v\n", EigenVector(matA, EigenValues(matA)).T())
+	// fmt.Printf("%+v\n", new(Matrix).Init(b))
+	// fmt.Printf("%+v\n", EigenVector(matA, EigenValues(matA)).T().Sub(new(Matrix).Init(b)))
+	if !Equal(EigenVector(matA, EigenValues(matA)), new(Matrix).Init(b).T()) {
+		t.Fail()
+	}
+}
+
+// Vector
+func TestVEqual(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	v2 := &Vector{1, 2, 3}
+	if !VEqual(v1, v2) {
+		t.Fail()
+	}
+}
+
+func TestVector_Add(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	v2 := &Vector{1, 2, 3}
+	if !VEqual(v1.Add(v2), &Vector{2, 4, 6}) {
+		t.Fail()
+	}
+}
+
+func TestVector_AddNum(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	n := 1
+	if !VEqual(v1.AddNum(n), &Vector{2, 3, 4}) {
+		t.Fail()
+	}
+}
+
+func TestVector_Sub(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	v2 := &Vector{1, 2, 3}
+	if !VEqual(v1.Sub(v2), &Vector{0, 0, 0}) {
+		t.Fail()
+	}
+}
+
+func TestVector_SubNum(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	n := 1
+	if !VEqual(v1.SubNum(n), &Vector{0, 1, 2}) {
+		t.Fail()
+	}
+}
+
+func TestVector_MulNum(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	n := 2
+	if !VEqual(v1.MulNum(n), &Vector{2, 4, 6}) {
+		t.Fail()
+	}
+}
+
+func TestVector_Dot(t *testing.T) {
+	v1 := &Vector{1, 2, 3, 4, 5, 6}
+	v2 := &Vector{6, 5, 4, 3, 2, 1}
+	if v1.Dot(v2) != 56 || v1.Dot(v2) != v2.Dot(v1) {
+		t.Fail()
+	}
+}
+
+func TestVector_Cross(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	v2 := &Vector{5, 8, 6}
+	if !VEqual(v1.Cross(v2), &Vector{-12, 9, -2}) {
+		t.Fail()
+	}
+}
+
+func TestVector_SquareSum(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	if v1.SquareSum() != 14 {
+		t.Fail()
+	}
+}
+
+func TestVector_Norm(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	if !VEqual(v1.Norm(), &Vector{0.2672612419124244, 0.5345224838248488, 0.8017837257372732}) {
 		t.Fail()
 	}
 }
