@@ -110,7 +110,7 @@ func (t *Matrix) Col(n int) *Vector {
 func FloatEqual(x, y float64) bool {
 	diff := math.Abs(x - y)
 	mean := math.Abs(x+y) / 2.0
-	return (diff/mean) < EPS || diff < EPS
+	return (diff/mean) < EPS || diff < EPS*EPS
 }
 
 func VEqual(v1, v2 *Vector) bool {
