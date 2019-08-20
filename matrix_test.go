@@ -32,6 +32,15 @@ func generateRandomSymmetric33Matrix() *Matrix {
 	return m
 }
 
+func generateRandomSquareMatrix(size int) *Matrix {
+	rows := make(Data, size)
+	for i := range rows {
+		rows[i] = *generateRandomVector(size)
+	}
+	m := new(Matrix).Init(rows)
+	return m
+}
+
 // https://blog.karenuorteva.fi/go-unit-test-setup-and-teardown-db1601a796f2#.2aherx2z5
 
 func TestMatrix_Init(t *testing.T) {
@@ -433,6 +442,22 @@ func BenchmarkEigen(b *testing.B) {
 		Eigen(generateRandomSymmetric33Matrix())
 	}
 }
+
+/*
+// BenchmarkMatrix_Det/SquareSum/size-10-8                      100        2121988644 ns/op
+// too slow
+func BenchmarkMatrix_Det(b *testing.B) {
+	for k := 1.0; k <= 5; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("SquareSum/size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				m := generateRandomSquareMatrix(n)
+				m.Det()
+			}
+		})
+	}
+}
+*/
 
 func BenchmarkConvolve(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
