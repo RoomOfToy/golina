@@ -106,12 +106,19 @@ func (t *Matrix) Col(n int) *Vector {
 	panic("column index out of range")
 }
 
+// TODO: float number comparision with zero
+func FloatEqual(x, y float64) bool {
+	diff := math.Abs(x - y)
+	mean := math.Abs(x+y) / 2.0
+	return (diff/mean) < EPS || diff < EPS
+}
+
 func VEqual(v1, v2 *Vector) bool {
 	if len(*v1) != len(*v2) {
 		return false
 	}
 	for i, v := range *v1 {
-		if v != (*v2)[i] && v-(*v2)[i] > EPS {
+		if v != (*v2)[i] && !FloatEqual(v, (*v2)[i]) {
 			return false
 		}
 	}

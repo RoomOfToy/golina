@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func generateRandomVector(size int) *Vector {
+func GenerateRandomVector(size int) *Vector {
 	slice := make(Vector, size, size)
 	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < size; i++ {
@@ -17,8 +17,8 @@ func generateRandomVector(size int) *Vector {
 	return &slice
 }
 
-func generateRandomSymmetric33Matrix() *Matrix {
-	entries := *generateRandomVector(6)
+func GenerateRandomSymmetric33Matrix() *Matrix {
+	entries := *GenerateRandomVector(6)
 	m := EmptyMatrix(3, 3)
 	m.Set(0, 0, entries[0])
 	m.Set(1, 1, entries[1])
@@ -32,10 +32,10 @@ func generateRandomSymmetric33Matrix() *Matrix {
 	return m
 }
 
-func generateRandomSquareMatrix(size int) *Matrix {
+func GenerateRandomSquareMatrix(size int) *Matrix {
 	rows := make(Data, size)
 	for i := range rows {
-		rows[i] = *generateRandomVector(size)
+		rows[i] = *GenerateRandomVector(size)
 	}
 	m := new(Matrix).Init(rows)
 	return m
@@ -416,8 +416,8 @@ func TestVector_Norm(t *testing.T) {
 // Vector convolve
 func TestConvolve(t *testing.T) {
 	size := 10000
-	u := generateRandomVector(size)
-	v := generateRandomVector(size)
+	u := GenerateRandomVector(size)
+	v := GenerateRandomVector(size)
 
 	res := Convolve(u, v)
 	if len(*res) != size+size-1 {
@@ -428,9 +428,9 @@ func TestConvolve(t *testing.T) {
 func BenchmarkVector_SquareSum(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))
-		b.Run("SquareSum/size-"+strconv.Itoa(n), func(b *testing.B) {
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
 			for i := 1; i < b.N; i++ {
-				v := generateRandomVector(n)
+				v := GenerateRandomVector(n)
 				v.SquareSum()
 			}
 		})
@@ -439,19 +439,19 @@ func BenchmarkVector_SquareSum(b *testing.B) {
 
 func BenchmarkEigen(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		Eigen(generateRandomSymmetric33Matrix())
+		Eigen(GenerateRandomSymmetric33Matrix())
 	}
 }
 
 /*
-// BenchmarkMatrix_Det/SquareSum/size-10-8                      100        2121988644 ns/op
+// BenchmarkMatrix_Det/size-10-8                      100        2121988644 ns/op
 // too slow
 func BenchmarkMatrix_Det(b *testing.B) {
-	for k := 1.0; k <= 5; k++ {
+	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
-		b.Run("SquareSum/size-"+strconv.Itoa(n), func(b *testing.B) {
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
 			for i := 1; i < b.N; i++ {
-				m := generateRandomSquareMatrix(n)
+				m := GenerateRandomSquareMatrix(n)
 				m.Det()
 			}
 		})
@@ -462,10 +462,10 @@ func BenchmarkMatrix_Det(b *testing.B) {
 func BenchmarkConvolve(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
-		b.Run("Convolve/size-"+strconv.Itoa(n), func(b *testing.B) {
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
 			for i := 1; i < b.N; i++ {
-				u := generateRandomVector(n)
-				v := generateRandomVector(n)
+				u := GenerateRandomVector(n)
+				v := GenerateRandomVector(n)
 				Convolve(u, v)
 			}
 		})
