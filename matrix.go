@@ -510,7 +510,7 @@ func Eigen(t *Matrix) (eig_val *Vector, eig_vec *Matrix) {
 
 	// Eigenvectors
 	// eig_vec.Sub(IdentityMatrix(3).MulNum((*eig_val)[1]))
-	if math.Pow(t._array[0][1], 2.)+math.Pow(t._array[0][2], 2.)+math.Pow(t._array[1][2], 2.) == 0 {
+	if t._array[0][1]*t._array[0][1]+t._array[0][2]*t._array[0][2]+t._array[1][2]*t._array[1][2] == 0 {
 		eig_vec = IdentityMatrix(3)
 		return
 	}
@@ -522,7 +522,7 @@ func EigenValues(t *Matrix) (eig_val *Vector) {
 	// Eigenvalues
 	eig0, eig1, eig2 := 0., 0., 0.
 	// upper triangle
-	p1 := math.Pow(t._array[0][1], 2.) + math.Pow(t._array[0][2], 2.) + math.Pow(t._array[1][2], 2.)
+	p1 := t._array[0][1]*t._array[0][1] + t._array[0][2]*t._array[0][2] + t._array[1][2]*t._array[1][2]
 	if p1 == 0 {
 		// t is diagonal
 		eig0 = t._array[0][0]
@@ -530,7 +530,7 @@ func EigenValues(t *Matrix) (eig_val *Vector) {
 		eig2 = t._array[2][2]
 	} else {
 		q := t.Trace() / 3
-		p2 := math.Pow(t._array[0][0]-q, 2.) + math.Pow(t._array[1][1]-q, 2.) + math.Pow(t._array[2][2]-q, 2.) + 2*p1
+		p2 := (t._array[0][0]-q)*(t._array[0][0]-q) + (t._array[1][1]-q)*(t._array[1][1]-q) + (t._array[2][2]-q)*(t._array[2][2]-q) + 2*p1
 		p := math.Sqrt(p2 / 6)
 		B := t.Sub(IdentityMatrix(3).MulNum(q)).MulNum(1 / p)
 		r := B.Det() / 2
@@ -602,10 +602,10 @@ func computeEigenVector0(t *Matrix, val0 float64) (vec0 *Vector) {
 func ComputeOrthogonalComplement(W *Vector) (U, V *Vector) {
 	invLength := 0.
 	if math.Abs((*W)[0]) > math.Abs((*W)[1]) {
-		invLength = 1 / math.Sqrt(math.Pow((*W)[0], 2.)+math.Pow((*W)[2], 2.))
+		invLength = 1 / math.Sqrt(((*W)[0])*((*W)[0])+((*W)[2])*((*W)[2]))
 		U = &Vector{-(*W)[2] * invLength, 0, (*W)[0] * invLength}
 	} else {
-		invLength = 1 / math.Sqrt(math.Pow((*W)[1], 2.)+math.Pow((*W)[2], 2.))
+		invLength = 1 / math.Sqrt(((*W)[1])*((*W)[1])+((*W)[2])*((*W)[2]))
 		U = &Vector{0, (*W)[2] * invLength, -(*W)[1] * invLength}
 	}
 	V = W.Cross(U)
@@ -640,11 +640,11 @@ func computeEigenVector1(t *Matrix, vec0 *Vector, val1 float64) (vec1 *Vector) {
 		if maxAbsComp > 0 {
 			if absM00 >= absM01 {
 				m01 /= m00
-				m00 = 1 / math.Sqrt(1+math.Pow(m01, 2.))
+				m00 = 1 / math.Sqrt(1+m01*m01)
 				m01 *= m00
 			} else {
 				m00 /= m01
-				m01 = 1 / math.Sqrt(1+math.Pow(m00, 2.))
+				m01 = 1 / math.Sqrt(1+m00*m00)
 				m00 *= m01
 			}
 			vec1 = U.MulNum(m01).Sub(V.MulNum(m00))
@@ -656,11 +656,11 @@ func computeEigenVector1(t *Matrix, vec0 *Vector, val1 float64) (vec1 *Vector) {
 		if maxAbsComp > 0 {
 			if absM11 >= absM01 {
 				m01 /= m11
-				m11 = 1 / math.Sqrt(1+math.Pow(m01, 2.))
+				m11 = 1 / math.Sqrt(1+m01*m01)
 				m01 *= m11
 			} else {
 				m11 /= m01
-				m01 = 1 / math.Sqrt(1+math.Pow(m11, 2.))
+				m01 = 1 / math.Sqrt(1+m11*m11)
 				m11 *= m01
 			}
 			vec1 = U.MulNum(m11).Sub(V.MulNum(m01))
@@ -738,11 +738,8 @@ func (v *Vector) Cross(v1 *Vector) *Vector {
 }
 
 func (v *Vector) SquareSum() float64 {
-	res := 0.
-	for i := range *v {
-		res += math.Pow((*v)[i], 2.) // TODO: v[i].Dot(v[i]) ? which one is faster?
-	}
-	return res
+	// dot is almost 50% faster than pow by benchmark
+	return v.Dot(v)
 }
 
 func (v *Vector) Norm() *Vector {

@@ -3,6 +3,7 @@ package golina
 import (
 	"math"
 	"math/rand"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -14,6 +15,21 @@ func generateRandomVector(size int) *Vector {
 		slice[i] = rand.Float64() - rand.Float64()
 	}
 	return &slice
+}
+
+func generateRandomSymmetric33Matrix() *Matrix {
+	entries := *generateRandomVector(6)
+	m := EmptyMatrix(3, 3)
+	m.Set(0, 0, entries[0])
+	m.Set(1, 1, entries[1])
+	m.Set(2, 2, entries[2])
+	m.Set(0, 1, entries[3])
+	m.Set(1, 0, entries[3])
+	m.Set(0, 2, entries[4])
+	m.Set(2, 0, entries[4])
+	m.Set(1, 2, entries[5])
+	m.Set(2, 1, entries[5])
+	return m
 }
 
 // https://blog.karenuorteva.fi/go-unit-test-setup-and-teardown-db1601a796f2#.2aherx2z5
@@ -299,6 +315,16 @@ func TestEigenVector(t *testing.T) {
 	}
 }
 
+func TestEigen(t *testing.T) {
+	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
+	matA := new(Matrix).Init(a)
+	b := Data{{0.39057517, 0.9184855, -0.06193087}, {0.57537831, -0.29608033, -0.76241474}, {0.71860339, -0.26214659, 0.64411826}}
+	eig_val, eig_vec := Eigen(matA)
+	if !Equal(eig_vec, new(Matrix).Init(b).T()) || !VEqual(eig_val, &Vector{12.77890686, -1.10871847, -3.67018839}) {
+		t.Fail()
+	}
+}
+
 // Vector
 func TestVEqual(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
@@ -390,27 +416,33 @@ func TestConvolve(t *testing.T) {
 	}
 }
 
-// https://medium.com/justforfunc/analyzing-the-performance-of-go-functions-with-benchmarks-60b8162e61c6
-func BenchmarkConvolve(b *testing.B) {
-	convolves := []struct {
-		name string
-		fun  func(u, v *Vector) *Vector
-	}{
-		{"size-10", Convolve},
-		{"size-100", Convolve},
-		{"size-1000", Convolve},
+func BenchmarkVector_SquareSum(b *testing.B) {
+	for k := 1.0; k <= 5; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("SquareSum/size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				v := generateRandomVector(n)
+				v.SquareSum()
+			}
+		})
 	}
+}
 
-	for _, convolve := range convolves {
-		for k := 1.0; k <= 3; k++ {
-			n := int(math.Pow(10, k))
-			b.Run(convolve.name, func(b *testing.B) {
-				for i := 1; i < b.N; i++ {
-					u := generateRandomVector(n)
-					v := generateRandomVector(n)
-					Convolve(u, v)
-				}
-			})
-		}
+func BenchmarkEigen(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Eigen(generateRandomSymmetric33Matrix())
+	}
+}
+
+func BenchmarkConvolve(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("Convolve/size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				u := generateRandomVector(n)
+				v := generateRandomVector(n)
+				Convolve(u, v)
+			}
+		})
 	}
 }
