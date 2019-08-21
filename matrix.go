@@ -1,6 +1,7 @@
 package golina
 
 import (
+	"fmt"
 	"math"
 	"runtime"
 	"sync"
@@ -803,6 +804,19 @@ func (v *Vector) Normalize() *Vector {
 		res[i] = (*v)[i] / math.Sqrt(ss)
 	}
 	return &res
+}
+
+func (v *Vector) ToMatrix(rows, cols int) *Matrix {
+	if len(*v) != rows*cols {
+		panic(fmt.Sprintf("invalid target matrix dimensions (%d x %d) with vector length %d\n", rows, cols, len(*v)))
+	}
+	nt := EmptyMatrix(rows, cols)
+	for r := range nt._array {
+		for c := range nt._array[r] {
+			nt._array[r][c] = (*v)[r*cols+c]
+		}
+	}
+	return nt
 }
 
 // Vector convolve

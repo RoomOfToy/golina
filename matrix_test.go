@@ -456,6 +456,14 @@ func TestVector_Normalize(t *testing.T) {
 	}
 }
 
+func TestVector_ToMatrix(t *testing.T) {
+	v := &Vector{1, 2, 3, 4, 5, 6}
+	m := Data{{1, 2, 3}, {4, 5, 6}}
+	if !Equal(v.ToMatrix(2, 3), new(Matrix).Init(m)) {
+		t.Fail()
+	}
+}
+
 // Vector convolve
 func TestConvolve(t *testing.T) {
 	size := 10000

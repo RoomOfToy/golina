@@ -14,7 +14,7 @@ Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 
 Vector `VEqual`, `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
-`Convolve`
+`ToMatrix`, `Convolve`
 
 Benchmark:
 
