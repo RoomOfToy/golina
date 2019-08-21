@@ -334,6 +334,42 @@ func TestEigen(t *testing.T) {
 	}
 }
 
+func TestMatrix_Norm(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !FloatEqual(matA.Norm(), 6.403124237) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_Flat(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !VEqual(matA.Flat(), &Vector{2, -2, 1, -1, 3, -1, 2, -4, 1}) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_GetSubMatrix(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	b := Data{{3, -1}, {-4, 1}}
+	if !Equal(matA.GetSubMatrix(1, 1, 2, 2), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_SetSubMatrix(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	b := Data{{0, 5}, {-5, 8}}
+	c := Data{{2, -2, 1}, {-1, 0, 5}, {2, -5, 8}}
+	matA.SetSubMatrix(1, 1, new(Matrix).Init(b))
+	if !Equal(matA, new(Matrix).Init(c)) {
+		t.Fail()
+	}
+}
+
 // Vector
 func TestVEqual(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
@@ -408,7 +444,14 @@ func TestVector_SquareSum(t *testing.T) {
 
 func TestVector_Norm(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
-	if !VEqual(v1.Norm(), &Vector{0.2672612419124244, 0.5345224838248488, 0.8017837257372732}) {
+	if !FloatEqual(v1.Norm(), 3.741657387) {
+		t.Fail()
+	}
+}
+
+func TestVector_Normalize(t *testing.T) {
+	v1 := &Vector{1, 2, 3}
+	if !VEqual(v1.Normalize(), &Vector{0.2672612419124244, 0.5345224838248488, 0.8017837257372732}) {
 		t.Fail()
 	}
 }

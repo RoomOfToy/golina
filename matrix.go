@@ -678,6 +678,46 @@ func computeEigenVector1(t *Matrix, vec0 *Vector, val1 float64) (vec1 *Vector) {
 	return
 }
 
+// Frobenius norm
+func (t *Matrix) Norm() float64 {
+	fr := 0.
+	for _, i := range t._array {
+		fr += i.SquareSum()
+	}
+	return math.Sqrt(fr)
+}
+
+func (t *Matrix) Flat() *Vector {
+	m, n := t.Dims()
+	v := make(Vector, m*n)
+	for i, j := range t._array {
+		copy(v[i*n:i*n+m], j)
+	}
+	return &v
+}
+
+/*
+Get a submatrix starting at i,j with rows rows and cols columns. Changes to
+the returned matrix show up in the original.
+*/
+func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
+	nt := EmptyMatrix(rows, cols)
+	for k := range nt._array {
+		copy(nt._array[k], t._array[i+k][j:j+cols])
+	}
+	return nt
+}
+
+// notice: in-place change
+func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix) {
+	m, n := mat.Dims()
+	for r := 0; r < m; r++ {
+		for c := 0; c < n; c++ {
+			t.Set(i+r, j+c, mat.At(r, c))
+		}
+	}
+}
+
 // Vector
 func (v *Vector) Add(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
@@ -749,7 +789,11 @@ func (v *Vector) SquareSum() float64 {
 	return v.Dot(v)
 }
 
-func (v *Vector) Norm() *Vector {
+func (v *Vector) Norm() float64 {
+	return math.Sqrt(v.SquareSum())
+}
+
+func (v *Vector) Normalize() *Vector {
 	ss := v.SquareSum()
 	if ss == 0 {
 		panic("invalid input vector with square sum equal to 0")

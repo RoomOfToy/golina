@@ -6,10 +6,15 @@ A toy repo for reviewing linear algebra.
 
 Realized functions up to now:
 
-Matrix Operations: `Add`, `Sub`, `Mul`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
-`Eigen`, `EigenValues`, `EigenVector`, `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`
+Matrix Operations: `Add`, `Sub`, `Mul`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, `Norm`, 
+`Flat`, `GetSubMatrix`, `SetSubMatrix`
+ 
+Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 
-Vector `VEqual`, `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Convolve`
+LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
+
+Vector `VEqual`, `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
+`Convolve`
 
 Benchmark:
 
