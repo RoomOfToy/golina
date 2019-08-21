@@ -13,6 +13,8 @@ Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 
 LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 
+QR-Decomposition: `Householder`, `QRDecomposition`
+
 Vector `VEqual`, `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
 `ToMatrix`, `Convolve`
 
