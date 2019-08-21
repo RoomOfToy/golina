@@ -123,3 +123,13 @@ func LUPDeterminant(t *Matrix, P *[]int, N int) float64 {
 		return -det
 	}
 }
+
+func LUPRank(t *Matrix, N int) int {
+	rank := 0
+	for i := 0; i < N; i++ {
+		if !FloatEqual(t.At(i, i), 0.) {
+			rank++
+		}
+	}
+	return rank
+}

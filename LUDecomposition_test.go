@@ -58,6 +58,15 @@ func TestLUPDeterminant(t *testing.T) {
 	}
 }
 
+func TestLUPRank(t *testing.T) {
+	matA := GenerateRandomSquareMatrix(3)
+	nt, _ := LUPDecompose(matA, 3, EPS)
+	rank := LUPRank(nt, 3)
+	if rank != matA.Rank() {
+		t.Fail()
+	}
+}
+
 /*
  *BenchmarkLUPDeterminant/size-10-8                  20000             89249 ns/op
  *BenchmarkLUPDeterminant/size-100-8                  1000           1832234 ns/op
