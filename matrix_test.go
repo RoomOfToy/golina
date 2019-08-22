@@ -476,12 +476,56 @@ func TestConvolve(t *testing.T) {
 	}
 }
 
+/*
+BenchmarkMatrix_Mul/size-10-8     500000              3418 ns/op
+BenchmarkMatrix_Mul/size-100-8       500           2845713 ns/op
+BenchmarkMatrix_MulParaFor/size-10-8              200000             11248 ns/op
+BenchmarkMatrix_MulParaFor/size-100-8               1000           2273291 ns/op
+BenchmarkMatrix_MulParaFor/size-300-8                100          75323710 ns/op
+*/
+func BenchmarkMatrix_Mul(b *testing.B) {
+	for k := 1; k <= 5; k++ {
+		n := 0
+		if k < 3 {
+			n = int(math.Pow(10, float64(k)))
+		} else {
+			n = k * 100
+		}
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				m.Mul(m)
+			}
+		})
+	}
+}
+
+func BenchmarkMatrix_MulNum(b *testing.B) {
+	for k := 1; k <= 10; k++ {
+		n := 0
+		if k < 3 {
+			n = int(math.Pow(10, float64(k)))
+		} else {
+			n = k * 100
+		}
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				m.MulNum(n)
+			}
+		})
+	}
+}
+
 func BenchmarkVector_SquareSum(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			v := GenerateRandomVector(n)
+			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				v := GenerateRandomVector(n)
 				v.SquareSum()
 			}
 		})
@@ -492,8 +536,9 @@ func BenchmarkMatrix_Rank(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				m := GenerateRandomSquareMatrix(n)
 				m.Rank()
 			}
 		})
@@ -526,9 +571,10 @@ func BenchmarkConvolve(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			u := GenerateRandomVector(n)
+			v := GenerateRandomVector(n)
+			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				u := GenerateRandomVector(n)
-				v := GenerateRandomVector(n)
 				Convolve(u, v)
 			}
 		})

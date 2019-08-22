@@ -34,16 +34,13 @@ func TestQR(t *testing.T) {
 	}
 }
 
-/*
- * BenchmarkQRDecomposition/size-10-8                  5000            264976 ns/op
- * BenchmarkQRDecomposition/size-100-8                  100         610476336 ns/op
- */
 func BenchmarkQRDecomposition(b *testing.B) {
 	for k := 1.0; k <= 2; k++ {
 		n := int(math.Pow(10, k))
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				m := GenerateRandomSquareMatrix(n)
 				QRDecomposition(m)
 			}
 		})

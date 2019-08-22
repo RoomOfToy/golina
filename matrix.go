@@ -1,7 +1,10 @@
 package golina
 
 import (
+	"context"
 	"fmt"
+	"golang.org/x/sync/semaphore"
+	"log"
 	"math"
 	"runtime"
 	"sync"
@@ -421,12 +424,37 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 	if col1 != row2 {
 		panic("matrix multiplication need M x N and N x L matrices to get M x L matrix")
 	}
-	out := ZeroMatrix(row1, col2)
-	for i := 0; i < row1; i++ {
-		for j := 0; j < col2; j++ {
-			for k := 0; k < row2; k++ {
-				out.Set(i, j, out.At(i, j)+t.At(i, k)*mat2.At(k, j))
+	out := EmptyMatrix(row1, col2)
+	if row1 <= 80 {
+		for i := 0; i < row1; i++ {
+			for j := 0; j < col2; j++ {
+				for k := 0; k < row2; k++ {
+					out.Set(i, j, out.At(i, j)+t.At(i, k)*mat2.At(k, j))
+				}
 			}
+		}
+	} else {
+		sem := semaphore.NewWeighted(int64(runtime.NumCPU()))
+		ctx := context.TODO()
+		sum := 0.
+		for i := 0; i < row1; i++ {
+			if err := sem.Acquire(ctx, 1); err != nil {
+				log.Printf("Failed to acquire semaphore: %v", err)
+				break
+			}
+			go func(i int) {
+				defer sem.Release(1)
+				for j := 0; j < col2; j++ {
+					sum = 0.
+					for k := 0; k < row2; k++ {
+						sum += out.At(i, j) + t.At(i, k)*mat2.At(k, j)
+					}
+					out.Set(i, j, sum)
+				}
+			}(i)
+		}
+		if err := sem.Acquire(ctx, int64(runtime.NumCPU())); err != nil {
+			log.Printf("Failed to acquire semaphore: %v", err)
 		}
 	}
 	return out
@@ -435,7 +463,7 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 func (t *Matrix) MulNum(n interface{}) *Matrix {
 	multiplier := getFloat64(n)
 	row, col := t.Dims()
-	out := ZeroMatrix(row, col)
+	out := EmptyMatrix(row, col)
 	for i := range t._array {
 		for j, v := range t._array[i] {
 			out.Set(i, j, v*multiplier)
@@ -780,7 +808,7 @@ func (v *Vector) Dot(v1 *Vector) float64 {
 // only for 3d
 func (v *Vector) Cross(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) || len(*v) != 3 {
-		panic("cross product requires 2d or 3d vectors")
+		panic("cross product requires 3d vectors in 3d space!")
 	}
 	return &Vector{(*v)[1]*(*v1)[2] - (*v)[2]*(*v1)[1], (*v)[2]*(*v1)[0] - (*v)[0]*(*v1)[2], (*v)[0]*(*v1)[1] - (*v)[1]*(*v1)[0]}
 }
@@ -795,13 +823,13 @@ func (v *Vector) Norm() float64 {
 }
 
 func (v *Vector) Normalize() *Vector {
-	ss := v.SquareSum()
-	if ss == 0 {
-		panic("invalid input vector with square sum equal to 0")
+	n := v.Norm()
+	if n == 0 {
+		panic("invalid input vector with norm equal to 0")
 	}
 	res := make(Vector, len(*v))
 	for i := range *v {
-		res[i] = (*v)[i] / math.Sqrt(ss)
+		res[i] = (*v)[i] / n
 	}
 	return &res
 }

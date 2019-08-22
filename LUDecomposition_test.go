@@ -67,21 +67,13 @@ func TestLUPRank(t *testing.T) {
 	}
 }
 
-/*
- *BenchmarkLUPDeterminant/size-10-8                  20000             89249 ns/op
- *BenchmarkLUPDeterminant/size-100-8                  1000           1832234 ns/op
- *BenchmarkLUPDeterminant/size-1000-8                  100         602877739 ns/op
- *
- *Compare with naive det func: more than 23000 times improved
- *
- *BenchmarkMatrix_Det/size-10-8                      100        2121988644 ns/op
- */
 func BenchmarkLUPDeterminant(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				m := GenerateRandomSquareMatrix(n)
 				nt, P := LUPDecompose(m, n, EPS)
 				LUPDeterminant(nt, P, 3)
 			}
@@ -89,23 +81,13 @@ func BenchmarkLUPDeterminant(b *testing.B) {
 	}
 }
 
-/*
- * BenchmarkLUPRank/size-10-8                 20000             90408 ns/op
- * BenchmarkLUPRank/size-100-8                 1000           1988381 ns/op
- * BenchmarkLUPRank/size-1000-8                 100         663358579 ns/op
- *
- * Faster than Gaussian Elimination
- *
- * BenchmarkMatrix_Rank/size-10-8             20000             91392 ns/op
- * BenchmarkMatrix_Rank/size-100-8              500           2834004 ns/op
- * BenchmarkMatrix_Rank/size-1000-8             100        1811608687 ns/op
- */
 func BenchmarkLUPRank(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				m := GenerateRandomSquareMatrix(n)
 				nt, _ := LUPDecompose(m, n, EPS)
 				LUPRank(nt, n)
 			}

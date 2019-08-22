@@ -15,32 +15,42 @@ LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LU
 
 QR-Decomposition: `Householder`, `QRDecomposition`
 
-Vector `VEqual`, `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
+Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
 `ToMatrix`, `Convolve`
 
-Benchmark(No parallel code now, need optimize):
+Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`
+
+Benchmark(simple parallel `Mul`, need more optimization):
 
 ```bash
 CPU, 64-bit Linux
 Intel: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz, 32073 MB, Max threads(8)
 Used Core: 1, Single Thread
 
-BenchmarkLUPDeterminant/size-10-8                  20000             93133 ns/op
-BenchmarkLUPDeterminant/size-100-8                  1000           1918208 ns/op
-BenchmarkLUPDeterminant/size-1000-8                  100         621303080 ns/op
-BenchmarkMatrix_Det/size-10-8                        100        2121988644 ns/op
-BenchmarkLUPRank/size-10-8                         20000             90408 ns/op
-BenchmarkLUPRank/size-100-8                         1000           1988381 ns/op
-BenchmarkLUPRank/size-1000-8                         100         663358579 ns/op
-BenchmarkMatrix_Rank/size-10-8                     20000             91392 ns/op
-BenchmarkMatrix_Rank/size-100-8                      500           2834004 ns/op
-BenchmarkMatrix_Rank/size-1000-8                     100        1811608687 ns/op
-BenchmarkEigen-8                                  100000             17866 ns/op
-BenchmarkConvolve/size-10-8                       100000             20842 ns/op
-BenchmarkConvolve/size-100-8                       30000             41146 ns/op
-BenchmarkConvolve/size-1000-8                       3000            460712 ns/op
-BenchmarkQRDecomposition/size-10-8                  5000            264976 ns/op
-BenchmarkQRDecomposition/size-100-8                  100         610476336 ns/op
-PASS
-ok      golina  83.338s
+BenchmarkLUPDeterminant/size-10-8                1000000              1836 ns/op
+BenchmarkLUPDeterminant/size-100-8                  2000            595163 ns/op
+BenchmarkLUPDeterminant/size-1000-8                  100         556498134 ns/op
+BenchmarkLUPRank/size-10-8                       1000000              1798 ns/op
+BenchmarkLUPRank/size-100-8                         2000            596218 ns/op
+BenchmarkLUPRank/size-1000-8                         100         557026660 ns/op
+BenchmarkQRDecomposition/size-10-8                 10000            126480 ns/op
+BenchmarkQRDecomposition/size-100-8                  100         460142966 ns/op
+BenchmarkMatrix_Mul/size-10-8                     500000              3305 ns/op
+BenchmarkMatrix_Mul/size-100-8                      1000           2167119 ns/op
+BenchmarkMatrix_Mul/size-300-8                       100          72219939 ns/op
+BenchmarkMatrix_Mul/size-400-8                       100         178311710 ns/op
+BenchmarkMatrix_Mul/size-500-8                       100         366776279 ns/op
+BenchmarkMatrix_MulNum/size-10-8                 2000000               935 ns/op
+BenchmarkMatrix_MulNum/size-100-8                  30000             44814 ns/op
+BenchmarkMatrix_MulNum/size-1000-8                   500           3011459 ns/op
+BenchmarkVector_SquareSum/size-10-8            200000000              7.79 ns/op
+BenchmarkVector_SquareSum/size-100-8            20000000              72.7 ns/op
+BenchmarkVector_SquareSum/size-1000-8            2000000               762 ns/op
+BenchmarkMatrix_Rank/size-10-8                    500000              2704 ns/op
+BenchmarkMatrix_Rank/size-100-8                     1000           1720043 ns/op
+BenchmarkMatrix_Rank/size-1000-8                     100        1754637844 ns/op
+BenchmarkEigen/size-3-8                           100000             15462 ns/op
+BenchmarkConvolve/size-10-8                      2000000               978 ns/op
+BenchmarkConvolve/size-100-8                      100000             13134 ns/op
+BenchmarkConvolve/size-1000-8                       5000            283011 ns/op
 ```
