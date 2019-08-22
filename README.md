@@ -20,7 +20,6 @@ Benchmark(simple parallel `Mul`, need more optimization):
 ```bash
 CPU, 64-bit Linux
 Intel: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz, 32073 MB, Max threads(8)
-Used Core: 1, Single Thread
 
 BenchmarkLUPDeterminant/size-10-8                1000000              1836 ns/op
 BenchmarkLUPDeterminant/size-100-8                  2000            595163 ns/op
