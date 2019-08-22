@@ -7,12 +7,12 @@ A toy repo for reviewing linear algebra.
 Realized functions up to now:
 
 - Matrix Operations: `Add`, `Sub`, `Mul`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, `Norm`, 
-`Flat`, `GetSubMatrix`, `SetSubMatrix`
+`Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`
 - Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
-`ToMatrix`, `Convolve`
+`ToMatrix`, `Sum`, `Mean`, `Tile`, `Convolve`
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`
 
 Benchmark(simple parallel `Mul`, need more optimization):

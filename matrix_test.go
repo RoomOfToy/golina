@@ -370,6 +370,65 @@ func TestMatrix_SetSubMatrix(t *testing.T) {
 	}
 }
 
+func TestMatrix_SumCol(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !FloatEqual(matA.SumCol(0), 3) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_SumRow(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !FloatEqual(matA.SumRow(0), 1) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_Sum(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	b := &Vector{3, -3, 1}
+	if !VEqual(matA.Sum(0), b) {
+		t.Fail()
+	}
+	b = &Vector{1, 1, -1}
+	if !VEqual(matA.Sum(1), b) {
+		t.Fail()
+	}
+	b = &Vector{1}
+	if !VEqual(matA.Sum(-1), b) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_Mean(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	b := &Vector{1, -1, 1. / 3}
+	if !VEqual(matA.Mean(0), b) {
+		t.Fail()
+	}
+	b = &Vector{1. / 3, 1. / 3, -1. / 3}
+	if !VEqual(matA.Mean(1), b) {
+		t.Fail()
+	}
+	b = &Vector{1. / 9}
+	if !VEqual(matA.Mean(-1), b) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_CovMatrix(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	b := Data{{3, -6, 2}, {-6, 13, -4}, {2, -4, 1.33333333333333}}
+	if !Equal(matA.CovMatrix(), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
 // Vector
 func TestVEqual(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
@@ -460,6 +519,32 @@ func TestVector_ToMatrix(t *testing.T) {
 	v := &Vector{1, 2, 3, 4, 5, 6}
 	m := Data{{1, 2, 3}, {4, 5, 6}}
 	if !Equal(v.ToMatrix(2, 3), new(Matrix).Init(m)) {
+		t.Fail()
+	}
+}
+
+func TestVector_Sum(t *testing.T) {
+	v := &Vector{1, 2, 3, 4, 5, 6}
+	if !FloatEqual(v.Sum(), 21) {
+		t.Fail()
+	}
+}
+
+func TestVector_Mean(t *testing.T) {
+	v := &Vector{1, 2, 3, 4, 5, 6}
+	if !FloatEqual(v.Mean(), 3.5) {
+		t.Fail()
+	}
+}
+
+func TestVector_Tile(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	m := Data{{1, 2, 3}, {1, 2, 3}}
+	n := Data{{1, 1}, {2, 2}, {3, 3}}
+	if !Equal(v.Tile(0, 2), new(Matrix).Init(m)) {
+		t.Fail()
+	}
+	if !Equal(v.Tile(1, 2), new(Matrix).Init(n)) {
 		t.Fail()
 	}
 }

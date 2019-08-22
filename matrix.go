@@ -747,6 +747,66 @@ func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix) {
 	}
 }
 
+func (t *Matrix) SumCol(col int) float64 {
+	s := 0.
+	for _, e := range *(t.Col(col)) {
+		s += e
+	}
+	return s
+}
+
+func (t *Matrix) SumRow(row int) float64 {
+	s := 0.
+	for _, e := range *(t.Row(row)) {
+		s += e
+	}
+	return s
+}
+
+func (t *Matrix) Sum(dim int) *Vector {
+	row, col := t.Dims()
+	switch dim {
+	case 0:
+		v := make(Vector, col)
+		for i := range v {
+			v[i] = t.SumCol(i)
+		}
+		return &v
+	case 1:
+		v := make(Vector, row)
+		for i := range v {
+			v[i] = t.SumRow(i)
+		}
+		return &v
+	case -1:
+		d := Ternary(row > col, 1, 0).(int)
+		return &Vector{t.Sum(d).Sum()}
+	default:
+		panic("invalid sum dimension")
+	}
+}
+
+func (t *Matrix) Mean(dim int) *Vector {
+	row, col := t.Dims()
+	switch dim {
+	case 0:
+		return t.Sum(0).MulNum(1. / float64(col)) // Notice: without float64(col), this will be int, e.g. col=3, 1./col=0
+	case 1:
+		return t.Sum(1).MulNum(1. / float64(row))
+	case -1:
+		return t.Sum(-1).MulNum(1. / float64(row*col))
+	default:
+		panic("invalid mean dimension")
+	}
+}
+
+func (t *Matrix) CovMatrix() *Matrix {
+	row, col := t.Dims()
+	x := t.Sub(t.Mean(0).Tile(0, row))
+	cov := x.T().Mul(x).MulNum(1. / float64(col-1))
+	return cov
+}
+
 // Vector
 func (v *Vector) Add(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
@@ -845,6 +905,37 @@ func (v *Vector) ToMatrix(rows, cols int) *Matrix {
 		}
 	}
 	return nt
+}
+
+func (v *Vector) Sum() float64 {
+	s := 0.
+	for _, e := range *v {
+		s += e
+	}
+	return s
+}
+
+func (v *Vector) Mean() float64 {
+	return v.Sum() / float64(len(*v))
+}
+
+func (v *Vector) Tile(dim, n int) *Matrix {
+	switch dim {
+	case 0:
+		d := make(Data, n)
+		for i := range d {
+			d[i] = *v
+		}
+		return new(Matrix).Init(d)
+	case 1:
+		d := make(Data, n)
+		for i := range d {
+			d[i] = *v
+		}
+		return new(Matrix).Init(d).T()
+	default:
+		panic("invalid tile dimension")
+	}
 }
 
 // Vector convolve
