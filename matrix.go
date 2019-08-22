@@ -995,3 +995,72 @@ func Convolve(u, v *Vector) *Vector {
 
 	return &w
 }
+
+// pretty-print
+func (t *Matrix) String() string {
+	if t == nil {
+		return "{nil}"
+	}
+	outString := "{"
+	maxLen := 0
+	row, col := t.Dims()
+	for i := 0; i < row; i++ {
+		for j := 0; j < col; j++ {
+			entry := t.At(i, j)
+			entryString := fmt.Sprintf("%f", entry)
+
+			maxLen = max(maxLen, len(entryString))
+		}
+	}
+
+	for i := 0; i < row; i++ {
+		for j := 0; j < col; j++ {
+			entry := t.At(i, j)
+
+			entryString := fmt.Sprintf("%f", entry)
+
+			for len(entryString) < maxLen {
+				entryString = " " + entryString
+			}
+			outString += entryString
+			if i != row-1 || j != col-1 {
+				outString += ","
+			}
+			if j != col-1 {
+				outString += " "
+			}
+		}
+		if i != row-1 {
+			outString += "\n "
+		}
+	}
+	outString += "}"
+	return outString
+}
+
+func (v *Vector) String() string {
+	if v == nil {
+		return "{nil}"
+	}
+	outString := "{"
+	maxLen := 0
+	vLen := len(*v)
+	for i := 0; i < vLen; i++ {
+		entry := (*v)[i]
+		entryString := fmt.Sprintf("%f", entry)
+		maxLen = max(maxLen, len(entryString))
+	}
+	for i := 0; i < vLen; i++ {
+		entry := (*v)[i]
+		entryString := fmt.Sprintf("%f", entry)
+		for len(entryString) < maxLen {
+			entryString = " " + entryString
+		}
+		outString += entryString
+		if i != vLen-1 {
+			outString += ", "
+		}
+	}
+	outString += "}"
+	return outString
+}

@@ -13,7 +13,7 @@ Realized functions up to now:
 - QR-Decomposition: `Householder`, `QRDecomposition`
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
 `ToMatrix`, `Sum`, `Mean`, `Tile`, `Convolve`
-- Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`
+- Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
 Benchmark(simple parallel `Mul`, need more optimization):
 
