@@ -6,19 +6,14 @@ A toy repo for reviewing linear algebra.
 
 Realized functions up to now:
 
-Matrix Operations: `Add`, `Sub`, `Mul`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, `Norm`, 
+- Matrix Operations: `Add`, `Sub`, `Mul`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, `Norm`, 
 `Flat`, `GetSubMatrix`, `SetSubMatrix`
- 
-Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
-
-LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
-
-QR-Decomposition: `Householder`, `QRDecomposition`
-
-Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
+- Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
+- LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
+- QR-Decomposition: `Householder`, `QRDecomposition`
+- Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
 `ToMatrix`, `Convolve`
-
-Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`
+- Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`
 
 Benchmark(simple parallel `Mul`, need more optimization):
 
