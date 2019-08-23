@@ -59,7 +59,6 @@ type _Matrix interface {
 	Rank() int
 }
 
-// Transpose struct implementing _Matrix interface and return transpose of input _Matrix
 type Matrix struct {
 	_Matrix
 	_array Data // row-wise
