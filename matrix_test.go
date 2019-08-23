@@ -33,9 +33,13 @@ func GenerateRandomSymmetric33Matrix() *Matrix {
 }
 
 func GenerateRandomSquareMatrix(size int) *Matrix {
-	rows := make(Data, size)
+	return GenerateRandomMatrix(size, size)
+}
+
+func GenerateRandomMatrix(row, col int) *Matrix {
+	rows := make(Data, row)
 	for i := range rows {
-		rows[i] = *GenerateRandomVector(size)
+		rows[i] = *GenerateRandomVector(col)
 	}
 	m := new(Matrix).Init(rows)
 	return m

@@ -15,6 +15,7 @@ Realized functions up to now:
 `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
 `TaxicabDistance`, `EuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, `HammingDistance`, `CanberraDistance`
+- k-Nearest-Neighbors: `KNearestNeighnor` (work with above distance functions)
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
 Benchmark(simple parallel `Mul`, need more optimization):
