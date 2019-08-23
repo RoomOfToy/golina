@@ -538,6 +538,13 @@ func TestVector_Sum(t *testing.T) {
 	}
 }
 
+func TestVector_AbsSum(t *testing.T) {
+	v := &Vector{1, -2, 3, -4, 5, -6}
+	if !FloatEqual(v.AbsSum(), 21) {
+		t.Fail()
+	}
+}
+
 func TestVector_Mean(t *testing.T) {
 	v := &Vector{1, 2, 3, 4, 5, 6}
 	if !FloatEqual(v.Mean(), 3.5) {

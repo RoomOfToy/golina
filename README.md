@@ -12,8 +12,9 @@ Realized functions up to now:
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
-`ToMatrix`, `Sum`, `Mean`, `Tile`, `Convolve`
-- 3D Distance: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`
+`ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
+- Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
+`TaxicabDistance`, `EuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, `HammingDistance`, `CanberraDistance`
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
 Benchmark(simple parallel `Mul`, need more optimization):

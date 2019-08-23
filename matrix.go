@@ -915,6 +915,14 @@ func (v *Vector) Sum() float64 {
 	return s
 }
 
+func (v *Vector) AbsSum() float64 {
+	s := 0.
+	for _, e := range *v {
+		s += math.Abs(e)
+	}
+	return s
+}
+
 func (v *Vector) Mean() float64 {
 	return v.Sum() / float64(len(*v))
 }

@@ -40,3 +40,57 @@ func TestDirectedHausdorffDistance(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestTaxicabDistance(t *testing.T) {
+	v1 := &Vector{1, 2, -3}
+	v2 := &Vector{5, -8, 6}
+	if !FloatEqual(TaxicabDistance(v1, v2), 23) {
+		t.Fail()
+	}
+}
+
+func TestEuclideanDistance(t *testing.T) {
+	v1 := &Vector{1, 2, -3}
+	v2 := &Vector{5, -8, 6}
+	if !FloatEqual(EuclideanDistance(v1, v2), 14.035668847618199) {
+		t.Fail()
+	}
+}
+
+func TestMinkowskiDistance(t *testing.T) {
+	v1 := &Vector{1, 2, -3}
+	v2 := &Vector{5, -8, 6}
+	if !FloatEqual(MinkowskiDistance(v1, v2, 1), TaxicabDistance(v1, v2)) {
+		t.Fail()
+	}
+	if !FloatEqual(MinkowskiDistance(v1, v2, 2), EuclideanDistance(v1, v2)) {
+		t.Fail()
+	}
+	if !FloatEqual(MinkowskiDistance(v1, v2, 3), 12.148614834158321) {
+		t.Fail()
+	}
+}
+
+func TestChebyshevDistance(t *testing.T) {
+	v1 := &Vector{1, 2, -3}
+	v2 := &Vector{5, -8, 6}
+	if !FloatEqual(ChebyshevDistance(v1, v2), 10) {
+		t.Fail()
+	}
+}
+
+func TestHammingDistance(t *testing.T) {
+	v1 := &Vector{1, 1, 1}
+	v2 := &Vector{0, 1, 0}
+	if !FloatEqual(HammingDistance(v1, v2), 2) {
+		t.Fail()
+	}
+}
+
+func TestCanberraDistance(t *testing.T) {
+	v1 := &Vector{0, 3, 4}
+	v2 := &Vector{7, 6, 3}
+	if !FloatEqual(CanberraDistance(v1, v2), 1.476190476190476) {
+		t.Fail()
+	}
+}
