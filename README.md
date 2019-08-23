@@ -50,4 +50,7 @@ BenchmarkEigen/size-3-8                           100000             15462 ns/op
 BenchmarkConvolve/size-10-8                      2000000               978 ns/op
 BenchmarkConvolve/size-100-8                      100000             13134 ns/op
 BenchmarkConvolve/size-1000-8                       5000            283011 ns/op
+BenchmarkKNearestNeighbors/size-10x3-4           1000000              1643 ns/op
+BenchmarkKNearestNeighbors/size-100x3-4           100000             16588 ns/op
+BenchmarkKNearestNeighbors/size-1000x3-4            5000            233153 ns/op
 ```
