@@ -24,7 +24,7 @@ func GenerateRandomVector(size int) *Vector {
 
 func GenerateRandomSymmetric33Matrix() *Matrix {
 	entries := *GenerateRandomVector(6)
-	m := EmptyMatrix(3, 3)
+	m := ZeroMatrix(3, 3)
 	m.Set(0, 0, entries[0])
 	m.Set(1, 1, entries[1])
 	m.Set(2, 2, entries[2])
@@ -682,6 +682,17 @@ func BenchmarkMatrix_Det(b *testing.B) {
 	}
 }
 */
+
+func BenchmarkOneMatrix(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				OneMatrix(n, n)
+			}
+		})
+	}
+}
 
 func BenchmarkConvolve(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {

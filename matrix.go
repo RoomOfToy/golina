@@ -158,11 +158,12 @@ func Empty(t *Matrix) *Matrix {
 	for i := range t._array {
 		nt._array[i] = make(Vector, col)
 	}
-	return &nt
+	return &nt // nt is a zero matrix
 }
 
 // nil entries
-func EmptyMatrix(row, col int) *Matrix {
+// golang make slice has zero value in default, so empty matrix == zero matrix
+func ZeroMatrix(row, col int) *Matrix {
 	nt := Matrix{_array: make([]Vector, row)}
 	for i := range nt._array {
 		nt._array[i] = make(Vector, col)
@@ -170,24 +171,26 @@ func EmptyMatrix(row, col int) *Matrix {
 	return &nt
 }
 
-func ZeroMatrix(row, col int) *Matrix {
-	nt := EmptyMatrix(row, col)
-	for i := 0; i < row; i++ {
-		for j := 0; j < col; j++ {
-			nt.Set(i, j, 0)
-		}
-	}
-	return nt
-}
-
 func OneMatrix(row, col int) *Matrix {
-	nt := EmptyMatrix(row, col)
-	for i := 0; i < row; i++ {
-		for j := 0; j < col; j++ {
-			nt.Set(i, j, 1)
+	/*
+		nt := ZeroMatrix(row, col)
+		for i := 0; i < row; i++ {
+			for j := 0; j < col; j++ {
+				nt.Set(i, j, 1)
+			}
 		}
+		return nt
+	*/
+	nt := Matrix{_array: make([]Vector, row)}
+	r := make(Vector, col)
+	for i := range r {
+		r[i] = 1
 	}
-	return nt
+	for i := range nt._array {
+		nt._array[i] = make(Vector, col)
+		copy(nt._array[i], r)
+	}
+	return &nt
 }
 
 func IdentityMatrix(n int) *Matrix {
@@ -423,7 +426,7 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 	if col1 != row2 {
 		panic("matrix multiplication need M x N and N x L matrices to get M x L matrix")
 	}
-	out := EmptyMatrix(row1, col2)
+	out := ZeroMatrix(row1, col2)
 	if row1 <= 80 {
 		for i := 0; i < row1; i++ {
 			for j := 0; j < col2; j++ {
@@ -462,7 +465,7 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 func (t *Matrix) MulNum(n interface{}) *Matrix {
 	multiplier := getFloat64(n)
 	row, col := t.Dims()
-	out := EmptyMatrix(row, col)
+	out := ZeroMatrix(row, col)
 	for i := range t._array {
 		for j, v := range t._array[i] {
 			out.Set(i, j, v*multiplier)
@@ -729,7 +732,7 @@ Get a submatrix starting at i,j with rows rows and cols columns. Changes to
 the returned matrix show up in the original.
 */
 func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
-	nt := EmptyMatrix(rows, cols)
+	nt := ZeroMatrix(rows, cols)
 	for k := range nt._array {
 		copy(nt._array[k], t._array[i+k][j:j+cols])
 	}
@@ -897,7 +900,7 @@ func (v *Vector) ToMatrix(rows, cols int) *Matrix {
 	if len(*v) != rows*cols {
 		panic(fmt.Sprintf("invalid target matrix dimensions (%d x %d) with vector length %d\n", rows, cols, len(*v)))
 	}
-	nt := EmptyMatrix(rows, cols)
+	nt := ZeroMatrix(rows, cols)
 	for r := range nt._array {
 		for c := range nt._array[r] {
 			nt._array[r][c] = (*v)[r*cols+c]

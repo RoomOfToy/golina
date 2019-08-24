@@ -11,8 +11,8 @@ var sin = math.Sin
 // https://en.wikipedia.org/wiki/Affine_transformation
 func TransformOnRow(t, transMat *Matrix) *Matrix {
 	row, col := t.Dims()
-	resMat := EmptyMatrix(row, col)
-	newRowMat := EmptyMatrix(1, col)
+	resMat := ZeroMatrix(row, col)
+	newRowMat := ZeroMatrix(1, col)
 	for i := range t._array {
 		newRowMat._array[0] = append(t._array[i], 1.)                      // 1 x (col+1)
 		resMat._array[i] = transMat.Mul(newRowMat.T()).T()._array[0][:col] // (col+1) x (col+1) x (col+1) x 1 -> (col+1) x 1 -> 1 x (col+1) -> 1 x col
@@ -56,7 +56,7 @@ func Rotate3D(t *Matrix, angle float64, axis *Vector) *Matrix {
 		panic("this is 3D rotation function, 2D please use Rotate2D")
 	}
 	angle = math.Pi * angle / 180.
-	resMat := EmptyMatrix(row, col)
+	resMat := ZeroMatrix(row, col)
 	for i := range t._array {
 		p := &t._array[i]
 		// Prot = Pcos(θ) + (n cross P)sin(-θ) + n(n dot P)(1 - cos(θ)) -> θ is clockwise, so here -θ

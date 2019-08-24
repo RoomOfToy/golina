@@ -86,7 +86,7 @@ func LUPSolve(t *Matrix, P *[]int, N int, b *Vector) *Vector {
  * OUTPUT: IA is the inverse of the initial matrix
  */
 func LUPInvert(t *Matrix, P *[]int, N int) *Matrix {
-	nt := EmptyMatrix(N, N)
+	nt := ZeroMatrix(N, N)
 	for j := 0; j < N; j++ {
 		for i := 0; i < N; i++ {
 			if (*P)[i] == j {

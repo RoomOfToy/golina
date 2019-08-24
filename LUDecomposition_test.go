@@ -94,3 +94,16 @@ func BenchmarkLUPRank(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkLUPDecompose(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				LUPDecompose(m, n, EPS)
+			}
+		})
+	}
+}
