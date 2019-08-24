@@ -13,6 +13,7 @@ Realized functions up to now:
 - Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
+- Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
 `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
@@ -55,4 +56,7 @@ BenchmarkConvolve/size-1000-8                       5000            283011 ns/op
 BenchmarkKNearestNeighbors/size-10x3-4           1000000              1643 ns/op
 BenchmarkKNearestNeighbors/size-100x3-4           100000             16588 ns/op
 BenchmarkKNearestNeighbors/size-1000x3-4            5000            233153 ns/op
+BenchmarkRotate3D/size-10x3-4                     300000              5303 ns/op
+BenchmarkRotate3D/size-100x3-4                     30000             52046 ns/op
+BenchmarkRotate3D/size-1000x3-4                     3000            523652 ns/op
 ```

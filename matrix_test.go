@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+func GenerateRandomFloat() float64 {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Float64()
+}
+
 func GenerateRandomVector(size int) *Vector {
 	slice := make(Vector, size, size)
 	rand.Seed(time.Now().UnixNano())
