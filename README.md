@@ -14,11 +14,13 @@ Realized functions up to now:
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
 - Cholesky-Decomposition: `CholeskyDecomposition` (2 times faster than QR-Decomposition)
-- Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`, `TransformOnRow` (for custom transform matrix)
-- Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `Cross`, `SquareSum`, `Norm`, `Normalize`, 
-`ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
+- Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`, 
+`TransformOnRow` (for custom transform matrix)
+- Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `OuterProduct`, `Cross`, `SquareSum`, `Norm`, 
+`Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
-`TaxicabDistance`, `EuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, `HammingDistance`, `CanberraDistance`
+`TaxicabDistance`, `EuclideanDistance`, `SquaredEuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, 
+`HammingDistance`, `CanberraDistance`
 - k-Nearest-Neighbors: `KNearestNeighnor` (work with above distance functions)
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
