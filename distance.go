@@ -78,6 +78,10 @@ func EuclideanDistance(v1, v2 *Vector) float64 {
 	return v1.Sub(v2).Norm()
 }
 
+func SquaredEuclideanDistance(v1, v2 *Vector) float64 {
+	return v1.Sub(v2).SquareSum()
+}
+
 // p norm
 // https://en.wikipedia.org/wiki/Minkowski_distance
 func MinkowskiDistance(v1, v2 *Vector, p float64) float64 {

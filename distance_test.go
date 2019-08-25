@@ -57,6 +57,14 @@ func TestEuclideanDistance(t *testing.T) {
 	}
 }
 
+func TestSquaredEuclideanDistance(t *testing.T) {
+	v1 := &Vector{1, 2, -3}
+	v2 := &Vector{5, -8, 6}
+	if !FloatEqual(SquaredEuclideanDistance(v1, v2), 197) {
+		t.Fail()
+	}
+}
+
 func TestMinkowskiDistance(t *testing.T) {
 	v1 := &Vector{1, 2, -3}
 	v2 := &Vector{5, -8, 6}
