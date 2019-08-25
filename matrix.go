@@ -867,6 +867,18 @@ func (v *Vector) Dot(v1 *Vector) float64 {
 	return res
 }
 
+// https://en.wikipedia.org/wiki/Outer_product
+func (v *Vector) OuterProduct(v1 *Vector) *Matrix {
+	row, col := len(*v), len(*v1)
+	res := ZeroMatrix(row, col)
+	for i := range res._array {
+		for j := range res._array[i] {
+			res.Set(i, j, (*v)[i]*(*v)[j])
+		}
+	}
+	return res
+}
+
 // only for 3d
 func (v *Vector) Cross(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) || len(*v) != 3 {
