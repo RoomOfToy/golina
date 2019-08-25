@@ -88,3 +88,42 @@ func KMeans(dataSet *Matrix, means *Matrix, distFunc DistFunc, iterLimit int) (C
 		}
 	}
 }
+
+// https://en.wikipedia.org/wiki/K-means%2B%2B
+// Not use RandomMeans but follow the following initialization process:
+// 1. Choose one center uniformly at random from among the data points.
+// 2. For each data point x, compute D(x), the distance between x and the nearest center that has already been chosen.
+// 3. Choose one new data point at random as a new center, using a weighted probability distribution where a point x is chosen with probability proportional to D(x)2.
+// 4. Repeat Steps 2 and 3 until k centers have been chosen.
+// 5. Now that the initial centers have been chosen, proceed using standard k-means clustering.
+func KMeansPP(dataSet *Matrix, k int, distFunc DistFunc, iterLimit int) (ClusteredObservationSet, []int, []int, int) {
+	means := PPMeans(dataSet, k, distFunc)
+	return KMeans(dataSet, means, distFunc, iterLimit)
+}
+
+func PPMeans(dataSet *Matrix, k int, distFunc DistFunc) *Matrix {
+	dataLen := len(dataSet._array)
+	means := ZeroMatrix(k, dataLen)
+	rand.Seed(time.Now().UnixNano())
+	// step 1
+	means._array[0] = dataSet._array[rand.Intn(dataLen)]
+	// step 2
+	dx2 := make([]float64, dataLen)
+	sum := 0.
+	for i := 1; i < k; i++ {
+		sum = 0.
+		for j, d := range dataSet._array {
+			_, minDistance := nearestMean(new(Matrix).Init(means._array[:i]), ObservationWithClusterID{observation: d}, distFunc)
+			dx2[j] = minDistance * minDistance
+			sum += dx2[j]
+		}
+		// step 3
+		target := rand.Float64() * sum
+		idx := 0
+		for sum = dx2[0]; sum < target; sum += dx2[idx] {
+			idx++
+		}
+		means._array[i] = dataSet._array[idx]
+	}
+	return means
+}
