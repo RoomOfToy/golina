@@ -15,6 +15,15 @@ func TestKNearestNeighbors(t *testing.T) {
 	}
 }
 
+func TestKNearestNeighborsWithDistance(t *testing.T) {
+	dataSet := GenerateRandomMatrix(10, 3)
+	v := GenerateRandomVector(3)
+	knn := KNearestNeighborsWithDistance(dataSet, v, 2, EuclideanDistance)
+	if knn.Row(0).At(-1) > knn.Row(1).At(-1) {
+		t.Fail()
+	}
+}
+
 func BenchmarkKNearestNeighbors(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))

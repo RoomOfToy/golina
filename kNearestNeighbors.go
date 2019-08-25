@@ -34,7 +34,23 @@ func KNearestNeighbors(dataSet *Matrix, v *Vector, k int, distFunc func(v1, v2 *
 	retM := ZeroMatrix(k, len(*v))
 	for i := range retM._array {
 		retM._array[i] = dataSet._array[distSlice[i].key]
-		// retM._array[i] = append(dataSet._array[distSlice[i].key], distSlice[i].value)  // output distance for observation
+	}
+	return retM
+}
+
+func KNearestNeighborsWithDistance(dataSet *Matrix, v *Vector, k int, distFunc func(v1, v2 *Vector) float64) *Matrix {
+	row, _ := dataSet.Dims()
+	if k > row {
+		k = row
+	}
+	distSlice := make(SortPairSlice, row)
+	for i, vd := range dataSet._array {
+		distSlice[i] = SortPair{i, distFunc(v, &vd)}
+	}
+	sort.Sort(distSlice) // sort default is ascending
+	retM := ZeroMatrix(k, len(*v))
+	for i := range retM._array {
+		retM._array[i] = append(dataSet._array[distSlice[i].key], distSlice[i].value) // output distance for observation
 	}
 	return retM
 }
