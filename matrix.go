@@ -823,7 +823,7 @@ func (v *Vector) At(n int) float64 {
 
 func (v *Vector) Add(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
-		panic("dot product requires equal-length vectors")
+		panic("add requires equal-length vectors")
 	}
 	res := make(Vector, len(*v))
 	for i := range *v {
@@ -842,7 +842,7 @@ func (v *Vector) AddNum(n interface{}) *Vector {
 
 func (v *Vector) Sub(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
-		panic("dot product requires equal-length vectors")
+		panic("sub requires equal-length vectors")
 	}
 	res := make(Vector, len(*v))
 	for i := range *v {
