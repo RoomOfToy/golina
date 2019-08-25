@@ -810,6 +810,17 @@ func (t *Matrix) CovMatrix() *Matrix {
 }
 
 // Vector
+func (v *Vector) At(n int) float64 {
+	l := len(*v)
+	if abs(n) > l {
+		panic("index out of range")
+	}
+	if n < 0 {
+		n = l + n
+	}
+	return (*v)[n]
+}
+
 func (v *Vector) Add(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
 		panic("dot product requires equal-length vectors")
@@ -967,6 +978,13 @@ func Ternary(statement bool, a, b interface{}) interface{} {
 		return a
 	}
 	return b
+}
+
+func abs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
 }
 
 func min(x, y int) int {

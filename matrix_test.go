@@ -455,6 +455,13 @@ func TestVEqual(t *testing.T) {
 	}
 }
 
+func TestVector_At(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	if v.At(0) != 1 || v.At(-1) != 3 {
+		t.Fail()
+	}
+}
+
 func TestVector_Add(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
 	v2 := &Vector{1, 2, 3}
