@@ -22,6 +22,7 @@ Realized functions up to now:
 `TaxicabDistance`, `EuclideanDistance`, `SquaredEuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, 
 `HammingDistance`, `CanberraDistance`
 - k-Nearest-Neighbors: `KNearestNeighnor`, `KNearestNeighborsWithDistance` (work with above distance functions)
+- k-Means: `KMeans`, `RandomMeans`
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
 Benchmark(simple parallel `Mul`, need more optimization):
@@ -68,4 +69,7 @@ BenchmarkCholeskyDecomposition/size-1000-4           100         320812408 ns/op
 BenchmarkLUPDecompose/size-10-4                  1000000              1676 ns/op
 BenchmarkLUPDecompose/size-100-4                    2000            712092 ns/op
 BenchmarkLUPDecompose/size-1000-4                    100         770541089 ns/op
+BenchmarkKMeans/size-10x3-4                        50000             21644 ns/op
+BenchmarkKMeans/size-100x3-4                        2000            773231 ns/op
+BenchmarkKMeans/size-1000x3-4                        100          47704397 ns/op
 ```
