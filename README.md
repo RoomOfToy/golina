@@ -23,6 +23,7 @@ Realized functions up to now:
 `HammingDistance`, `CanberraDistance`
 - k-Nearest-Neighbors: `KNearestNeighbor`, `KNearestNeighborsWithDistance` (work with above distance functions)
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
+- normal-Estimation: `PlanePCA`, `PlaneLinearSolveWeighted`
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
 Benchmark(simple parallel `Mul`, need more optimization):
@@ -75,4 +76,10 @@ BenchmarkKMeans/size-1000x3-4                        100          47704397 ns/op
 BenchmarkKMeansPP/size-10x3-4                      50000             27485 ns/op
 BenchmarkKMeansPP/size-100x3-4                      2000            595368 ns/op
 BenchmarkKMeansPP/size-1000x3-4                      100          51592136 ns/op
+BenchmarkPlanePCA/size-10x3-8                     200000              9748 ns/op
+BenchmarkPlanePCA/size-100x3-8                     50000             23807 ns/op
+BenchmarkPlanePCA/size-1000x3-8                    10000            151737 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-10x3-8     500000              4019 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-100x3-8    100000             18421 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-1000x3-8    10000            149438 ns/op
 ```
