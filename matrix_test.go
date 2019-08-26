@@ -332,22 +332,28 @@ func TestEigenValues(t *testing.T) {
 func TestEigenVector(t *testing.T) {
 	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
 	matA := new(Matrix).Init(a)
-	b := Data{{0.39057517, 0.9184855, -0.06193087}, {0.57537831, -0.29608033, -0.76241474}, {0.71860339, -0.26214659, 0.64411826}}
-	// fmt.Printf("%+v\n", EigenVector(matA, EigenValues(matA)).T())
-	// fmt.Printf("%+v\n", new(Matrix).Init(b))
-	// fmt.Printf("%+v\n", EigenVector(matA, EigenValues(matA)).T().Sub(new(Matrix).Init(b)))
-	if !Equal(EigenVector(matA, EigenValues(matA)), new(Matrix).Init(b).T()) {
-		t.Fail()
+	b := Data{{0.39057517, 0.57537831, 0.71860339}, {0.9184855, -0.29608033, -0.26214659}, {-0.06193087, -0.76241474, 0.64411826}}
+	eig_vec := EigenVector(matA, EigenValues(matA))
+	for i := range b {
+		if !VEqual(&(b[i]), eig_vec.Row(i)) && !VEqual(&(b[i]), eig_vec.Row(i).MulNum(-1)) { // Discard sign difference
+			t.Fail()
+		}
 	}
 }
 
 func TestEigen(t *testing.T) {
 	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
 	matA := new(Matrix).Init(a)
-	b := Data{{0.39057517, 0.9184855, -0.06193087}, {0.57537831, -0.29608033, -0.76241474}, {0.71860339, -0.26214659, 0.64411826}}
+	b := Data{{0.39057517, 0.57537831, 0.71860339}, {0.9184855, -0.29608033, -0.26214659}, {-0.06193087, -0.76241474, 0.64411826}}
 	eig_val, eig_vec := Eigen(matA)
-	if !Equal(eig_vec, new(Matrix).Init(b).T()) || !VEqual(eig_val, &Vector{12.77890686, -1.10871847, -3.67018839}) {
+	if !VEqual(eig_val, &Vector{12.77890686, -1.10871847, -3.67018839}) {
 		t.Fail()
+	}
+
+	for i := range b {
+		if !VEqual(&(b[i]), eig_vec.Row(i)) && !VEqual(&(b[i]), eig_vec.Row(i).MulNum(-1)) {
+			t.Fail()
+		}
 	}
 }
 

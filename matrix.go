@@ -597,8 +597,8 @@ func EigenVector(t *Matrix, eig_val *Vector) (eig_vec *Matrix) {
 	eig_vec._array[0] = *computeEigenVector0(Copy(t), (*eig_val)[0])
 	// algebraic multiplicity 2
 	eig_vec._array[1] = *computeEigenVector1(Copy(t), &eig_vec._array[0], (*eig_val)[1])
-	// TODO: here multiple - 1 to keep align with numpy result, but i think the sign does not matter, an i right?
-	eig_vec._array[2] = *(eig_vec.Row(0).Cross(eig_vec.Row(1)).MulNum(-1))
+	// TODO: the sign does not matter, but can it be decided?
+	eig_vec._array[2] = *(eig_vec.Row(0).Cross(eig_vec.Row(1)))
 	return
 }
 
