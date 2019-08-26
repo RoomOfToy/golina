@@ -21,7 +21,7 @@ Realized functions up to now:
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
 `TaxicabDistance`, `EuclideanDistance`, `SquaredEuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, 
 `HammingDistance`, `CanberraDistance`
-- k-Nearest-Neighbors: `KNearestNeighnor`, `KNearestNeighborsWithDistance` (work with above distance functions)
+- k-Nearest-Neighbors: `KNearestNeighbor`, `KNearestNeighborsWithDistance` (work with above distance functions)
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
 - Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
 
