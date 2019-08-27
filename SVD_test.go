@@ -10,10 +10,7 @@ func TestSVD(t *testing.T) {
 	a := Data{{8, -6, 2}, {-6, 7, -4}, {2, -4, 3}}
 	matA := new(Matrix).Init(a)
 	U, S, V := SVD(matA)
-	u := Data{{2. / 3., -2. / 3., -1. / 3.}, {-2. / 3., -1. / 3., -2. / 3.}, {1. / 3., 2. / 3., -2. / 3.}}
-	s := Data{{15, 0, 0}, {0, 3, 0}, {0, 0, 0}}
-	v := Data{{2. / 3., -2. / 3., -1. / 3.}, {-2. / 3., -1. / 3., -2. / 3.}, {1. / 3., 2. / 3., -2. / 3.}}
-	if !Equal(U, new(Matrix).Init(u)) || !Equal(S, new(Matrix).Init(s)) || !Equal(V, new(Matrix).Init(v)) {
+	if !Equal(matA, U.Mul(S).Mul(V.T())) {
 		t.Fail()
 	}
 }
