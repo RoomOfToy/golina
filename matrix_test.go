@@ -289,6 +289,16 @@ func TestMatrix_Mul(t *testing.T) {
 	}
 }
 
+func TestMatrix_MulVec(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	b := &Vector{1, 2, 3}
+	v := matA.MulVec(b)
+	if !VEqual(v, &Vector{80, -50, 130}) {
+		t.Fail()
+	}
+}
+
 func TestMatrix_MulNum(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
@@ -448,6 +458,14 @@ func TestMatrix_CovMatrix(t *testing.T) {
 	matA := new(Matrix).Init(a)
 	b := Data{{3, -6, 2}, {-6, 13, -4}, {2, -4, 1.33333333333333}}
 	if !Equal(matA.CovMatrix(), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestCrossCovMatrix(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !Equal(CrossCovMatrix(matA, matA), matA.CovMatrix()) {
 		t.Fail()
 	}
 }

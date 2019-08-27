@@ -462,6 +462,10 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 	return out
 }
 
+func (t *Matrix) MulVec(v *Vector) *Vector {
+	return t.Mul(new(Matrix).Init(Data{*v}).T()).T().Row(0)
+}
+
 func (t *Matrix) MulNum(n interface{}) *Matrix {
 	multiplier := getFloat64(n)
 	row, col := t.Dims()
@@ -807,6 +811,17 @@ func (t *Matrix) CovMatrix() *Matrix {
 	x := t.Sub(t.Mean(0).Tile(0, row))
 	cov := x.T().Mul(x).MulNum(1. / float64(col-1))
 	return cov
+}
+
+// https://en.wikipedia.org/wiki/Cross-covariance
+// https://en.wikipedia.org/wiki/Cross-covariance_matrix
+func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix {
+	r1, c1 := mat1.Dims()
+	r2, c2 := mat2.Dims()
+	if r1 != r2 || c1 != c2 {
+		panic("both matrix should have the same dimensions")
+	}
+	return mat1.Sub(mat1.Mean(0).Tile(0, r1)).T().Mul(mat2.Sub(mat2.Mean(0).Tile(0, r1))).MulNum(1. / float64(c1-1))
 }
 
 // Vector
