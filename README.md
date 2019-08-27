@@ -8,15 +8,15 @@ Pure Golang, No Dependencies.
 
 Realized functions up to now:
 
-- Matrix Operations: `Add`, `Sub`, `Mul`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, `Norm`, 
-`Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`
+- Matrix Operations: `Add`, `Sub`, `Mul`, `MulVec`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
+`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`
 - Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
 - Cholesky-Decomposition: `CholeskyDecomposition`
 - SVD: `SVD`
 - Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`, 
-`TransformOnRow` (for custom transform matrix)
+`TransformOnRow` (for custom transform matrix), `ToAffineMatrix`, `Kabsch` (Superimpose)
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `OuterProduct`, `Cross`, `SquareSum`, `Norm`, 
 `Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
@@ -85,4 +85,8 @@ BenchmarkPlanePCA/size-1000x3-8                    10000            151737 ns/op
 BenchmarkPlaneLinearSolveWeighted/size-10x3-8     500000              4019 ns/op
 BenchmarkPlaneLinearSolveWeighted/size-100x3-8    100000             18421 ns/op
 BenchmarkPlaneLinearSolveWeighted/size-1000x3-8    10000            149438 ns/op
+BenchmarkKabsch/size-10x3-8                       100000             17576 ns/op
+BenchmarkKabsch/size-100x3-8                       20000             73274 ns/op
+BenchmarkKabsch/size-1000x3-8                       2000            580883 ns/op
+
 ```
