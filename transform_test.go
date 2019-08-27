@@ -49,7 +49,7 @@ func TestRotate2D(t *testing.T) {
 func TestRotate3D(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
-	b := Data{{1, 3, -2}, {4, 6, -5}, {7, 9, -8}}
+	b := Data{{1, -3, 2}, {4, -6, 5}, {7, -9, 8}}
 	if !Equal(Rotate3D(matA, 90, &Vector{1, 0, 0}), new(Matrix).Init(b)) {
 		t.Fail()
 	}
@@ -86,6 +86,26 @@ func TestShear3D(t *testing.T) {
 	matA := new(Matrix).Init(a)
 	b := Data{{8, 5, 3}, {20, 17, 6}, {32, 29, 9}}
 	if !Equal(Shear3D(matA, 2, 1, 3), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestToAffineMatrix(t *testing.T) {
+	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+	matA := new(Matrix).Init(a)
+	b := Data{{1, 2, 3, 0}, {4, 5, 6, 0}, {7, 8, 9, 0}, {0, 0, 0, 1}}
+	if !Equal(ToAffineMatrix(matA), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestKabsch(t *testing.T) {
+	matA := new(Matrix).Init(Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}})
+	matB := Rotate3D(matA, 90, &Vector{1, 1, 1})
+	linear, translation := Kabsch(matA, matB)
+	// X -> AX + B, A: linear, B: translation
+	// first linear transformation, then translate
+	if !Equal(matB, Translate(TransformOnRow(matA, ToAffineMatrix(linear)), translation.At(0), translation.At(1), translation.At(2))) {
 		t.Fail()
 	}
 }

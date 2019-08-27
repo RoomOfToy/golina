@@ -59,8 +59,8 @@ func Rotate3D(t *Matrix, angle float64, axis *Vector) *Matrix {
 	resMat := ZeroMatrix(row, col)
 	for i := range t._array {
 		p := &t._array[i]
-		// Prot = Pcos(θ) + (n cross P)sin(-θ) + n(n dot P)(1 - cos(θ)) -> θ is clockwise, so here -θ
-		resMat._array[i] = *(p.MulNum(cos(angle)).Add(axis.Cross(p).MulNum(sin(-angle))).Add(axis.MulNum(axis.Dot(p) * (1 - cos(angle)))))
+		// Prot = Pcos(θ) + (n cross P)sin(θ) + n(n dot P)(1 - cos(θ)) -> θ is clockwise
+		resMat._array[i] = *(p.MulNum(cos(angle)).Add(axis.Cross(p).MulNum(sin(angle))).Add(axis.MulNum(axis.Dot(p) * (1 - cos(angle)))))
 	}
 	return resMat
 }
@@ -140,4 +140,54 @@ func Shear3D(t *Matrix, coordinates ...float64) *Matrix { // hxy, hxz, hyx, hyz,
 		transMat.Set(2, 1, coordinates[5])
 	}
 	return TransformOnRow(t, transMat)
+}
+
+// Calculate Superimpose Rotation Matrix (Kabsch Algorithm)
+// https://en.wikipedia.org/wiki/Kabsch_algorithm
+func Kabsch(P, Q *Matrix) (linear *Matrix, translation *Vector) { // X -> AX + B, A: linear transformation, B: translation
+	rp, cp := P.Dims()
+	rq, cq := Q.Dims()
+	if cp != cq || rp != rq || cp != 3 {
+		panic("dimension mismatch")
+	}
+	// find scale, it's distances sum ratio
+	distP, distQ := 0., 0.
+	for i := 0; i < rp-1; i++ {
+		distP += P.Row(i + 1).Sub(P.Row(i)).Norm()
+		distQ += Q.Row(i + 1).Sub(Q.Row(i)).Norm()
+	}
+	distP += P.Row(0).Sub(P.Row(rp - 1)).Norm()
+	distQ += Q.Row(0).Sub(Q.Row(rp - 1)).Norm()
+	if FloatEqual(distQ, 0.) {
+		panic("invalid scale")
+	}
+	scale := distQ / distP
+	Q = Q.MulNum(1. / scale)
+
+	// move to centroid
+	centeredP := P.Sub(P.Mean(0).Tile(0, rp))
+	centeredQ := Q.Sub(Q.Mean(0).Tile(0, rq))
+	// SVD
+	U, _, V := SVD(centeredP.T().Mul(centeredQ))
+	// Rotation
+	d := V.Mul(U.T()).Det()
+	if d > 0 {
+		d = 1.
+	} else {
+		d = -1.
+	}
+	I := IdentityMatrix(3)
+	I.Set(2, 2, d)
+	rotMatrix := V.Mul(I).Mul(U.T())
+	linear = rotMatrix.MulNum(scale)
+	translation = Q.Mean(0).Sub(rotMatrix.MulVec(P.Mean(0))).MulNum(scale)
+	return
+}
+
+func ToAffineMatrix(t *Matrix) *Matrix {
+	row, col := t.Dims()
+	nt := ZeroMatrix(row+1, col+1)
+	nt.SetSubMatrix(0, 0, t)
+	nt.Set(row, col, 1)
+	return nt
 }
