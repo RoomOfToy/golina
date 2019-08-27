@@ -13,7 +13,7 @@ Realized functions up to now:
 - Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
-- Cholesky-Decomposition: `CholeskyDecomposition` (2 times faster than QR-Decomposition)
+- Cholesky-Decomposition: `CholeskyDecomposition`
 - SVD: `SVD`
 - Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`, 
 `TransformOnRow` (for custom transform matrix)
