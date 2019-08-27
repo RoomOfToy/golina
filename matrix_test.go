@@ -63,7 +63,7 @@ func TestMatrix_Init(t *testing.T) {
 func TestMatrix_String(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
-	if matA.String() != "{1.000000, 2.000000, 3.000000,\n 4.000000, 5.000000, 6.000000,\n 7.000000, 8.000000, 9.000000}" {
+	if matA.String() != "{1.000000, 2.000000, 3.000000,\n 4.000000, 5.000000, 6.000000,\n 7.000000, 8.000000, 9.000000}\n" {
 		t.Fail()
 	}
 }
@@ -609,7 +609,7 @@ func TestConvolve(t *testing.T) {
 
 func TestVector_String(t *testing.T) {
 	v := &Vector{1, 2, 3}
-	if v.String() != "{1.000000, 2.000000, 3.000000}" {
+	if v.String() != "{1.000000, 2.000000, 3.000000}\n" {
 		t.Fail()
 	}
 }

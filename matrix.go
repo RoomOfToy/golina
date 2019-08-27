@@ -1074,7 +1074,7 @@ func (t *Matrix) String() string {
 			outString += "\n "
 		}
 	}
-	outString += "}"
+	outString += "}\n"
 	return outString
 }
 
@@ -1101,6 +1101,6 @@ func (v *Vector) String() string {
 			outString += ", "
 		}
 	}
-	outString += "}"
+	outString += "}\n"
 	return outString
 }
