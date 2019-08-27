@@ -124,3 +124,17 @@ func BenchmarkRotate3D(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkKabsch(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n)+"x3", func(b *testing.B) {
+			P := GenerateRandomMatrix(n, 3)
+			Q := GenerateRandomMatrix(n, 3)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				Kabsch(P, Q)
+			}
+		})
+	}
+}
