@@ -380,6 +380,7 @@ func (t *Matrix) Adj() (adj *Matrix) {
 // Inverse Matrix
 // 	inverse(t) = adj(t) / det(t)
 func (t *Matrix) Inverse() *Matrix {
+	// TODO: too slow, need optimize
 	det := t.Det()
 	if det == 0 {
 		panic("this matrix is not invertible")
@@ -517,6 +518,15 @@ func getFloat64(x interface{}) float64 {
 	panic("invalid numeric type of input")
 }
 
+func (t *Matrix) GetDiagonalElements() *Vector {
+	row, _ := t.Dims()
+	v := make(Vector, row)
+	for i := range t._array {
+		v[i] = t._array[i][i]
+	}
+	return &v
+}
+
 // Matrix Power of square matrix
 // 	Precondition: n >= 0
 func (t *Matrix) Pow(n int) *Matrix {
@@ -530,12 +540,22 @@ func (t *Matrix) Pow(n int) *Matrix {
 	} else if n == 1 {
 		return t
 	} else {
+		//*
 		nt := Copy(t)
 		for n > 1 {
 			nt = nt.Mul(Copy(t))
 			n--
 		}
 		return nt
+		// BenchmarkMatrix_Pow/size-10-4              30000             39967 ns/op
+		// BenchmarkMatrix_Pow/size-100-4               100         404934049 ns/op
+		/*/
+		V, D := EigenDecompose(t)
+		for i := range D._array {
+			D._array[i][i] = math.Pow(D._array[i][i], float64(n))
+		}
+		return V.Mul(D).Mul(V.Inverse())  // Inverse function is very very slow!!!
+		//*/
 	}
 }
 

@@ -308,6 +308,15 @@ func TestMatrix_MulNum(t *testing.T) {
 	}
 }
 
+func TestMatrix_GetDiagonalElements(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	v := &Vector{10, -30, 0}
+	if !VEqual(matA.GetDiagonalElements(), v) {
+		t.Fail()
+	}
+}
+
 func TestMatrix_Pow(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
@@ -625,6 +634,19 @@ func BenchmarkMatrix_Mul(b *testing.B) {
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
 				m.Mul(m)
+			}
+		})
+	}
+}
+
+func BenchmarkMatrix_Pow(b *testing.B) {
+	for k := 1.0; k <= 2; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				m.Pow(n)
 			}
 		})
 	}
