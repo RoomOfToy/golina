@@ -11,7 +11,7 @@ func TestPlanePCA(t *testing.T) {
 	points := new(Matrix).Init(a)
 	// np.linalg.eig(np.cov(a.transpose()))
 	b := Vector{3.16227766e-01, 2.45758907e-15, 9.48683298e-01}
-	if !VEqual(PlanePCA(points), &b) {
+	if !VEqual(PlanePCA(points), &b) && !VEqual(PlanePCA(points).MulNum(-1.), &b) {
 		t.Fail()
 	}
 }

@@ -14,8 +14,9 @@ func PlanePCA(points *Matrix) *Vector {
 		panic("Not enough points to fit a plane")
 	}
 	cov := points.CovMatrix()
-	_, eigVec := Eigen(cov)
-	return eigVec.Row(2)
+	// _, eigVec := Eigen33(cov)
+	eigVec, _ := EigenDecompose(cov) // new `EigenDecompose` function is about one times faster than `Eigen33`
+	return eigVec.Col(0)
 }
 
 // https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
