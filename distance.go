@@ -4,7 +4,6 @@ import (
 	"math"
 )
 
-/***************************** Space Distance *****************************/
 func PointToPointDistance(p1, p2 *Vector) float64 {
 	return p1.Sub(p2).Norm()
 }
@@ -17,7 +16,6 @@ func PointToPlaneDistance(pt, planeCenter, planeNormal *Vector) float64 {
 	return math.Abs(planeNormal.Dot(pt.Sub(planeCenter)))
 }
 
-/***************************** Cluster Distance *****************************/
 // https://en.wikipedia.org/wiki/Hausdorff_distance
 type HausdorffDistance struct {
 	distance       float64
@@ -64,7 +62,6 @@ func DirectedHausdorffDistance(pts1, pts2 *Matrix) *HausdorffDistance {
 	return &hd
 }
 
-/***************************** Similarity (Distance) *****************************/
 // https://people.revoledu.com/kardi/tutorial/Similarity/
 
 // Taxicab Distance or Manhattan Distance (== p1 MinkowskiDistance)

@@ -21,6 +21,7 @@ func (sps SortPairSlice) Less(i, j int) bool {
 	return sps[i].value < sps[j].value
 }
 
+// k-nearest-neighbors of some vector to all vectors in dataSet
 func KNearestNeighbors(dataSet *Matrix, v *Vector, k int, distFunc func(v1, v2 *Vector) float64) *Matrix {
 	row, _ := dataSet.Dims()
 	if k > row {

@@ -4,3 +4,6 @@ test:
 
 bench:
 	go test -bench .
+
+doc:
+	go doc -all

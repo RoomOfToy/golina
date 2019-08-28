@@ -1,3 +1,5 @@
+// Package `golina` provides primitives for linear algebra calculations on top of pure golang.
+
 package golina
 
 import (
@@ -29,7 +31,6 @@ type Entry struct {
 }
 
 // _Matrix interface
-
 type _Matrix interface {
 	// dimensions
 	Dims() (row, col int)
@@ -59,27 +60,33 @@ type _Matrix interface {
 	Rank() int
 }
 
+// Matrix struct
 type Matrix struct {
-	_Matrix
-	_array Data // row-wise
+	_Matrix      // basic interface
+	_array  Data // row-wise
 }
 
+// generate matrix struct from 2D array
 func (t *Matrix) Init(array Data) *Matrix {
 	return &Matrix{_array: array}
 }
 
+// matrix dimensions in row, col
 func (t *Matrix) Dims() (row, col int) {
 	return len(t._array), len(t._array[0])
 }
 
+// get element at row i, column j of matrix
 func (t *Matrix) At(i, j int) float64 {
 	return t._array[i][j]
 }
 
+// set element at row i, column j of matrix
 func (t *Matrix) Set(i, j int, value float64) {
 	t._array[i][j] = value
 }
 
+// transpose matrix
 func (t *Matrix) T() *Matrix {
 	row, col := t.Dims()
 	ntArray := make(Data, col)
@@ -93,6 +100,7 @@ func (t *Matrix) T() *Matrix {
 	return nt
 }
 
+// row vector of matrix row m
 func (t *Matrix) Row(m int) *Vector {
 	row, _ := t.Dims()
 	if m > -1 && m < row {
@@ -101,6 +109,7 @@ func (t *Matrix) Row(m int) *Vector {
 	panic("row index out of range")
 }
 
+// column vector of matrix column n
 func (t *Matrix) Col(n int) *Vector {
 	_, col := t.Dims()
 	if n > -1 && n < col {
@@ -109,13 +118,15 @@ func (t *Matrix) Col(n int) *Vector {
 	panic("column index out of range")
 }
 
-// TODO: float number comparision with zero
+// check whether two float numbers are equal, defined by threshold EPS
 func FloatEqual(x, y float64) bool {
+	// TODO: float number comparision with zero
 	diff := math.Abs(x - y)
 	mean := math.Abs(x+y) / 2.0
 	return (diff/mean) < EPS || diff < EPS*EPS
 }
 
+// check whether two vector are equal, based on `FloatEqual`
 func VEqual(v1, v2 *Vector) bool {
 	if len(*v1) != len(*v2) {
 		return false
@@ -128,7 +139,7 @@ func VEqual(v1, v2 *Vector) bool {
 	return true
 }
 
-// https://stackoverflow.com/questions/37884152/how-do-i-check-the-equality-of-three-values-elegantly
+// check whether two matrix are equal, based on `VEqual`
 func Equal(mat1, mat2 *Matrix) bool {
 	row1, col1 := mat1.Dims()
 	row2, col2 := mat2.Dims()
@@ -143,6 +154,7 @@ func Equal(mat1, mat2 *Matrix) bool {
 	return true
 }
 
+// make a copy of matrix
 func Copy(t *Matrix) *Matrix {
 	nt := Matrix{_array: make([]Vector, len(t._array))}
 	for i := range t._array {
@@ -152,6 +164,8 @@ func Copy(t *Matrix) *Matrix {
 	return &nt
 }
 
+// empty matrix
+// 	golang make slice has zero value in default, so empty matrix == zero matrix
 func Empty(t *Matrix) *Matrix {
 	row, col := t.Dims()
 	nt := Matrix{_array: make([]Vector, row)}
@@ -161,8 +175,7 @@ func Empty(t *Matrix) *Matrix {
 	return &nt // nt is a zero matrix
 }
 
-// nil entries
-// golang make slice has zero value in default, so empty matrix == zero matrix
+// generate matrix with all elements are zero
 func ZeroMatrix(row, col int) *Matrix {
 	nt := Matrix{_array: make([]Vector, row)}
 	for i := range nt._array {
@@ -171,16 +184,8 @@ func ZeroMatrix(row, col int) *Matrix {
 	return &nt
 }
 
+// generate matrix with all elements are one
 func OneMatrix(row, col int) *Matrix {
-	/*
-		nt := ZeroMatrix(row, col)
-		for i := 0; i < row; i++ {
-			for j := 0; j < col; j++ {
-				nt.Set(i, j, 1)
-			}
-		}
-		return nt
-	*/
 	nt := Matrix{_array: make([]Vector, row)}
 	r := make(Vector, col)
 	for i := range r {
@@ -193,6 +198,7 @@ func OneMatrix(row, col int) *Matrix {
 	return &nt
 }
 
+// generate diagonal matrix with ones as diagonal elements, like `eye` in other libs
 func IdentityMatrix(n int) *Matrix {
 	nt := ZeroMatrix(n, n)
 	for i := 0; i < n; i++ {
@@ -201,8 +207,9 @@ func IdentityMatrix(n int) *Matrix {
 	return nt
 }
 
-// TODO: how to find all max or min?
+// find the first max entry
 func (t *Matrix) Max() *Entry {
+	// TODO: how to find all max or min?
 	entry := Entry{}
 	entry.value = math.Inf(-1)
 	for r, i := range t._array {
@@ -216,6 +223,7 @@ func (t *Matrix) Max() *Entry {
 	return &entry
 }
 
+// find the first min entry
 func (t *Matrix) Min() *Entry {
 	entry := Entry{}
 	entry.value = math.Inf(1)
@@ -230,8 +238,7 @@ func (t *Matrix) Min() *Entry {
 	return &entry
 }
 
-// TODO: need optimize
-// Gaussian elimination (row echelon form)
+// get matrix rank through Gaussian elimination (row echelon form)
 func (t *Matrix) Rank() (rank int) {
 	mat := Copy(t)
 	rowN, colN := mat.Dims()
@@ -281,11 +288,11 @@ func (t *Matrix) Rank() (rank int) {
 	return rank
 }
 
+// swap two rows
 func SwapRow(t *Matrix, row1, row2 int) {
 	t._array[row1], t._array[row2] = *t.Row(row2), *t.Row(row1)
 }
 
-// TODO: need optimize
 // Determinant of N x N matrix recursively
 func (t *Matrix) Det() float64 {
 	row, col := t.Dims()
@@ -294,6 +301,7 @@ func (t *Matrix) Det() float64 {
 	}
 	return _det(t, row)
 }
+
 func _det(t *Matrix, n int) float64 {
 	det := 0.
 
@@ -370,7 +378,7 @@ func (t *Matrix) Adj() (adj *Matrix) {
 }
 
 // Inverse Matrix
-// inverse(t) = adj(t) / det(t)
+// 	inverse(t) = adj(t) / det(t)
 func (t *Matrix) Inverse() *Matrix {
 	det := t.Det()
 	if det == 0 {
@@ -387,6 +395,7 @@ func (t *Matrix) Inverse() *Matrix {
 	return inverse
 }
 
+// Add two matrices
 func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 	row1, col1 := t.Dims()
 	row2, col2 := mat2.Dims()
@@ -402,6 +411,7 @@ func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 	return nt
 }
 
+// Subtract matrix
 func (t *Matrix) Sub(mat2 *Matrix) *Matrix {
 	row1, col1 := t.Dims()
 	row2, col2 := mat2.Dims()
@@ -417,10 +427,10 @@ func (t *Matrix) Sub(mat2 *Matrix) *Matrix {
 	return nt
 }
 
-// TODO: need optimize
 // Matrix multiplication (dot | inner)
 // https://en.wikipedia.org/wiki/Matrix_multiplication
 func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
+	// TODO: need optimize
 	row1, col1 := t.Dims()
 	row2, col2 := mat2.Dims()
 	if col1 != row2 {
@@ -462,6 +472,7 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 	return out
 }
 
+// matrix multiply vector, please notice all vectors in this package is row vector
 func (t *Matrix) MulVec(v *Vector) *Vector {
 	return t.Mul(new(Matrix).Init(Data{*v}).T()).T().Row(0)
 }
@@ -506,10 +517,10 @@ func getFloat64(x interface{}) float64 {
 	panic("invalid numeric type of input")
 }
 
-// TODO: need optimize and deal with negative condition (invertible)
 // Matrix Power of square matrix
-// Precondition: n >= 0
+// 	Precondition: n >= 0
 func (t *Matrix) Pow(n int) *Matrix {
+	// TODO: need optimize and deal with negative condition (invertible)
 	row, col := t.Dims()
 	if row != col {
 		panic("only square matrix has power")
@@ -528,7 +539,7 @@ func (t *Matrix) Pow(n int) *Matrix {
 	}
 }
 
-// trace: sum of all diagonal values
+// Trace: sum of all diagonal values
 // https://en.wikipedia.org/wiki/Trace_(linear_algebra)
 func (t *Matrix) Trace() float64 {
 	row, col := t.Dims()
@@ -543,10 +554,10 @@ func (t *Matrix) Trace() float64 {
 }
 
 // Eigenvalues and Eigenvectors
-// https://en.wikipedia.org/wiki/Eigenvalue_algorithm
-// this is for 3 x 3 symmetric matrix only
-// TODO: general case
+// 	https://en.wikipedia.org/wiki/Eigenvalue_algorithm
+// 	this is for 3 x 3 symmetric matrix only now
 func Eigen(t *Matrix) (eig_val *Vector, eig_vec *Matrix) {
+	// TODO: general case
 	// Eigenvalues
 	eig_val = EigenValues(t)
 
@@ -560,6 +571,7 @@ func Eigen(t *Matrix) (eig_val *Vector, eig_vec *Matrix) {
 	return
 }
 
+// Eigenvalues of 3 X 3 matrix
 func EigenValues(t *Matrix) (eig_val *Vector) {
 	// Eigenvalues
 	eig0, eig1, eig2 := 0., 0., 0.
@@ -595,6 +607,7 @@ func EigenValues(t *Matrix) (eig_val *Vector) {
 	return
 }
 
+// EigenVector of 3 X 3 matrix, based on `EigenValues`
 func EigenVector(t *Matrix, eig_val *Vector) (eig_vec *Matrix) {
 	eig_vec = ZeroMatrix(3, 3)
 	// algebraic multiplicity 1
@@ -641,6 +654,7 @@ func computeEigenVector0(t *Matrix, val0 float64) (vec0 *Vector) {
 	return
 }
 
+// decompose vector into two orthogonal sub-vectors
 func ComputeOrthogonalComplement(W *Vector) (U, V *Vector) {
 	invLength := 0.
 	if math.Abs((*W)[0]) > math.Abs((*W)[1]) {
@@ -722,6 +736,7 @@ func (t *Matrix) Norm() float64 {
 	return math.Sqrt(fr)
 }
 
+// matrix to row vector
 func (t *Matrix) Flat() *Vector {
 	m, n := t.Dims()
 	v := make(Vector, m*n)
@@ -731,10 +746,7 @@ func (t *Matrix) Flat() *Vector {
 	return &v
 }
 
-/*
-Get a submatrix starting at i,j with rows rows and cols columns. Changes to
-the returned matrix show up in the original.
-*/
+// Get a sub-matrix starting at i, j with rows rows and cols columns.
 func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
 	nt := ZeroMatrix(rows, cols)
 	for k := range nt._array {
@@ -743,7 +755,8 @@ func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
 	return nt
 }
 
-// notice: in-place change
+// Set a sub-matrix starting at i, j with input matrix, please take care the dimension matching conditions
+// 	notice: in-place change
 func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix) {
 	m, n := mat.Dims()
 	for r := 0; r < m; r++ {
@@ -753,6 +766,7 @@ func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix) {
 	}
 }
 
+// sum one column of matrix
 func (t *Matrix) SumCol(col int) float64 {
 	s := 0.
 	for _, e := range *(t.Col(col)) {
@@ -761,6 +775,7 @@ func (t *Matrix) SumCol(col int) float64 {
 	return s
 }
 
+// sum one row of matrix
 func (t *Matrix) SumRow(row int) float64 {
 	s := 0.
 	for _, e := range *(t.Row(row)) {
@@ -769,6 +784,7 @@ func (t *Matrix) SumRow(row int) float64 {
 	return s
 }
 
+// sum the matrix along certain dimension, 0 -> sum all rows into one vector, 1 -> sum all columns into one vector
 func (t *Matrix) Sum(dim int) *Vector {
 	row, col := t.Dims()
 	switch dim {
@@ -792,6 +808,7 @@ func (t *Matrix) Sum(dim int) *Vector {
 	}
 }
 
+// mean vector of matrix along certain dimension, 0 -> row, 1 -> column
 func (t *Matrix) Mean(dim int) *Vector {
 	row, col := t.Dims()
 	switch dim {
@@ -806,6 +823,7 @@ func (t *Matrix) Mean(dim int) *Vector {
 	}
 }
 
+// covariance matrix
 func (t *Matrix) CovMatrix() *Matrix {
 	row, col := t.Dims()
 	x := t.Sub(t.Mean(0).Tile(0, row))
@@ -813,8 +831,9 @@ func (t *Matrix) CovMatrix() *Matrix {
 	return cov
 }
 
-// https://en.wikipedia.org/wiki/Cross-covariance
-// https://en.wikipedia.org/wiki/Cross-covariance_matrix
+// cross covariance matrix
+// 	https://en.wikipedia.org/wiki/Cross-covariance
+// 	https://en.wikipedia.org/wiki/Cross-covariance_matrix
 func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix {
 	r1, c1 := mat1.Dims()
 	r2, c2 := mat2.Dims()
@@ -825,6 +844,7 @@ func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix {
 }
 
 // Vector
+// 	get vector element at index n
 func (v *Vector) At(n int) float64 {
 	l := len(*v)
 	if abs(n) > l {
@@ -836,6 +856,7 @@ func (v *Vector) At(n int) float64 {
 	return (*v)[n]
 }
 
+// add two vectors
 func (v *Vector) Add(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
 		panic("add requires equal-length vectors")
@@ -847,6 +868,7 @@ func (v *Vector) Add(v1 *Vector) *Vector {
 	return &res
 }
 
+// vector add number
 func (v *Vector) AddNum(n interface{}) *Vector {
 	res := make(Vector, len(*v))
 	for i := range *v {
@@ -855,6 +877,7 @@ func (v *Vector) AddNum(n interface{}) *Vector {
 	return &res
 }
 
+// vector subtract vector
 func (v *Vector) Sub(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) {
 		panic("sub requires equal-length vectors")
@@ -866,6 +889,7 @@ func (v *Vector) Sub(v1 *Vector) *Vector {
 	return &res
 }
 
+// vector subtract number
 func (v *Vector) SubNum(n interface{}) *Vector {
 	res := make(Vector, len(*v))
 	for i := range *v {
@@ -874,6 +898,7 @@ func (v *Vector) SubNum(n interface{}) *Vector {
 	return &res
 }
 
+// vector multiply number
 func (v *Vector) MulNum(n interface{}) *Vector {
 	res := make(Vector, len(*v))
 	for i := range *v {
@@ -882,6 +907,7 @@ func (v *Vector) MulNum(n interface{}) *Vector {
 	return &res
 }
 
+// vector dot production
 func (v *Vector) Dot(v1 *Vector) float64 {
 	if len(*v) != len(*v1) {
 		panic("dot product requires equal-length vectors")
@@ -893,6 +919,7 @@ func (v *Vector) Dot(v1 *Vector) float64 {
 	return res
 }
 
+// vector outer product: v1, v2 -> matrix
 // https://en.wikipedia.org/wiki/Outer_product
 func (v *Vector) OuterProduct(v1 *Vector) *Matrix {
 	row, col := len(*v), len(*v1)
@@ -905,7 +932,7 @@ func (v *Vector) OuterProduct(v1 *Vector) *Matrix {
 	return res
 }
 
-// only for 3d
+// vector cross product, 3D only
 func (v *Vector) Cross(v1 *Vector) *Vector {
 	if len(*v) != len(*v1) || len(*v) != 3 {
 		panic("cross product requires 3d vectors in 3d space!")
@@ -913,15 +940,18 @@ func (v *Vector) Cross(v1 *Vector) *Vector {
 	return &Vector{(*v)[1]*(*v1)[2] - (*v)[2]*(*v1)[1], (*v)[2]*(*v1)[0] - (*v)[0]*(*v1)[2], (*v)[0]*(*v1)[1] - (*v)[1]*(*v1)[0]}
 }
 
+// vector elements square sum
 func (v *Vector) SquareSum() float64 {
 	// dot is almost 50% faster than pow by benchmark
 	return v.Dot(v)
 }
 
+// vector norm
 func (v *Vector) Norm() float64 {
 	return math.Sqrt(v.SquareSum())
 }
 
+// normalize vector
 func (v *Vector) Normalize() *Vector {
 	n := v.Norm()
 	if n == 0 {
@@ -934,6 +964,7 @@ func (v *Vector) Normalize() *Vector {
 	return &res
 }
 
+// vector to matrix, row-wise
 func (v *Vector) ToMatrix(rows, cols int) *Matrix {
 	if len(*v) != rows*cols {
 		panic(fmt.Sprintf("invalid target matrix dimensions (%d x %d) with vector length %d\n", rows, cols, len(*v)))
@@ -947,6 +978,7 @@ func (v *Vector) ToMatrix(rows, cols int) *Matrix {
 	return nt
 }
 
+// sum of vector's elements
 func (v *Vector) Sum() float64 {
 	s := 0.
 	for _, e := range *v {
@@ -955,6 +987,7 @@ func (v *Vector) Sum() float64 {
 	return s
 }
 
+// sum of vector elements' absolute value
 func (v *Vector) AbsSum() float64 {
 	s := 0.
 	for _, e := range *v {
@@ -963,10 +996,12 @@ func (v *Vector) AbsSum() float64 {
 	return s
 }
 
+// mean value of vector
 func (v *Vector) Mean() float64 {
 	return v.Sum() / float64(len(*v))
 }
 
+// tile vector alone certain dimension into matrix, 0 -> vector as row, 1 -> vector as column
 func (v *Vector) Tile(dim, n int) *Matrix {
 	switch dim {
 	case 0:
@@ -986,8 +1021,7 @@ func (v *Vector) Tile(dim, n int) *Matrix {
 	}
 }
 
-// Vector convolve
-
+// simple function for simulating ternary operator
 func Ternary(statement bool, a, b interface{}) interface{} {
 	if statement {
 		return a
@@ -1020,8 +1054,9 @@ func mul(u, v *Vector, k int) (res float64) {
 	return res
 }
 
-// Convolve computes w = u * v, where w[k] = Σ u[i]*v[j], i + j = k.
-// Precondition: len(u) > 0, len(v) > 0.
+// Vector convolve
+//	Convolve computes w = u * v, where w[k] = Σ u[i]*v[j], i + j = k.
+//	Precondition: len(u) > 0, len(v) > 0.
 func Convolve(u, v *Vector) *Vector {
 	n := len(*u) + len(*v) - 1
 	w := make(Vector, n)
@@ -1051,7 +1086,7 @@ func Convolve(u, v *Vector) *Vector {
 	return &w
 }
 
-// pretty-print
+// pretty-print for matrix
 func (t *Matrix) String() string {
 	if t == nil {
 		return "{nil}"
@@ -1093,6 +1128,7 @@ func (t *Matrix) String() string {
 	return outString
 }
 
+// pretty-print for vector
 func (v *Vector) String() string {
 	if v == nil {
 		return "{nil}"

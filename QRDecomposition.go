@@ -15,6 +15,7 @@ func UnitVector(n, i int) *Matrix {
 	return v
 }
 
+// Householder
 // https://en.wikipedia.org/wiki/QR_decomposition
 func Householder(t *Matrix) *Matrix {
 	m, _ := t.Dims()
@@ -29,8 +30,9 @@ func Householder(t *Matrix) *Matrix {
 	return IdentityMatrix(m).Sub(prod.MulNum(beta))
 }
 
-// TODO: need optimize, many `Mul` -> optimize `Mul` to run in parallel
+// QR-Decomposition based on `Householder`
 func QRDecomposition(t *Matrix) (*Matrix, *Matrix) {
+	// TODO: need optimize, many `Mul` -> optimize `Mul` to run in parallel
 	m, n := t.Dims()
 	q := IdentityMatrix(m)
 	r := Copy(t)

@@ -19,25 +19,25 @@ func PlanePCA(points *Matrix) *Vector {
 }
 
 // https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
-// ax + by +z + d = 0
-// ax + by + d = -z
-// [X, Y, 1] * [a, b, d].T() = -Z
-// [X, Y, 1].T() * [X, Y, 1] * [a, b, d].T() = [X, Y, 1].T() * -Z
+// 	ax + by +z + d = 0
+// 	ax + by + d = -z
+// 	[X, Y, 1] * [a, b, d].T() = -Z
+// 	[X, Y, 1].T() * [X, Y, 1] * [a, b, d].T() = [X, Y, 1].T() * -Z
 //
-// [ Σxx, Σxy, Σx,        [ a,          [ Σxz,
-//   Σyx, Σyy, Σyz,    *    b,    =   -   Σyz,
-//   Σx,  Σy,  N   ]        d ]           0   ]
-// define x, y, z is relative to the centroid (mean) of points, then Σx = Σy = Σz = 0, then N * d = 0, then d = 0
-// [ Σxx, Σxy,   *  [ a,    =  - [ Σxz,
-//   Σyx, Σyy ]       b ]          Σyz]
-// according to Cramer's rule (https://en.wikipedia.org/wiki/Cramer%27s_rule)
-// D = Σxx * Σyy - Σxy * Σxy
-// a = (Σyz * Σxy - Σxz * Σyy) / D
-// b = (Σxy * Σxz - Σxx * Σyz) / D
-// so n = [a, b, 1].T(), multiply by D, then n = [a, b, D].T(), then normalize it we will get the plane norm
-// but this works only when z-component of the plane normal is non-zero, if it is, then we can use the x or y component for calculation
-// sine the above only minimize the squares of the residuals as perpendicular to the main axis, not the residuals perpendicular to the plane,
-// then use the below weighted way to calculate the components of plain normal is more reasonable.
+// 	[ Σxx, Σxy, Σx,        [ a,          [ Σxz,
+//   	Σyx, Σyy, Σyz,    *    b,    =   -   Σyz,
+//   	Σx,  Σy,  N   ]        d ]           0   ]
+// 	define x, y, z is relative to the centroid (mean) of points, then Σx = Σy = Σz = 0, then N * d = 0, then d = 0
+// 	[ Σxx, Σxy,   *  [ a,    =  - [ Σxz,
+//   	Σyx, Σyy ]       b ]          Σyz]
+// 	according to Cramer's rule (https://en.wikipedia.org/wiki/Cramer%27s_rule)
+// 	D = Σxx * Σyy - Σxy * Σxy
+// 	a = (Σyz * Σxy - Σxz * Σyy) / D
+// 	b = (Σxy * Σxz - Σxx * Σyz) / D
+// 	so n = [a, b, 1].T(), multiply by D, then n = [a, b, D].T(), then normalize it we will get the plane norm
+// 	but this works only when z-component of the plane normal is non-zero, if it is, then we can use the x or y component for calculation
+// 	sine the above only minimize the squares of the residuals as perpendicular to the main axis, not the residuals perpendicular to the plane,
+// 	then use the below weighted way to calculate the components of plain normal is more reasonable.
 func PlaneLinearSolveWeighted(points *Matrix) *Vector {
 	row, col := points.Dims()
 	if col > 3 {

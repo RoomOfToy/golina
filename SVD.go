@@ -5,15 +5,15 @@ import (
 )
 
 // https://en.wikipedia.org/wiki/Singular_value_decomposition
-// A: m * n (m >= n)
-// U: m * n orthogonal matrix, U * U.T() = Im
-// S: n * n diagonal matrix
-// V: n * n orthogonal matrix, V * V.T() = Im
+// 	A: m * n (m >= n)
+// 	U: m * n orthogonal matrix, U * U.T() = Im
+// 	S: n * n diagonal matrix
+// 	V: n * n orthogonal matrix, V * V.T() = Im
 //
 // Step by step solution: https://atozmath.com/MatrixEv.aspx?q=svd
 //
-// Code from `Jama`, derived from LINPACK code
-// https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
+// 	Code from `Jama`, derived from LINPACK code
+// 	https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
 func SVD(t *Matrix) (U, S, V *Matrix) {
 	// Initialize
 	A := Copy(t)._array

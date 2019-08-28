@@ -1,0 +1,423 @@
+package golina // import "golina"
+
+
+CONSTANTS
+
+const EPS float64 = 1E-6
+    EPS for float number comparision
+
+
+FUNCTIONS
+
+func CanberraDistance(v1, v2 *Vector) float64
+    CanberraDistance https://en.wikipedia.org/wiki/Canberra_distance
+
+func ChebyshevDistance(v1, v2 *Vector) float64
+    L∞ distance (infinity norm distance, p -> ∞); Chessboard Distance; Chebyshev
+    Distance https://en.wikipedia.org/wiki/Chebyshev_distance
+
+func Eigen(t *Matrix) (eig_val *Vector, eig_vec *Matrix)
+    Eigenvalues and Eigenvectors
+
+    https://en.wikipedia.org/wiki/Eigenvalue_algorithm
+    this is for 3 x 3 symmetric matrix only now
+
+func Equal(mat1, mat2 *Matrix) bool
+    check whether two matrix are equal, based on `VEqual`
+
+func EuclideanDistance(v1, v2 *Vector) float64
+    EuclideanDistance (== p2 MinkowskiDistance)
+
+func FloatEqual(x, y float64) bool
+    check whether two float numbers are equal, defined by threshold EPS
+
+func HammingDistance(v1, v2 *Vector) float64
+    HammingDistance (bitwise difference)
+    https://en.wikipedia.org/wiki/Hamming_distance
+
+func Kabsch(P, Q *Matrix) (linear *Matrix, translation *Vector)
+    Calculate Superimpose Rotation Matrix (Kabsch Algorithm)
+    https://en.wikipedia.org/wiki/Kabsch_algorithm
+
+func LUPDeterminant(t *Matrix, P *[]int, N int) float64
+func LUPRank(t *Matrix, N int) int
+func MinkowskiDistance(v1, v2 *Vector, p float64) float64
+    p norm https://en.wikipedia.org/wiki/Minkowski_distance
+
+func PointToLineDistance(pt, linePt, lineDir *Vector) float64
+func PointToPlaneDistance(pt, planeCenter, planeNormal *Vector) float64
+func PointToPointDistance(p1, p2 *Vector) float64
+func QRDecomposition(t *Matrix) (*Matrix, *Matrix)
+    QR-Decomposition based on `Householder`
+
+func Sign(a float64) float64
+func SquaredEuclideanDistance(v1, v2 *Vector) float64
+func SwapRow(t *Matrix, row1, row2 int)
+    swap two rows
+
+func TaxicabDistance(v1, v2 *Vector) float64
+    Taxicab Distance or Manhattan Distance (== p1 MinkowskiDistance)
+    https://en.wikipedia.org/wiki/Taxicab_geometry
+
+func Ternary(statement bool, a, b interface{}) interface{}
+    simple function for simulating ternary operator
+
+func VEqual(v1, v2 *Vector) bool
+    check whether two vector are equal, based on `FloatEqual`
+
+
+TYPES
+
+type ClusteredObservationSet []ObservationWithClusterID
+
+func KMeans(dataSet *Matrix, means *Matrix, distFunc DistFunc, iterLimit int) (ClusteredObservationSet, []int, []int, int)
+    K-means https://en.wikipedia.org/wiki/K-means_clustering
+
+func KMeansPP(dataSet *Matrix, k int, distFunc DistFunc, iterLimit int) (ClusteredObservationSet, []int, []int, int)
+    K-means++ https://en.wikipedia.org/wiki/K-means%2B%2B
+
+    Not use RandomMeans but follow the following initialization process:
+    1. Choose one center uniformly at random from among the data points.
+    2. For each data point x, compute D(x), the distance between x and the nearest center that has already been chosen.
+    3. Choose one new data point at random as a new center, using a weighted probability distribution where a point x is chosen with probability proportional to D(x)2.
+    4. Repeat Steps 2 and 3 until k centers have been chosen.
+    5. Now that the initial centers have been chosen, proceed using standard k-means clustering.
+
+type Data []Vector // 2D array -> backend of Matrix
+
+type DistFunc func(v1, v2 *Vector) float64
+
+type Entry struct {
+	// Has unexported fields.
+}
+    matrix entry
+
+type HausdorffDistance struct {
+	// Has unexported fields.
+}
+    https://en.wikipedia.org/wiki/Hausdorff_distance
+
+func DirectedHausdorffDistance(pts1, pts2 *Matrix) *HausdorffDistance
+type Matrix struct {
+	// Has unexported fields.
+}
+    Matrix struct
+
+func CholeskyDecomposition(t *Matrix) *Matrix
+    https://en.wikipedia.org/wiki/Cholesky_decomposition
+
+    A = L.Mul(L.T())
+    Ljj = sqrt(Ajj - sum((Ljk) ** 2)_from_k=1_to_j-1)
+    Lij = (1 / Ljj) * (Aij - sum(Lik * Ljk)_from_k=1_to_j-1)
+
+func Copy(t *Matrix) *Matrix
+    make a copy of matrix
+
+func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix
+    cross covariance matrix
+
+    https://en.wikipedia.org/wiki/Cross-covariance
+    https://en.wikipedia.org/wiki/Cross-covariance_matrix
+
+func EigenVector(t *Matrix, eig_val *Vector) (eig_vec *Matrix)
+    EigenVector of 3 X 3 matrix, based on `EigenValues`
+
+func Empty(t *Matrix) *Matrix
+    empty matrix
+
+    golang make slice has zero value in default, so empty matrix == zero matrix
+
+func Householder(t *Matrix) *Matrix
+    Householder https://en.wikipedia.org/wiki/QR_decomposition
+
+func IdentityMatrix(n int) *Matrix
+    generate diagonal matrix with ones as diagonal elements, like `eye` in other
+    libs
+
+func KNearestNeighbors(dataSet *Matrix, v *Vector, k int, distFunc func(v1, v2 *Vector) float64) *Matrix
+    k-nearest-neighbors of some vector to all vectors in dataSet
+
+func KNearestNeighborsWithDistance(dataSet *Matrix, v *Vector, k int, distFunc func(v1, v2 *Vector) float64) *Matrix
+func LUPDecompose(t *Matrix, N int, Tol float64) (*Matrix, *[]int)
+    https://en.wikipedia.org/wiki/LU_decomposition
+
+    INPUT: t - array of pointers to rows of a square matrix having dimension N
+    *        Tol - small tolerance number to detect failure when the matrix is near degenerate
+    * OUTPUT: New Matrix nt, it contains both matrices L-E and U as nt=(L-E)+U such that P*nt=L*U.
+    *        The permutation matrix is not stored as a matrix, but in an integer vector P of size N+1
+    *        containing column indexes where the permutation matrix has "1". The last element P[N]=S+N,
+    *        where S is the number of row exchanges needed for determinant computation, det(P)=(-1)^S
+
+func LUPInvert(t *Matrix, P *[]int, N int) *Matrix
+    INPUT: A,P filled in LUPDecompose; N - dimension * OUTPUT: IA is the inverse
+    of the initial matrix
+
+func OneMatrix(row, col int) *Matrix
+    generate matrix with all elements are one
+
+func PPMeans(dataSet *Matrix, k int, distFunc DistFunc) *Matrix
+func RandomMeans(dataSet *Matrix, k int) *Matrix
+func Rotate2D(t *Matrix, angle float64) *Matrix
+    2D, rotation angle θ in counter-clockwise
+
+func Rotate3D(t *Matrix, angle float64, axis *Vector) *Matrix
+    3D, rotation angle θ in counter-clockwise with vector axis
+
+func SVD(t *Matrix) (U, S, V *Matrix)
+    https://en.wikipedia.org/wiki/Singular_value_decomposition
+
+    A: m * n (m >= n)
+    U: m * n orthogonal matrix, U * U.T() = Im
+    S: n * n diagonal matrix
+    V: n * n orthogonal matrix, V * V.T() = Im
+
+    Step by step solution: https://atozmath.com/MatrixEv.aspx?q=svd
+
+    Code from `Jama`, derived from LINPACK code
+    https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
+
+func Shear2D(t *Matrix, coordinates ...float64) *Matrix
+    Shear2D
+
+    hx: parallel to x, hy: parallel to y
+    x1 = x + hx * y
+    y1 = y + hy * x
+
+func Shear3D(t *Matrix, coordinates ...float64) *Matrix
+    Shear3D
+
+    hxy, hxz, hyx, hyz, hzx, hzy
+    x1 = x + hxy * y + hxz * z
+    y1 = hyx * x + y + hyz * z
+    z1 = hzx * x + hzy * y + z
+
+func Stretch(t *Matrix, coordinates ...float64) *Matrix
+    if not use transform matrix, scale can be simply done by
+    t.T().Row(i).MulNum(coordinates[i])
+
+    squeeze: just x = k, y = 1 / k for stretch
+
+func ToAffineMatrix(t *Matrix) *Matrix
+func TransformOnRow(t, transMat *Matrix) *Matrix
+    Affine transformations https://en.wikipedia.org/wiki/Affine_transformation
+
+func Translate(t *Matrix, coordinates ...float64) *Matrix
+func UnitVector(n, i int) *Matrix
+func ZeroMatrix(row, col int) *Matrix
+    generate matrix with all elements are zero
+
+func (t *Matrix) Add(mat2 *Matrix) *Matrix
+    Add two matrices
+
+func (t *Matrix) Adj() (adj *Matrix)
+    Adjugate Matrix https://en.wikipedia.org/wiki/Adjugate_matrix
+
+func (t *Matrix) At(i, j int) float64
+    get element at row i, column j of matrix
+
+func (t *Matrix) Col(n int) *Vector
+    column vector of matrix column n
+
+func (t *Matrix) CovMatrix() *Matrix
+    covariance matrix
+
+func (t *Matrix) Det() float64
+    Determinant of N x N matrix recursively
+
+func (t *Matrix) Dims() (row, col int)
+    matrix dimensions in row, col
+
+func (t *Matrix) Flat() *Vector
+    matrix to row vector
+
+func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix
+    Get a sub-matrix starting at i, j with rows rows and cols columns.
+
+func (t *Matrix) Init(array Data) *Matrix
+    generate matrix struct from 2D array
+
+func (t *Matrix) Inverse() *Matrix
+    Inverse Matrix
+
+    inverse(t) = adj(t) / det(t)
+
+func (t *Matrix) Max() *Entry
+    find the first max entry
+
+func (t *Matrix) Mean(dim int) *Vector
+    mean vector of matrix along certain dimension, 0 -> row, 1 -> column
+
+func (t *Matrix) Min() *Entry
+    find the first min entry
+
+func (t *Matrix) Mul(mat2 *Matrix) *Matrix
+    Matrix multiplication (dot | inner)
+    https://en.wikipedia.org/wiki/Matrix_multiplication
+
+func (t *Matrix) MulNum(n interface{}) *Matrix
+func (t *Matrix) MulVec(v *Vector) *Vector
+    matrix multiply vector, please notice all vectors in this package is row
+    vector
+
+func (t *Matrix) Norm() float64
+    Frobenius norm
+
+func (t *Matrix) Pow(n int) *Matrix
+    Matrix Power of square matrix
+
+    Precondition: n >= 0
+
+func (t *Matrix) Rank() (rank int)
+    get matrix rank through Gaussian elimination (row echelon form)
+
+func (t *Matrix) Row(m int) *Vector
+    row vector of matrix row m
+
+func (t *Matrix) Set(i, j int, value float64)
+    set element at row i, column j of matrix
+
+func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix)
+    Set a sub-matrix starting at i, j with input matrix, please take care the
+    dimension matching conditions
+
+    notice: in-place change
+
+func (t *Matrix) String() string
+    pretty-print for matrix
+
+func (t *Matrix) Sub(mat2 *Matrix) *Matrix
+    Subtract matrix
+
+func (t *Matrix) Sum(dim int) *Vector
+    sum the matrix along certain dimension, 0 -> sum all rows into one vector, 1
+    -> sum all columns into one vector
+
+func (t *Matrix) SumCol(col int) float64
+    sum one column of matrix
+
+func (t *Matrix) SumRow(row int) float64
+    sum one row of matrix
+
+func (t *Matrix) T() *Matrix
+    transpose matrix
+
+func (t *Matrix) Trace() float64
+    Trace: sum of all diagonal values
+    https://en.wikipedia.org/wiki/Trace_(linear_algebra)
+
+type ObservationWithClusterID struct {
+	// Has unexported fields.
+}
+
+type SortPair struct {
+	// Has unexported fields.
+}
+
+type SortPairSlice []SortPair
+
+func (sps SortPairSlice) Len() int
+func (sps SortPairSlice) Less(i, j int) bool
+func (sps SortPairSlice) Swap(i, j int)
+type Vector []float64 // 1D array
+
+func ComputeOrthogonalComplement(W *Vector) (U, V *Vector)
+    decompose vector into two orthogonal sub-vectors
+
+func Convolve(u, v *Vector) *Vector
+    Vector convolve
+
+    Convolve computes w = u * v, where w[k] = Σ u[i]*v[j], i + j = k.
+    Precondition: len(u) > 0, len(v) > 0.
+
+func EigenValues(t *Matrix) (eig_val *Vector)
+    Eigenvalues of 3 X 3 matrix
+
+func LUPSolve(t *Matrix, P *[]int, N int, b *Vector) *Vector
+    INPUT: A,P filled in LUPDecompose; b - rhs vector; N - dimension * OUTPUT: x
+    - solution vector of A*x=b
+
+func PlaneLinearSolveWeighted(points *Matrix) *Vector
+    https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html
+
+    	ax + by +z + d = 0
+    	ax + by + d = -z
+    	[X, Y, 1] * [a, b, d].T() = -Z
+    	[X, Y, 1].T() * [X, Y, 1] * [a, b, d].T() = [X, Y, 1].T() * -Z
+
+    	[ Σxx, Σxy, Σx,        [ a,          [ Σxz,
+      	Σyx, Σyy, Σyz,    *    b,    =   -   Σyz,
+      	Σx,  Σy,  N   ]        d ]           0   ]
+    	define x, y, z is relative to the centroid (mean) of points, then Σx = Σy = Σz = 0, then N * d = 0, then d = 0
+    	[ Σxx, Σxy,   *  [ a,    =  - [ Σxz,
+      	Σyx, Σyy ]       b ]          Σyz]
+    	according to Cramer's rule (https://en.wikipedia.org/wiki/Cramer%27s_rule)
+    	D = Σxx * Σyy - Σxy * Σxy
+    	a = (Σyz * Σxy - Σxz * Σyy) / D
+    	b = (Σxy * Σxz - Σxx * Σyz) / D
+    	so n = [a, b, 1].T(), multiply by D, then n = [a, b, D].T(), then normalize it we will get the plane norm
+    	but this works only when z-component of the plane normal is non-zero, if it is, then we can use the x or y component for calculation
+    	sine the above only minimize the squares of the residuals as perpendicular to the main axis, not the residuals perpendicular to the plane,
+    	then use the below weighted way to calculate the components of plain normal is more reasonable.
+
+func PlanePCA(points *Matrix) *Vector
+    common solution: `Principle Component Analysis`
+    https://en.wikipedia.org/wiki/Principal_component_analysis
+
+func (v *Vector) AbsSum() float64
+    sum of vector elements' absolute value
+
+func (v *Vector) Add(v1 *Vector) *Vector
+    add two vectors
+
+func (v *Vector) AddNum(n interface{}) *Vector
+    vector add number
+
+func (v *Vector) At(n int) float64
+    Vector
+
+    get vector element at index n
+
+func (v *Vector) Cross(v1 *Vector) *Vector
+    vector cross product, 3D only
+
+func (v *Vector) Dot(v1 *Vector) float64
+    vector dot production
+
+func (v *Vector) Mean() float64
+    mean value of vector
+
+func (v *Vector) MulNum(n interface{}) *Vector
+    vector multiply number
+
+func (v *Vector) Norm() float64
+    vector norm
+
+func (v *Vector) Normalize() *Vector
+    normalize vector
+
+func (v *Vector) OuterProduct(v1 *Vector) *Matrix
+    vector outer product: v1, v2 -> matrix
+    https://en.wikipedia.org/wiki/Outer_product
+
+func (v *Vector) SquareSum() float64
+    vector elements square sum
+
+func (v *Vector) String() string
+    pretty-print for vector
+
+func (v *Vector) Sub(v1 *Vector) *Vector
+    vector subtract vector
+
+func (v *Vector) SubNum(n interface{}) *Vector
+    vector subtract number
+
+func (v *Vector) Sum() float64
+    sum of vector's elements
+
+func (v *Vector) Tile(dim, n int) *Matrix
+    tile vector alone certain dimension into matrix, 0 -> vector as row, 1 ->
+    vector as column
+
+func (v *Vector) ToMatrix(rows, cols int) *Matrix
+    vector to matrix, row-wise
+

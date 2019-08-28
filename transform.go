@@ -20,6 +20,8 @@ func TransformOnRow(t, transMat *Matrix) *Matrix {
 	return resMat
 }
 
+// if not use transform matrix, scale can be simply done by t.T().Row(i).MulNum(coordinates[i])
+// 	squeeze: just x = k, y = 1 / k for stretch
 func Stretch(t *Matrix, coordinates ...float64) *Matrix {
 	cl := len(coordinates)
 	if cl == 0 {
@@ -33,10 +35,6 @@ func Stretch(t *Matrix, coordinates ...float64) *Matrix {
 	}
 	return TransformOnRow(t, transMat)
 }
-
-// if not use transform matrix, scale can be simply done by t.T().Row(i).MulNum(coordinates[i])
-
-// squeeze: just x = k, y = 1 / k for stretch
 
 // 2D, rotation angle θ in counter-clockwise
 func Rotate2D(t *Matrix, angle float64) *Matrix {
@@ -79,7 +77,10 @@ func Translate(t *Matrix, coordinates ...float64) *Matrix {
 	return TransformOnRow(t, transMat)
 }
 
-// hx: parallel to x, hy: parallel to y
+// Shear2D
+// 	hx: parallel to x, hy: parallel to y
+// 	x1 = x + hx * y
+// 	y1 = y + hy * x
 func Shear2D(t *Matrix, coordinates ...float64) *Matrix {
 	cl := len(coordinates)
 	if cl == 0 {
@@ -94,16 +95,21 @@ func Shear2D(t *Matrix, coordinates ...float64) *Matrix {
 	case 1:
 		transMat.Set(0, 1, coordinates[0])
 	case 2:
-		transMat.Set(0, 1, coordinates[0]) // x1 = x + hx * y
-		transMat.Set(1, 0, coordinates[1]) // y1 = y + hy * x
+		transMat.Set(0, 1, coordinates[0])
+		transMat.Set(1, 0, coordinates[1])
 	}
 	return TransformOnRow(t, transMat)
 }
 
-func Shear3D(t *Matrix, coordinates ...float64) *Matrix { // hxy, hxz, hyx, hyz, hzx, hzy
-	cl := len(coordinates) // x1 = x + hxy * y + hxz * z
-	if cl == 0 {           // y1 = hyx * x + y + hyz * z
-		return t // z1 = hzx * x + hzy * y + z
+// Shear3D
+// 	hxy, hxz, hyx, hyz, hzx, hzy
+// 	x1 = x + hxy * y + hxz * z
+// 	y1 = hyx * x + y + hyz * z
+// 	z1 = hzx * x + hzy * y + z
+func Shear3D(t *Matrix, coordinates ...float64) *Matrix {
+	cl := len(coordinates)
+	if cl == 0 {
+		return t
 	}
 	_, col := t.Dims()
 	if col != 3 || cl < 3 {

@@ -3,9 +3,9 @@ package golina
 import "math"
 
 // https://en.wikipedia.org/wiki/Cholesky_decomposition
-// A = L.Mul(L.T())
-// Ljj = sqrt(Ajj - sum((Ljk) ** 2)_from_k=1_to_j-1)
-// Lij = (1 / Ljj) * (Aij - sum(Lik * Ljk)_from_k=1_to_j-1)
+// 	A = L.Mul(L.T())
+// 	Ljj = sqrt(Ajj - sum((Ljk) ** 2)_from_k=1_to_j-1)
+// 	Lij = (1 / Ljj) * (Aij - sum(Lik * Ljk)_from_k=1_to_j-1)
 func CholeskyDecomposition(t *Matrix) *Matrix {
 	row, col := t.Dims()
 	if row != col {
