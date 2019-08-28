@@ -62,6 +62,32 @@ func DirectedHausdorffDistance(pts1, pts2 *Matrix) *HausdorffDistance {
 	return &hd
 }
 
+func DirectedHausdorffDistanceBasedOnKNN(pts1, pts2 *Matrix) *HausdorffDistance {
+	// TODO: tile first then convert to matrix operations?
+	r1, c1 := pts1.Dims()
+	_, c2 := pts2.Dims()
+	if c1 != c2 {
+		panic("points should have same coordinates")
+	}
+	ch := make(chan Vector, r1)
+	for i, p := range pts1._array {
+		go func(i int, p Vector) {
+			res := KNearestNeighborsWithDistance(Copy(pts2), &p, 1, SquaredEuclideanDistance).Row(0)
+			ch <- Vector{float64(i), res.At(-2), res.At(-1)} // idx, idx, distance
+		}(i, p)
+	}
+	lidx, ridx, dist := 0, 0, 0.
+	for i := 0; i < r1; i++ {
+		res := <-ch
+		if res.At(-1) > dist {
+			dist = res.At(-1)
+			lidx = int(res.At(0))
+			ridx = int(res.At(1))
+		}
+	}
+	return &HausdorffDistance{lIndex: lidx, rIndex: ridx, distance: dist}
+}
+
 // https://people.revoledu.com/kardi/tutorial/Similarity/
 
 // Taxicab Distance or Manhattan Distance (== p1 MinkowskiDistance)

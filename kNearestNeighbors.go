@@ -51,7 +51,7 @@ func KNearestNeighborsWithDistance(dataSet *Matrix, v *Vector, k int, distFunc f
 	sort.Sort(distSlice) // sort default is ascending
 	retM := ZeroMatrix(k, len(*v))
 	for i := range retM._array {
-		retM._array[i] = append(dataSet._array[distSlice[i].key], distSlice[i].value) // output distance for observation
+		retM._array[i] = append(dataSet._array[distSlice[i].key], float64(distSlice[i].key), distSlice[i].value) // output idx, distance for observation
 	}
 	return retM
 }

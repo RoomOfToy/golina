@@ -1,6 +1,8 @@
 package golina
 
 import (
+	"math"
+	"strconv"
 	"testing"
 )
 
@@ -31,6 +33,17 @@ func TestPointToPlaneDistance(t *testing.T) {
 }
 
 func TestDirectedHausdorffDistance(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	pts1 := new(Matrix).Init(a)
+	b := Data{{32, 12, 3}, {6, 3, 52}, {9, 2, 15}}
+	pts2 := new(Matrix).Init(b)
+	hd := DirectedHausdorffDistance(pts1, pts2)
+	if !FloatEqual(hd.distance, 43.474130238568314) || hd.lIndex != 1 || hd.rIndex != 2 {
+		t.Fail()
+	}
+}
+
+func TestDirectedHausdorffDistanceBasedOnKNN(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	pts1 := new(Matrix).Init(a)
 	b := Data{{32, 12, 3}, {6, 3, 52}, {9, 2, 15}}
@@ -102,3 +115,40 @@ func TestCanberraDistance(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func BenchmarkDirectedHausdorffDistance(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n)+"x3", func(b *testing.B) {
+			pts1 := GenerateRandomMatrix(n, 3)
+			pts2 := GenerateRandomMatrix(n, 3)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				DirectedHausdorffDistance(pts1, pts2)
+			}
+		})
+	}
+}
+
+func BenchmarkDirectedHausdorffDistanceBasedOnKNN(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n)+"x3", func(b *testing.B) {
+			pts1 := GenerateRandomMatrix(n, 3)
+			pts2 := GenerateRandomMatrix(n, 3)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				DirectedHausdorffDistanceBasedOnKNN(pts1, pts2)
+			}
+		})
+	}
+}
+
+/*
+BenchmarkDirectedHausdorffDistance/size-10x3-8                           5000000               467 ns/op
+BenchmarkDirectedHausdorffDistance/size-100x3-8                           200000             21126 ns/op
+BenchmarkDirectedHausdorffDistance/size-1000x3-8                            3000            428309 ns/op
+BenchmarkDirectedHausdorffDistanceBasedOnKNN/size-10x3-8                   50000             31167 ns/op
+BenchmarkDirectedHausdorffDistanceBasedOnKNN/size-100x3-8                   2000            882729 ns/op
+BenchmarkDirectedHausdorffDistanceBasedOnKNN/size-1000x3-8                   100          89443641 ns/op
+*/
