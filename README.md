@@ -11,8 +11,8 @@ Pure Golang, No Dependencies.
 Realized functions up to now:
 
 - Matrix Operations: `Add`, `Sub`, `Mul`, `MulVec`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
-`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`
-- Eigen-Decomposition: `Eigen`, `EigenValues`, `EigenVector`
+`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`, `IsSymmetric`
+- Eigen-Decomposition: `EigenDecompose`, `Eigen33`, `EigenValues33`, `EigenVector33`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
 - Cholesky-Decomposition: `CholeskyDecomposition`
@@ -35,6 +35,10 @@ Benchmark(simple parallel `Mul`, need more optimization):
 CPU, 64-bit Linux
 Intel: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz, 32073 MB, Max threads(8)
 
+BenchmarkEigenDecompose/symmetric:_size-3x3-8    1000000              1267 ns/op
+BenchmarkEigenDecompose/size-10-8                  50000             25288 ns/op
+BenchmarkEigenDecompose/size-100-8                   100          14075608 ns/op
+BenchmarkEigen33/symmetric:_size-3x3-8            300000              6117 ns/op
 BenchmarkCholeskyDecomposition/size-10-4         1000000              1122 ns/op
 BenchmarkCholeskyDecomposition/size-100-4           5000            340299 ns/op
 BenchmarkCholeskyDecomposition/size-1000-4           100         320812408 ns/op
@@ -65,7 +69,6 @@ BenchmarkMatrix_MulNum/size-1000-8                   500           3011459 ns/op
 BenchmarkVector_SquareSum/size-10-8            200000000              7.79 ns/op
 BenchmarkVector_SquareSum/size-100-8            20000000              72.7 ns/op
 BenchmarkVector_SquareSum/size-1000-8            2000000               762 ns/op
-BenchmarkEigen/size-3-8                           100000             15462 ns/op
 BenchmarkConvolve/size-10-8                      2000000               978 ns/op
 BenchmarkConvolve/size-100-8                      100000             13134 ns/op
 BenchmarkConvolve/size-1000-8                       5000            283011 ns/op
@@ -90,5 +93,4 @@ BenchmarkPlaneLinearSolveWeighted/size-1000x3-8    10000            149438 ns/op
 BenchmarkKabsch/size-10x3-8                       100000             17576 ns/op
 BenchmarkKabsch/size-100x3-8                       20000             73274 ns/op
 BenchmarkKabsch/size-1000x3-8                       2000            580883 ns/op
-
 ```

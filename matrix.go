@@ -553,180 +553,6 @@ func (t *Matrix) Trace() float64 {
 	return res
 }
 
-// Eigenvalues and Eigenvectors
-// 	https://en.wikipedia.org/wiki/Eigenvalue_algorithm
-// 	this is for 3 x 3 symmetric matrix only now
-func Eigen(t *Matrix) (eig_val *Vector, eig_vec *Matrix) {
-	// TODO: general case
-	// Eigenvalues
-	eig_val = EigenValues(t)
-
-	// Eigenvectors
-	// eig_vec.Sub(IdentityMatrix(3).MulNum((*eig_val)[1]))
-	if t._array[0][1]*t._array[0][1]+t._array[0][2]*t._array[0][2]+t._array[1][2]*t._array[1][2] == 0 {
-		eig_vec = IdentityMatrix(3)
-		return
-	}
-	eig_vec = EigenVector(t, eig_val)
-	return
-}
-
-// Eigenvalues of 3 X 3 matrix
-func EigenValues(t *Matrix) (eig_val *Vector) {
-	// Eigenvalues
-	eig0, eig1, eig2 := 0., 0., 0.
-	// upper triangle
-	p1 := t._array[0][1]*t._array[0][1] + t._array[0][2]*t._array[0][2] + t._array[1][2]*t._array[1][2]
-	if p1 == 0 {
-		// t is diagonal
-		eig0 = t._array[0][0]
-		eig1 = t._array[1][1]
-		eig2 = t._array[2][2]
-	} else {
-		q := t.Trace() / 3
-		p2 := (t._array[0][0]-q)*(t._array[0][0]-q) + (t._array[1][1]-q)*(t._array[1][1]-q) + (t._array[2][2]-q)*(t._array[2][2]-q) + 2*p1
-		p := math.Sqrt(p2 / 6)
-		B := t.Sub(IdentityMatrix(3).MulNum(q)).MulNum(1 / p)
-		r := B.Det() / 2
-		// in exact arithmetic for a symmetric matrix: -1 <= r <= 1
-		// but computation error can leave it slightly outside this range
-		phi := 0.
-		if r <= -1 {
-			phi = math.Pi / 3
-		} else if r >= 1 {
-			phi = 0.
-		} else {
-			phi = math.Acos(r) / 3
-		}
-		// eigenvalues satisfy eig2 <= eig1 <= eig0
-		eig0 = q + 2*p*math.Cos(phi)
-		eig2 = q + 2*p*math.Cos(phi+(2*math.Pi/3))
-		eig1 = 3*q - eig0 - eig2 // since t.Trace() = eig0 + eig1 + eig2
-	}
-	eig_val = &Vector{eig0, eig1, eig2}
-	return
-}
-
-// EigenVector of 3 X 3 matrix, based on `EigenValues`
-func EigenVector(t *Matrix, eig_val *Vector) (eig_vec *Matrix) {
-	eig_vec = ZeroMatrix(3, 3)
-	// algebraic multiplicity 1
-	eig_vec._array[0] = *computeEigenVector0(Copy(t), (*eig_val)[0])
-	// algebraic multiplicity 2
-	eig_vec._array[1] = *computeEigenVector1(Copy(t), &eig_vec._array[0], (*eig_val)[1])
-	// TODO: the sign does not matter, but can it be decided?
-	eig_vec._array[2] = *(eig_vec.Row(0).Cross(eig_vec.Row(1)))
-	return
-}
-
-// A Robust Eigensolver for 3 3 Symmetric Matrices
-func computeEigenVector0(t *Matrix, val0 float64) (vec0 *Vector) {
-	// Move RHS to LHS
-	t.Set(0, 0, t.At(0, 0)-val0)
-	t.Set(1, 1, t.At(1, 1)-val0)
-	t.Set(2, 2, t.At(2, 2)-val0)
-
-	r0r1 := t.Row(0).Cross(t.Col(1))
-	r0r2 := t.Row(0).Cross(t.Col(2))
-	r1r2 := t.Col(1).Cross(t.Col(2))
-
-	d0 := r0r1.Dot(r0r1)
-	d1 := r0r2.Dot(r0r2)
-	d2 := r1r2.Dot(r1r2)
-
-	dmax := d0
-	imax := 0
-
-	if d1 > dmax {
-		dmax = d1
-		imax = 1
-	}
-	if d2 > dmax {
-		imax = 2
-	}
-	if imax == 0 {
-		vec0 = r0r1.MulNum(1 / math.Sqrt(d0))
-	} else if imax == 1 {
-		vec0 = r0r2.MulNum(1 / math.Sqrt(d1))
-	} else {
-		vec0 = r1r2.MulNum(1 / math.Sqrt(d2))
-	}
-	return
-}
-
-// decompose vector into two orthogonal sub-vectors
-func ComputeOrthogonalComplement(W *Vector) (U, V *Vector) {
-	invLength := 0.
-	if math.Abs((*W)[0]) > math.Abs((*W)[1]) {
-		invLength = 1 / math.Sqrt(((*W)[0])*((*W)[0])+((*W)[2])*((*W)[2]))
-		U = &Vector{-(*W)[2] * invLength, 0, (*W)[0] * invLength}
-	} else {
-		invLength = 1 / math.Sqrt(((*W)[1])*((*W)[1])+((*W)[2])*((*W)[2]))
-		U = &Vector{0, (*W)[2] * invLength, -(*W)[1] * invLength}
-	}
-	V = W.Cross(U)
-	return
-}
-
-func computeEigenVector1(t *Matrix, vec0 *Vector, val1 float64) (vec1 *Vector) {
-	// compute a right-handed orthonormal set {U, V, vec0}
-	U, V := ComputeOrthogonalComplement(vec0)
-	AU := &Vector{
-		t.Row(0).Dot(U),
-		t.Col(1).Dot(U),
-		t.Col(2).Dot(U),
-	}
-	AV := &Vector{
-		t.Row(0).Dot(V),
-		t.Col(1).Dot(V),
-		t.Col(2).Dot(V),
-	}
-
-	m00 := U.Dot(AU) - val1
-	m01 := U.Dot(AV)
-	m11 := V.Dot(AV) - val1
-
-	absM00 := math.Abs(m00)
-	absM01 := math.Abs(m01)
-	absM11 := math.Abs(m11)
-	maxAbsComp := 0.
-
-	if absM00 >= absM11 {
-		maxAbsComp = math.Max(absM00, absM01)
-		if maxAbsComp > 0 {
-			if absM00 >= absM01 {
-				m01 /= m00
-				m00 = 1 / math.Sqrt(1+m01*m01)
-				m01 *= m00
-			} else {
-				m00 /= m01
-				m01 = 1 / math.Sqrt(1+m00*m00)
-				m00 *= m01
-			}
-			vec1 = U.MulNum(m01).Sub(V.MulNum(m00))
-		} else {
-			vec1 = U
-		}
-	} else {
-		maxAbsComp = math.Max(absM11, absM01)
-		if maxAbsComp > 0 {
-			if absM11 >= absM01 {
-				m01 /= m11
-				m11 = 1 / math.Sqrt(1+m01*m01)
-				m01 *= m11
-			} else {
-				m11 /= m01
-				m01 = 1 / math.Sqrt(1+m11*m11)
-				m11 *= m01
-			}
-			vec1 = U.MulNum(m11).Sub(V.MulNum(m01))
-		} else {
-			vec1 = U
-		}
-	}
-	return
-}
-
 // Frobenius norm
 func (t *Matrix) Norm() float64 {
 	fr := 0.
@@ -841,6 +667,22 @@ func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix {
 		panic("both matrix should have the same dimensions")
 	}
 	return mat1.Sub(mat1.Mean(0).Tile(0, r1)).T().Mul(mat2.Sub(mat2.Mean(0).Tile(0, r1))).MulNum(1. / float64(c1-1))
+}
+
+// check whether matrix is symmetric
+func (t *Matrix) IsSymmetric() bool {
+	m, n := t.Dims()
+	if m != n {
+		return false
+	}
+	for i := range t._array {
+		for j := range t._array[i] {
+			if t._array[i][j] != t._array[j][i] {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // Vector

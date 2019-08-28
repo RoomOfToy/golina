@@ -331,42 +331,6 @@ func TestMatrix_Trace(t *testing.T) {
 	}
 }
 
-func TestEigenValues(t *testing.T) {
-	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
-	matA := new(Matrix).Init(a)
-	if !VEqual(EigenValues(matA), &Vector{12.77890686, -1.10871847, -3.67018839}) {
-		t.Fail()
-	}
-}
-
-func TestEigenVector(t *testing.T) {
-	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
-	matA := new(Matrix).Init(a)
-	b := Data{{0.39057517, 0.57537831, 0.71860339}, {0.9184855, -0.29608033, -0.26214659}, {-0.06193087, -0.76241474, 0.64411826}}
-	eig_vec := EigenVector(matA, EigenValues(matA))
-	for i := range b {
-		if !VEqual(&(b[i]), eig_vec.Row(i)) && !VEqual(&(b[i]), eig_vec.Row(i).MulNum(-1)) { // Discard sign difference
-			t.Fail()
-		}
-	}
-}
-
-func TestEigen(t *testing.T) {
-	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
-	matA := new(Matrix).Init(a)
-	b := Data{{0.39057517, 0.57537831, 0.71860339}, {0.9184855, -0.29608033, -0.26214659}, {-0.06193087, -0.76241474, 0.64411826}}
-	eig_val, eig_vec := Eigen(matA)
-	if !VEqual(eig_val, &Vector{12.77890686, -1.10871847, -3.67018839}) {
-		t.Fail()
-	}
-
-	for i := range b {
-		if !VEqual(&(b[i]), eig_vec.Row(i)) && !VEqual(&(b[i]), eig_vec.Row(i).MulNum(-1)) {
-			t.Fail()
-		}
-	}
-}
-
 func TestMatrix_Norm(t *testing.T) {
 	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
 	matA := new(Matrix).Init(a)
@@ -458,6 +422,15 @@ func TestMatrix_CovMatrix(t *testing.T) {
 	matA := new(Matrix).Init(a)
 	b := Data{{3, -6, 2}, {-6, 13, -4}, {2, -4, 1.33333333333333}}
 	if !Equal(matA.CovMatrix(), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_IsSymmetric(t *testing.T) {
+	if new(Matrix).Init(Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}).IsSymmetric() {
+		t.Fail()
+	}
+	if !GenerateRandomSymmetric33Matrix().IsSymmetric() {
 		t.Fail()
 	}
 }
@@ -698,12 +671,6 @@ func BenchmarkMatrix_Rank(b *testing.B) {
 				m.Rank()
 			}
 		})
-	}
-}
-
-func BenchmarkEigen(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		Eigen(GenerateRandomSymmetric33Matrix())
 	}
 }
 
