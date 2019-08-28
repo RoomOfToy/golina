@@ -4,6 +4,8 @@
 
 A toy repo for reviewing linear algebra.
 
+[doc](https://godoc.org/github.com/Harold2017/golina)
+
 Pure Golang, No Dependencies.
 
 Realized functions up to now:
