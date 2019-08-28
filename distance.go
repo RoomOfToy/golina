@@ -85,7 +85,7 @@ func DirectedHausdorffDistanceBasedOnKNN(pts1, pts2 *Matrix) *HausdorffDistance 
 			ridx = int(res.At(1))
 		}
 	}
-	return &HausdorffDistance{lIndex: lidx, rIndex: ridx, distance: dist}
+	return &HausdorffDistance{lIndex: lidx, rIndex: ridx, distance: math.Sqrt(dist)}
 }
 
 // https://people.revoledu.com/kardi/tutorial/Similarity/

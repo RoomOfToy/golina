@@ -1,6 +1,7 @@
 package golina
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"testing"
@@ -48,8 +49,9 @@ func TestDirectedHausdorffDistanceBasedOnKNN(t *testing.T) {
 	pts1 := new(Matrix).Init(a)
 	b := Data{{32, 12, 3}, {6, 3, 52}, {9, 2, 15}}
 	pts2 := new(Matrix).Init(b)
-	hd := DirectedHausdorffDistance(pts1, pts2)
+	hd := DirectedHausdorffDistanceBasedOnKNN(pts1, pts2)
 	if !FloatEqual(hd.distance, 43.474130238568314) || hd.lIndex != 1 || hd.rIndex != 2 {
+		fmt.Println(hd)
 		t.Fail()
 	}
 }
