@@ -217,27 +217,24 @@ func TestMatrix_Rank(t *testing.T) {
 	if matB.Rank() != 3 {
 		t.Fail()
 	}
+
+	c := Data{{0, 1, 2}, {-1, -2, 1}, {2, 7, 8}, {3, 5, 3}}
+	matC := new(Matrix).Init(c)
+	if matC.Rank() != 3 {
+		t.Fail()
+	}
 }
 
 func TestMatrix_Det(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
-	if matA.Det() != 0 {
+	if !FloatEqual(matA.Det(), 0) {
 		t.Fail()
 	}
 
 	b := Data{{32, 12, 1}, {6, 3, 45}, {9, 2, 1}}
 	matB := new(Matrix).Init(b)
 	if matB.Det() != 1989 {
-		t.Fail()
-	}
-}
-
-func TestMatrix_Adj(t *testing.T) {
-	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
-	matA := new(Matrix).Init(a)
-	b := Data{{-500, 500, 500}, {300, -300, -300}, {-100, 100, 100}}
-	if !Equal(matA.Adj(), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -249,6 +246,40 @@ func TestMatrix_Inverse(t *testing.T) {
 		{0.2006033182503770739, 0.0115635997988939167, -0.7209653092006033182},
 		{-0.007541478129713423831, 0.022121669180492709902, 0.012066365007541478129}}
 	if !Equal(matA.Inverse(), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestNaiveDet(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	if NaiveDet(matA) != 0 {
+		t.Fail()
+	}
+
+	b := Data{{32, 12, 1}, {6, 3, 45}, {9, 2, 1}}
+	matB := new(Matrix).Init(b)
+	if NaiveDet(matB) != 1989 {
+		t.Fail()
+	}
+}
+
+func TestNaiveAdj(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	b := Data{{-500, 500, 500}, {300, -300, -300}, {-100, 100, 100}}
+	if !Equal(NaiveAdj(matA), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestNaiveInverse(t *testing.T) {
+	a := Data{{32, 12, 1}, {6, 3, 45}, {9, 2, 1}}
+	matA := new(Matrix).Init(a)
+	b := Data{{-0.04374057315233785821, -0.00502765208647561595, 0.26998491704374057313},
+		{0.2006033182503770739, 0.0115635997988939167, -0.7209653092006033182},
+		{-0.007541478129713423831, 0.022121669180492709902, 0.012066365007541478129}}
+	if !Equal(NaiveInverse(matA), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }

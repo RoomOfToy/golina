@@ -119,11 +119,19 @@ func (t *Matrix) Col(n int) *Vector {
 }
 
 // check whether two float numbers are equal, defined by threshold EPS
+// https://floating-point-gui.de/errors/comparison/
 func FloatEqual(x, y float64) bool {
-	// TODO: float number comparision with zero
 	diff := math.Abs(x - y)
-	mean := math.Abs(x+y) / 2.0
-	return (diff/mean) < EPS || diff < EPS*EPS
+	mean := math.Abs(x+y) / 2.
+	absX := math.Abs(x)
+	absY := math.Abs(y)
+	if x == y {
+		return true
+	} else if x == 0 || y == 0 || absX+absY < EPS {
+		return diff < EPS
+	} else {
+		return diff/mean < EPS
+	}
 }
 
 // check whether two vector are equal, based on `FloatEqual`
@@ -242,6 +250,11 @@ func (t *Matrix) Min() *Entry {
 func (t *Matrix) Rank() (rank int) {
 	mat := Copy(t)
 	rowN, colN := mat.Dims()
+	if rowN == colN {
+		nt, _ := LUPDecompose(t, rowN, EPS)
+		rank = LUPRank(nt, rowN)
+		return
+	}
 	rank = colN
 	for row := 0; row < rank; row++ {
 		// diagonal entry is not zero
@@ -293,8 +306,23 @@ func SwapRow(t *Matrix, row1, row2 int) {
 	t._array[row1], t._array[row2] = *t.Row(row2), *t.Row(row1)
 }
 
-// Determinant of N x N matrix recursively
+// Determinant of N x N matrix based on LU Decomposition
 func (t *Matrix) Det() float64 {
+	row, col := t.Dims()
+	if row != col {
+		panic("need N x N matrix for determinant calculation")
+	}
+	nt, P := LUPDecompose(t, 3, EPS)
+	return LUPDeterminant(nt, P, 3)
+}
+
+func (t *Matrix) Inverse() *Matrix {
+	nt, P := LUPDecompose(t, 3, EPS)
+	return LUPInvert(nt, P, 3)
+}
+
+// Determinant of N x N matrix recursively
+func NaiveDet(t *Matrix) float64 {
 	row, col := t.Dims()
 	if row != col {
 		panic("need N x N matrix for determinant calculation")
@@ -347,7 +375,7 @@ func getCoeff(t, matTmp *Matrix, p, q, n int) {
 
 // Adjugate Matrix
 // https://en.wikipedia.org/wiki/Adjugate_matrix
-func (t *Matrix) Adj() (adj *Matrix) {
+func NaiveAdj(t *Matrix) (adj *Matrix) {
 	row, col := t.Dims()
 	if row != col {
 		panic("need N x N matrix for adjugate calculation")
@@ -379,12 +407,12 @@ func (t *Matrix) Adj() (adj *Matrix) {
 
 // Inverse Matrix
 // 	inverse(t) = adj(t) / det(t)
-func (t *Matrix) Inverse() *Matrix {
-	det := t.Det()
+func NaiveInverse(t *Matrix) *Matrix {
+	det := NaiveDet(t)
 	if det == 0 {
 		panic("this matrix is not invertible")
 	}
-	adj := t.Adj()
+	adj := NaiveAdj(t)
 	inverse := Empty(t)
 	n, _ := t.Dims()
 	for i := 0; i < n; i++ {
