@@ -339,6 +339,15 @@ func TestMatrix_MulNum(t *testing.T) {
 	}
 }
 
+func TestMatrix_GetDiagonalElements(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	v := &Vector{10, -30, 0}
+	if !VEqual(matA.GetDiagonalElements(), v) {
+		t.Fail()
+	}
+}
+
 func TestMatrix_Pow(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
@@ -350,6 +359,21 @@ func TestMatrix_Pow(t *testing.T) {
 	}
 	b := Data{{0, 100, 300}, {700, 1000, -500}, {-700, -900, 800}}
 	if !Equal(matA.Pow(2), new(Matrix).Init(b)) {
+		t.Fail()
+	}
+}
+
+func TestNaivePow(t *testing.T) {
+	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
+	matA := new(Matrix).Init(a)
+	if !Equal(NaivePow(matA, 0), IdentityMatrix(3)) {
+		t.Fail()
+	}
+	if !Equal(NaivePow(matA, 1), matA) {
+		t.Fail()
+	}
+	b := Data{{0, 100, 300}, {700, 1000, -500}, {-700, -900, 800}}
+	if !Equal(NaivePow(matA, 2), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -663,6 +687,25 @@ func BenchmarkMatrix_Mul(b *testing.B) {
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
 				m.Mul(m)
+			}
+		})
+	}
+}
+
+/*
+BenchmarkNaivePow/size-10-8                30000             40736 ns/op
+BenchmarkNaivePow/size-100-8                 100         212962377 ns/op
+BenchmarkMatrix_Pow/size-10-8              30000             40647 ns/op
+BenchmarkMatrix_Pow/size-100-8               100          22311996 ns/op
+*/
+func BenchmarkMatrix_Pow(b *testing.B) {
+	for k := 1.0; k <= 2; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			m := GenerateRandomSquareMatrix(n)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				m.Pow(n)
 			}
 		})
 	}

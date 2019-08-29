@@ -312,13 +312,17 @@ func (t *Matrix) Det() float64 {
 	if row != col {
 		panic("need N x N matrix for determinant calculation")
 	}
-	nt, P := LUPDecompose(t, 3, EPS)
-	return LUPDeterminant(nt, P, 3)
+	nt, P := LUPDecompose(t, row, EPS)
+	return LUPDeterminant(nt, P, row)
 }
 
 func (t *Matrix) Inverse() *Matrix {
-	nt, P := LUPDecompose(t, 3, EPS)
-	return LUPInvert(nt, P, 3)
+	row, col := t.Dims()
+	if row != col {
+		panic("only inverse only support square matrix, left/right is not supported")
+	}
+	nt, P := LUPDecompose(t, row, EPS)
+	return LUPInvert(nt, P, row)
 }
 
 // Determinant of N x N matrix recursively
@@ -545,10 +549,38 @@ func getFloat64(x interface{}) float64 {
 	panic("invalid numeric type of input")
 }
 
+func (t *Matrix) GetDiagonalElements() *Vector {
+	row, _ := t.Dims()
+	v := make(Vector, row)
+	for i := range t._array {
+		v[i] = t._array[i][i]
+	}
+	return &v
+}
+
 // Matrix Power of square matrix
 // 	Precondition: n >= 0
 func (t *Matrix) Pow(n int) *Matrix {
-	// TODO: need optimize and deal with negative condition (invertible)
+	// TODO: need deal with negative condition (invertible)
+	row, col := t.Dims()
+	if row != col {
+		panic("only square matrix has power")
+	}
+	if n == 0 {
+		return IdentityMatrix(row)
+	} else if n == 1 {
+		return t
+	} else {
+		V, D := EigenDecompose(t)
+		for i := range D._array {
+			D._array[i][i] = math.Pow(D._array[i][i], float64(n))
+		}
+		return V.Mul(D).Mul(V.Inverse()) // change NaiveInverse to LUPDecomposeInvert
+	}
+}
+
+// ten times slower than LUDecompose + EigenDecompose ways for 100 x 100 matrix
+func NaivePow(t *Matrix, n int) *Matrix {
 	row, col := t.Dims()
 	if row != col {
 		panic("only square matrix has power")
