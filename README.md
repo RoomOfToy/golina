@@ -28,7 +28,8 @@ Realized functions up to now:
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
 - normal-Estimation: `PlanePCA`, `PlaneLinearSolveWeighted`
 - Utils Functions: `FloatEqual`, `MEqual`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print), 
-`Map`, `Reduce`, `Filter`
+`Map`, `Reduce`, `Filter` (`Map`, `Reduce`, `Filter` here are just for tests, if you want to use it, you'd better change 
+them from using `interface` with `reflect` module to `[]float64` for performance, since you have known the data type...)
 
 Benchmark(simple parallel `Mul`, need more optimization):
 
