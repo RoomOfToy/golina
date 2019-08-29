@@ -125,14 +125,6 @@ func TestMatrix_Col(t *testing.T) {
 	}
 }
 
-func TestEqual(t *testing.T) {
-	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
-	matA := new(Matrix).Init(a)
-	if !Equal(matA, matA) {
-		t.Fail()
-	}
-}
-
 func TestMatrix_Max(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
@@ -155,7 +147,7 @@ func TestCopy(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
 	matB := Copy(matA)
-	if !Equal(matA, matB) {
+	if !MEqual(matA, matB) {
 		t.Fail()
 	}
 }
@@ -174,7 +166,7 @@ func TestEmpty(t *testing.T) {
 func TestZeroMatrix(t *testing.T) {
 	a := Data{{0}, {0}}
 	matA := ZeroMatrix(2, 1)
-	if !Equal(matA, new(Matrix).Init(a)) {
+	if !MEqual(matA, new(Matrix).Init(a)) {
 		t.Fail()
 	}
 }
@@ -182,7 +174,7 @@ func TestZeroMatrix(t *testing.T) {
 func TestOneMatrix(t *testing.T) {
 	a := Data{{1}, {1}}
 	matA := OneMatrix(2, 1)
-	if !Equal(matA, new(Matrix).Init(a)) {
+	if !MEqual(matA, new(Matrix).Init(a)) {
 		t.Fail()
 	}
 }
@@ -190,7 +182,7 @@ func TestOneMatrix(t *testing.T) {
 func TestIdentityMatrix(t *testing.T) {
 	a := Data{{1, 0}, {0, 1}}
 	matA := IdentityMatrix(2)
-	if !Equal(matA, new(Matrix).Init(a)) {
+	if !MEqual(matA, new(Matrix).Init(a)) {
 		t.Fail()
 	}
 }
@@ -245,7 +237,7 @@ func TestMatrix_Inverse(t *testing.T) {
 	b := Data{{-0.04374057315233785821, -0.00502765208647561595, 0.26998491704374057313},
 		{0.2006033182503770739, 0.0115635997988939167, -0.7209653092006033182},
 		{-0.007541478129713423831, 0.022121669180492709902, 0.012066365007541478129}}
-	if !Equal(matA.Inverse(), new(Matrix).Init(b)) {
+	if !MEqual(matA.Inverse(), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -268,7 +260,7 @@ func TestNaiveAdj(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
 	b := Data{{-500, 500, 500}, {300, -300, -300}, {-100, 100, 100}}
-	if !Equal(NaiveAdj(matA), new(Matrix).Init(b)) {
+	if !MEqual(NaiveAdj(matA), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -279,7 +271,7 @@ func TestNaiveInverse(t *testing.T) {
 	b := Data{{-0.04374057315233785821, -0.00502765208647561595, 0.26998491704374057313},
 		{0.2006033182503770739, 0.0115635997988939167, -0.7209653092006033182},
 		{-0.007541478129713423831, 0.022121669180492709902, 0.012066365007541478129}}
-	if !Equal(NaiveInverse(matA), new(Matrix).Init(b)) {
+	if !MEqual(NaiveInverse(matA), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -291,7 +283,7 @@ func TestMatrix_Add(t *testing.T) {
 	matB := new(Matrix).Init(b)
 	matC := matA.Add(matB)
 	c := Data{{42, 32, 11}, {-14, -27, 55}, {39, 52, 1}}
-	if !Equal(matC, new(Matrix).Init(c)) {
+	if !MEqual(matC, new(Matrix).Init(c)) {
 		t.Fail()
 	}
 }
@@ -303,7 +295,7 @@ func TestMatrix_Sub(t *testing.T) {
 	matB := new(Matrix).Init(b)
 	matC := matA.Sub(matB)
 	c := Data{{-22, 8, 9}, {-26, -33, -35}, {21, 48, -1}}
-	if !Equal(matC, new(Matrix).Init(c)) {
+	if !MEqual(matC, new(Matrix).Init(c)) {
 		t.Fail()
 	}
 }
@@ -315,7 +307,7 @@ func TestMatrix_Mul(t *testing.T) {
 	matB := new(Matrix).Init(b)
 	matC := matA.Mul(matB)
 	c := Data{{530, 200}, {-730, -310}, {1260, 510}}
-	if !Equal(matC, new(Matrix).Init(c)) {
+	if !MEqual(matC, new(Matrix).Init(c)) {
 		t.Fail()
 	}
 }
@@ -334,7 +326,7 @@ func TestMatrix_MulNum(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
 	b := Data{{30, 60, 30}, {-60, -90, 30}, {90, 150, 0}}
-	if !Equal(matA.MulNum(3), new(Matrix).Init(b)) {
+	if !MEqual(matA.MulNum(3), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -351,14 +343,14 @@ func TestMatrix_GetDiagonalElements(t *testing.T) {
 func TestMatrix_Pow(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
-	if !Equal(matA.Pow(0), IdentityMatrix(3)) {
+	if !MEqual(matA.Pow(0), IdentityMatrix(3)) {
 		t.Fail()
 	}
-	if !Equal(matA.Pow(1), matA) {
+	if !MEqual(matA.Pow(1), matA) {
 		t.Fail()
 	}
 	b := Data{{0, 100, 300}, {700, 1000, -500}, {-700, -900, 800}}
-	if !Equal(matA.Pow(2), new(Matrix).Init(b)) {
+	if !MEqual(matA.Pow(2), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -366,14 +358,14 @@ func TestMatrix_Pow(t *testing.T) {
 func TestNaivePow(t *testing.T) {
 	a := Data{{10, 20, 10}, {-20, -30, 10}, {30, 50, 0}}
 	matA := new(Matrix).Init(a)
-	if !Equal(NaivePow(matA, 0), IdentityMatrix(3)) {
+	if !MEqual(NaivePow(matA, 0), IdentityMatrix(3)) {
 		t.Fail()
 	}
-	if !Equal(NaivePow(matA, 1), matA) {
+	if !MEqual(NaivePow(matA, 1), matA) {
 		t.Fail()
 	}
 	b := Data{{0, 100, 300}, {700, 1000, -500}, {-700, -900, 800}}
-	if !Equal(NaivePow(matA, 2), new(Matrix).Init(b)) {
+	if !MEqual(NaivePow(matA, 2), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -406,7 +398,7 @@ func TestMatrix_GetSubMatrix(t *testing.T) {
 	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
 	matA := new(Matrix).Init(a)
 	b := Data{{3, -1}, {-4, 1}}
-	if !Equal(matA.GetSubMatrix(1, 1, 2, 2), new(Matrix).Init(b)) {
+	if !MEqual(matA.GetSubMatrix(1, 1, 2, 2), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -417,7 +409,7 @@ func TestMatrix_SetSubMatrix(t *testing.T) {
 	b := Data{{0, 5}, {-5, 8}}
 	c := Data{{2, -2, 1}, {-1, 0, 5}, {2, -5, 8}}
 	matA.SetSubMatrix(1, 1, new(Matrix).Init(b))
-	if !Equal(matA, new(Matrix).Init(c)) {
+	if !MEqual(matA, new(Matrix).Init(c)) {
 		t.Fail()
 	}
 }
@@ -476,7 +468,7 @@ func TestMatrix_CovMatrix(t *testing.T) {
 	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
 	matA := new(Matrix).Init(a)
 	b := Data{{3, -6, 2}, {-6, 13, -4}, {2, -4, 1.33333333333333}}
-	if !Equal(matA.CovMatrix(), new(Matrix).Init(b)) {
+	if !MEqual(matA.CovMatrix(), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -493,20 +485,12 @@ func TestMatrix_IsSymmetric(t *testing.T) {
 func TestCrossCovMatrix(t *testing.T) {
 	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
 	matA := new(Matrix).Init(a)
-	if !Equal(CrossCovMatrix(matA, matA), matA.CovMatrix()) {
+	if !MEqual(CrossCovMatrix(matA, matA), matA.CovMatrix()) {
 		t.Fail()
 	}
 }
 
 // Vector
-func TestVEqual(t *testing.T) {
-	v1 := &Vector{1, 2, 3}
-	v2 := &Vector{1, 2, 3}
-	if !VEqual(v1, v2) {
-		t.Fail()
-	}
-}
-
 func TestVector_At(t *testing.T) {
 	v := &Vector{1, 2, 3}
 	if v.At(0) != 1 || v.At(-1) != 3 {
@@ -566,7 +550,7 @@ func TestVector_OuterProduct(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
 	v2 := &Vector{4, 5}
 	a := Data{{1, 2}, {2, 4}, {3, 6}}
-	if !Equal(v1.OuterProduct(v2), new(Matrix).Init(a)) {
+	if !MEqual(v1.OuterProduct(v2), new(Matrix).Init(a)) {
 		t.Fail()
 	}
 }
@@ -603,7 +587,7 @@ func TestVector_Normalize(t *testing.T) {
 func TestVector_ToMatrix(t *testing.T) {
 	v := &Vector{1, 2, 3, 4, 5, 6}
 	m := Data{{1, 2, 3}, {4, 5, 6}}
-	if !Equal(v.ToMatrix(2, 3), new(Matrix).Init(m)) {
+	if !MEqual(v.ToMatrix(2, 3), new(Matrix).Init(m)) {
 		t.Fail()
 	}
 }
@@ -633,10 +617,10 @@ func TestVector_Tile(t *testing.T) {
 	v := &Vector{1, 2, 3}
 	m := Data{{1, 2, 3}, {1, 2, 3}}
 	n := Data{{1, 1}, {2, 2}, {3, 3}}
-	if !Equal(v.Tile(0, 2), new(Matrix).Init(m)) {
+	if !MEqual(v.Tile(0, 2), new(Matrix).Init(m)) {
 		t.Fail()
 	}
-	if !Equal(v.Tile(1, 2), new(Matrix).Init(n)) {
+	if !MEqual(v.Tile(1, 2), new(Matrix).Init(n)) {
 		t.Fail()
 	}
 }

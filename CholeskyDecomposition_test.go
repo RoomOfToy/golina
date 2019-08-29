@@ -10,7 +10,7 @@ func TestMatrix_CholeskyDecomposition(t *testing.T) {
 	a := Data{{4, 12, -16}, {12, 37, -43}, {-16, -43, 98}}
 	matA := new(Matrix).Init(a)
 	b := Data{{2, 0, 0}, {6, 1, 0}, {-8, 5, 3}}
-	if !Equal(CholeskyDecomposition(matA), new(Matrix).Init(b)) {
+	if !MEqual(CholeskyDecomposition(matA), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }

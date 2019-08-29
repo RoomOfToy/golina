@@ -11,28 +11,28 @@ func TestStretch(t *testing.T) {
 	a := Data{{1}, {6}, {9}}
 	matA := new(Matrix).Init(a)
 	b := Data{{2}, {12}, {18}}
-	if !Equal(Stretch(matA, 2, 7), new(Matrix).Init(b)) {
+	if !MEqual(Stretch(matA, 2, 7), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 	// 2D
 	a = Data{{1, 2}, {5, 6}, {7, 8}}
 	matA = new(Matrix).Init(a)
 	b = Data{{2, 2}, {10, 6}, {14, 8}}
-	if !Equal(Stretch(matA, 2, 1), new(Matrix).Init(b)) {
+	if !MEqual(Stretch(matA, 2, 1), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 	// 3D
 	a = Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA = new(Matrix).Init(a)
 	b = Data{{2, 2, 9}, {8, 5, 18}, {14, 8, 27}}
-	if !Equal(Stretch(matA, 2, 1, 3), new(Matrix).Init(b)) {
+	if !MEqual(Stretch(matA, 2, 1, 3), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 	// 4D
 	a = Data{{1, 2, 3, 4}, {4, 5, 6, 7}, {7, 8, 9, 10}}
 	matA = new(Matrix).Init(a)
 	b = Data{{2, 2, 9, 4}, {8, 5, 18, 7}, {14, 8, 27, 10}}
-	if !Equal(Stretch(matA, 2, 1, 3), new(Matrix).Init(b)) {
+	if !MEqual(Stretch(matA, 2, 1, 3), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -41,7 +41,7 @@ func TestRotate2D(t *testing.T) {
 	a := Data{{1, 2}, {5, 6}, {7, 8}}
 	matA := new(Matrix).Init(a)
 	b := Data{{-2, 1}, {-6, 5}, {-8, 7}}
-	if !Equal(Rotate2D(matA, 90), new(Matrix).Init(b)) {
+	if !MEqual(Rotate2D(matA, 90), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -50,7 +50,7 @@ func TestRotate3D(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
 	b := Data{{1, -3, 2}, {4, -6, 5}, {7, -9, 8}}
-	if !Equal(Rotate3D(matA, 90, &Vector{1, 0, 0}), new(Matrix).Init(b)) {
+	if !MEqual(Rotate3D(matA, 90, &Vector{1, 0, 0}), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -60,14 +60,14 @@ func TestTranslate(t *testing.T) {
 	a := Data{{1, 2}, {5, 6}, {7, 8}}
 	matA := new(Matrix).Init(a)
 	b := Data{{2, 4}, {6, 8}, {8, 10}}
-	if !Equal(Translate(matA, 1, 2), new(Matrix).Init(b)) {
+	if !MEqual(Translate(matA, 1, 2), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 	// 3D
 	a = Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA = new(Matrix).Init(a)
 	b = Data{{3, 3, 6}, {6, 6, 9}, {9, 9, 12}}
-	if !Equal(Translate(matA, 2, 1, 3), new(Matrix).Init(b)) {
+	if !MEqual(Translate(matA, 2, 1, 3), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -76,7 +76,7 @@ func TestShear2D(t *testing.T) {
 	a := Data{{1, 2}, {5, 6}, {7, 8}}
 	matA := new(Matrix).Init(a)
 	b := Data{{3, 4}, {11, 16}, {15, 22}}
-	if !Equal(Shear2D(matA, 1, 2), new(Matrix).Init(b)) {
+	if !MEqual(Shear2D(matA, 1, 2), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -85,7 +85,7 @@ func TestShear3D(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
 	b := Data{{8, 5, 3}, {20, 17, 6}, {32, 29, 9}}
-	if !Equal(Shear3D(matA, 2, 1, 3), new(Matrix).Init(b)) {
+	if !MEqual(Shear3D(matA, 2, 1, 3), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -94,7 +94,7 @@ func TestToAffineMatrix(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
 	b := Data{{1, 2, 3, 0}, {4, 5, 6, 0}, {7, 8, 9, 0}, {0, 0, 0, 1}}
-	if !Equal(ToAffineMatrix(matA), new(Matrix).Init(b)) {
+	if !MEqual(ToAffineMatrix(matA), new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -105,7 +105,7 @@ func TestKabsch(t *testing.T) {
 	linear, translation := Kabsch(matA, matB)
 	// X -> AX + B, A: linear, B: translation
 	// first linear transformation, then translate
-	if !Equal(matB, Translate(TransformOnRow(matA, ToAffineMatrix(linear)), translation.At(0), translation.At(1), translation.At(2))) {
+	if !MEqual(matB, Translate(TransformOnRow(matA, ToAffineMatrix(linear)), translation.At(0), translation.At(1), translation.At(2))) {
 		t.Fail()
 	}
 }

@@ -16,7 +16,7 @@ func TestEigenDecompose(t *testing.T) {
 		d.Set(i, i, e)
 	}
 	evec := EigenVector33(matA, eval)
-	if !Equal(D, d) {
+	if !MEqual(D, d) {
 		t.Fail()
 	}
 	for i := range V._array {
@@ -29,7 +29,7 @@ func TestEigenDecompose(t *testing.T) {
 	// EigenDecompose result not in order
 	matB := new(Matrix).Init(Data{{1, 2, 3}, {7, 5, 6}, {7, 4, 9}})
 	VB, DB := EigenDecompose(matB)
-	if !Equal(matB, VB.Mul(DB).Mul(VB.Inverse())) {
+	if !MEqual(matB, VB.Mul(DB).Mul(VB.Inverse())) {
 		t.Fail()
 	}
 }

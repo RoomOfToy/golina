@@ -10,7 +10,7 @@ func TestSVD(t *testing.T) {
 	a := Data{{8, -6, 2}, {-6, 7, -4}, {2, -4, 3}}
 	matA := new(Matrix).Init(a)
 	U, S, V := SVD(matA)
-	if !Equal(matA, U.Mul(S).Mul(V.T())) {
+	if !MEqual(matA, U.Mul(S).Mul(V.T())) {
 		t.Fail()
 	}
 }

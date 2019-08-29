@@ -27,7 +27,8 @@ Realized functions up to now:
 - k-Nearest-Neighbors: `KNearestNeighbor`, `KNearestNeighborsWithDistance` (work with above distance functions)
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
 - normal-Estimation: `PlanePCA`, `PlaneLinearSolveWeighted`
-- Helper Functions: `FloatEqual`, `Equal`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print)
+- Utils Functions: `FloatEqual`, `MEqual`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print), 
+`Map`, `Reduce`, `Filter`
 
 Benchmark(simple parallel `Mul`, need more optimization):
 

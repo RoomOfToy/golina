@@ -19,7 +19,7 @@ func TestLUPDecompose(t *testing.T) {
 		}
 	}
 	b := Data{{30, 50, 10}, {-2. / 3., 10. / 3., 35. / 3.}, {1. / 3., 1, -5}}
-	if !Equal(nt, new(Matrix).Init(b)) {
+	if !MEqual(nt, new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }
@@ -42,7 +42,7 @@ func TestLUPInvert(t *testing.T) {
 	it := LUPInvert(nt, P, 3)
 	// fmt.Printf("%v\n", it)
 	b := Data{{-1.1, 0.6, 0.8}, {0.7, -0.4, -0.5}, {-0.2, 0.2, 0.2}}
-	if !Equal(it, new(Matrix).Init(b)) {
+	if !MEqual(it, new(Matrix).Init(b)) {
 		t.Fail()
 	}
 }

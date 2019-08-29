@@ -118,50 +118,6 @@ func (t *Matrix) Col(n int) *Vector {
 	panic("column index out of range")
 }
 
-// check whether two float numbers are equal, defined by threshold EPS
-// https://floating-point-gui.de/errors/comparison/
-func FloatEqual(x, y float64) bool {
-	diff := math.Abs(x - y)
-	mean := math.Abs(x+y) / 2.
-	absX := math.Abs(x)
-	absY := math.Abs(y)
-	if x == y {
-		return true
-	} else if x == 0 || y == 0 || absX+absY < EPS {
-		return diff < EPS
-	} else {
-		return diff/mean < EPS
-	}
-}
-
-// check whether two vector are equal, based on `FloatEqual`
-func VEqual(v1, v2 *Vector) bool {
-	if len(*v1) != len(*v2) {
-		return false
-	}
-	for i, v := range *v1 {
-		if v != (*v2)[i] && !FloatEqual(v, (*v2)[i]) {
-			return false
-		}
-	}
-	return true
-}
-
-// check whether two matrix are equal, based on `VEqual`
-func Equal(mat1, mat2 *Matrix) bool {
-	row1, col1 := mat1.Dims()
-	row2, col2 := mat2.Dims()
-	if [2]int{row1, col1} != [2]int{row2, col2} {
-		return false
-	}
-	for i, col := range mat1._array {
-		if !VEqual(&col, mat2.Row(i)) {
-			return false
-		}
-	}
-	return true
-}
-
 // make a copy of matrix
 func Copy(t *Matrix) *Matrix {
 	nt := Matrix{_array: make([]Vector, len(t._array))}
@@ -521,34 +477,6 @@ func (t *Matrix) MulNum(n interface{}) *Matrix {
 	return out
 }
 
-func getFloat64(x interface{}) float64 {
-	switch x := x.(type) {
-	case uint8:
-		return float64(x)
-	case int8:
-		return float64(x)
-	case uint16:
-		return float64(x)
-	case int16:
-		return float64(x)
-	case uint32:
-		return float64(x)
-	case int32:
-		return float64(x)
-	case uint64:
-		return float64(x)
-	case int64:
-		return float64(x)
-	case int:
-		return float64(x)
-	case float32:
-		return float64(x)
-	case float64:
-		return x
-	}
-	panic("invalid numeric type of input")
-}
-
 func (t *Matrix) GetDiagonalElements() *Vector {
 	row, _ := t.Dims()
 	v := make(Vector, row)
@@ -627,7 +555,7 @@ func (t *Matrix) Flat() *Vector {
 	m, n := t.Dims()
 	v := make(Vector, m*n)
 	for i, j := range t._array {
-		copy(v[i*n:i*n+m], j)
+		copy(v[i*n:i*n+n], j)
 	}
 	return &v
 }
@@ -926,29 +854,6 @@ func (v *Vector) Tile(dim, n int) *Matrix {
 // length of vector
 func (v *Vector) Length() int {
 	return len(*v)
-}
-
-// simple function for simulating ternary operator
-func Ternary(statement bool, a, b interface{}) interface{} {
-	if statement {
-		return a
-	}
-	return b
-}
-
-func abs(n int) int {
-	if n < 0 {
-		return -n
-	}
-	return n
-}
-
-func min(x, y int) int {
-	return Ternary(x > y, y, x).(int)
-}
-
-func max(x, y int) int {
-	return Ternary(x > y, x, y).(int)
 }
 
 func mul(u, v *Vector, k int) (res float64) {
