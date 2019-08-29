@@ -586,6 +586,13 @@ func TestVector_Tile(t *testing.T) {
 	}
 }
 
+func TestVector_Length(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	if v.Length() != 3 {
+		t.Fail()
+	}
+}
+
 // Vector convolve
 func TestConvolve(t *testing.T) {
 	size := 10000

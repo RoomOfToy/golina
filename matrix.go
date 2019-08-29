@@ -863,6 +863,11 @@ func (v *Vector) Tile(dim, n int) *Matrix {
 	}
 }
 
+// length of vector
+func (v *Vector) Length() int {
+	return len(*v)
+}
+
 // simple function for simulating ternary operator
 func Ternary(statement bool, a, b interface{}) interface{} {
 	if statement {
