@@ -632,6 +632,22 @@ func TestVector_Length(t *testing.T) {
 	}
 }
 
+func TestVector_Max(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	idx, value := v.Max()
+	if idx != 2 || value != v.At(2) {
+		t.Fail()
+	}
+}
+
+func TestVector_Min(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	idx, value := v.Min()
+	if idx != 0 || value != v.At(0) {
+		t.Fail()
+	}
+}
+
 // Vector convolve
 func TestConvolve(t *testing.T) {
 	size := 10000

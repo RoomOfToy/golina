@@ -9,6 +9,7 @@ import (
 	"log"
 	"math"
 	"runtime"
+	"sort"
 	"sync"
 )
 
@@ -854,6 +855,32 @@ func (v *Vector) Tile(dim, n int) *Matrix {
 // length of vector
 func (v *Vector) Length() int {
 	return len(*v)
+}
+
+// max element of vector
+func (v *Vector) Max() (int, float64) {
+	sortSlice := make(SortPairSlice, v.Length())
+	for i, j := range *v {
+		sortSlice[i] = SortPair{
+			key:   i,
+			value: j,
+		}
+	}
+	sort.Sort(sortSlice)
+	return sortSlice[v.Length()-1].key, sortSlice[v.Length()-1].value
+}
+
+// min element of vector
+func (v *Vector) Min() (int, float64) {
+	sortSlice := make(SortPairSlice, v.Length())
+	for i, j := range *v {
+		sortSlice[i] = SortPair{
+			key:   i,
+			value: j,
+		}
+	}
+	sort.Sort(sortSlice)
+	return sortSlice[0].key, sortSlice[0].value
 }
 
 func mul(u, v *Vector, k int) (res float64) {
