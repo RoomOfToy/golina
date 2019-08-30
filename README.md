@@ -30,6 +30,7 @@ Realized functions up to now:
 - Utils Functions: `FloatEqual`, `MEqual`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print), 
 `Map`, `Reduce`, `Filter` (`Map`, `Reduce`, `Filter` here are just for tests, if you want to use it, you'd better change 
 them from using `interface` with `reflect` module to `[]float64` for performance, since you have known the data type...)
+- Octree: `Octree` (based on hash map), `OctreeNode` (location encoded as map key)
 
 Benchmark(simple parallel `Mul`, need more optimization):
 
