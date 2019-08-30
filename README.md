@@ -20,7 +20,7 @@ Realized functions up to now:
 - Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`, 
 `TransformOnRow` (for custom transform matrix), `ToAffineMatrix`, `Kabsch` (Superimpose)
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `OuterProduct`, `Cross`, `SquareSum`, `Norm`, 
-`Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`
+`Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`, `Max`, `Min`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
 `TaxicabDistance`, `EuclideanDistance`, `SquaredEuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, 
 `HammingDistance`, `CanberraDistance`
@@ -31,6 +31,7 @@ Realized functions up to now:
 `Map`, `Reduce`, `Filter` (`Map`, `Reduce`, `Filter` here are just for tests, if you want to use it, you'd better change 
 them from using `interface` with `reflect` module to `[]float64` for performance, since you have known the data type...)
 - Octree (concept only): `Octree` (based on hash map), `OctreeNode` (location encoded as map key)
+- KD-Tree: `Insert`, `Search`, `FindMinValue`, `FindMinNode`, `DeleteNode`
 
 Benchmark(simple parallel `Mul`, need more optimization):
 
