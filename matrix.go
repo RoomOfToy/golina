@@ -884,7 +884,7 @@ func (v *Vector) Min() (int, float64) {
 }
 
 // Sorted pairs of vector
-func (v *Vector) Sorted() SortPairSlice {
+func (v *Vector) SortedToSortPairSlice() SortPairSlice {
 	sortSlice := make(SortPairSlice, v.Length())
 	for i, j := range *v {
 		sortSlice[i] = SortPair{
@@ -894,6 +894,32 @@ func (v *Vector) Sorted() SortPairSlice {
 	}
 	sort.Sort(sortSlice)
 	return sortSlice
+}
+
+// Sorted return new vector in ascending order
+func (v *Vector) SortedAscending() *Vector {
+	nv := make(Vector, v.Length())
+	copy(nv, *v)
+	sort.Float64s(nv)
+	return &nv
+}
+
+// Sorted return new vector in descending order
+func (v *Vector) SortedDescending() *Vector {
+	nv := make(Vector, v.Length())
+	copy(nv, *v)
+	sort.Sort(sort.Reverse(sort.Float64Slice(nv)))
+	return &nv
+}
+
+// Reversed return new vector with reverse order
+func (v *Vector) Reversed() *Vector {
+	nv := make(Vector, v.Length())
+	copy(nv, *v)
+	for i, j := 0, v.Length()-1; i < j; i, j = i+1, j-1 {
+		nv[i], nv[j] = nv[j], nv[i]
+	}
+	return &nv
 }
 
 func mul(u, v *Vector, k int) (res float64) {

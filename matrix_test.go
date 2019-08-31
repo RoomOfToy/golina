@@ -648,13 +648,47 @@ func TestVector_Min(t *testing.T) {
 	}
 }
 
-func TestVector_Sorted(t *testing.T) {
+func TestVector_SortedToSortPairSlice(t *testing.T) {
 	v := &Vector{1, 2, 3}
-	sorted := v.Sorted()
+	sorted := v.SortedToSortPairSlice()
 	for i := 1; i < v.Length(); i++ {
 		if sorted[i].value < sorted[i-1].value {
 			t.Fail()
 		}
+	}
+}
+
+func TestVector_SortedAscending(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	sorted := v.SortedAscending()
+	// sorted function return a new vector
+	if v == sorted {
+		t.Fail()
+	}
+	for i := 1; i < sorted.Length(); i++ {
+		if sorted.At(i) < sorted.At(i-1) {
+			t.Fail()
+		}
+	}
+}
+
+func TestVector_SortedDescending(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	sorted := v.SortedDescending()
+	if v == sorted {
+		t.Fail()
+	}
+	for i := 1; i < sorted.Length(); i++ {
+		if sorted.At(i) > sorted.At(i-1) {
+			t.Fail()
+		}
+	}
+}
+
+func TestVector_Reversed(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	if !VEqual(v, v.Reversed().Reversed()) {
+		t.Fail()
 	}
 }
 
