@@ -883,6 +883,19 @@ func (v *Vector) Min() (int, float64) {
 	return sortSlice[0].key, sortSlice[0].value
 }
 
+// Sorted pairs of vector
+func (v *Vector) Sorted() SortPairSlice {
+	sortSlice := make(SortPairSlice, v.Length())
+	for i, j := range *v {
+		sortSlice[i] = SortPair{
+			key:   i,
+			value: j,
+		}
+	}
+	sort.Sort(sortSlice)
+	return sortSlice
+}
+
 func mul(u, v *Vector, k int) (res float64) {
 	n := min(k+1, len(*u))
 	j := min(k, len(*v)-1)

@@ -648,6 +648,16 @@ func TestVector_Min(t *testing.T) {
 	}
 }
 
+func TestVector_Sorted(t *testing.T) {
+	v := &Vector{1, 2, 3}
+	sorted := v.Sorted()
+	for i := 1; i < v.Length(); i++ {
+		if sorted[i].value < sorted[i-1].value {
+			t.Fail()
+		}
+	}
+}
+
 // Vector convolve
 func TestConvolve(t *testing.T) {
 	size := 10000
