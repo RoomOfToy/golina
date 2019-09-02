@@ -201,7 +201,7 @@ func WriteMatrixToTxt(path string, t *Matrix) error {
 
 	for i := range t._array {
 		for j := range t._array[i] {
-			_, err = fmt.Fprintf(file, "%f", t._array[i][j])
+			_, err = fmt.Fprintf(file, "%f ", t._array[i][j])
 			if j == c-1 {
 				_, err = fmt.Fprintf(file, "\n")
 			}

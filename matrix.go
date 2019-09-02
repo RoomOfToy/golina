@@ -400,6 +400,17 @@ func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 	return nt
 }
 
+// Add number
+func (t *Matrix) AddNum(n interface{}) *Matrix {
+	nt := Empty(t)
+	for r, i := range t._array {
+		for c, j := range i {
+			nt.Set(r, c, j+getFloat64(n))
+		}
+	}
+	return nt
+}
+
 // Subtract matrix
 func (t *Matrix) Sub(mat2 *Matrix) *Matrix {
 	row1, col1 := t.Dims()
