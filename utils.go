@@ -1,7 +1,9 @@
 package golina
 
 import (
+	"fmt"
 	"math"
+	"os"
 	"reflect"
 	"sync"
 )
@@ -153,4 +155,57 @@ func Filter(input interface{}, filter func(interface{}) bool) interface{} {
 		}
 	}
 	return out
+}
+
+func getFileSize(filename string) int64 {
+	fileStat, err := os.Stat(filename)
+	if err != nil {
+		panic(err)
+	}
+	fileSize := fileStat.Size()
+	return fileSize
+}
+
+// Read data into matrix
+func Load3DToMatrix(path string) (*Matrix, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	fileSize := getFileSize(path)
+	est := 3 * fileSize / (4*8*3 + 1*2)
+	lines := make(Data, 0, est)
+
+	var x, y, z float64
+	for {
+		rowNum, err := fmt.Fscanln(file, &x, &y, &z)
+		if rowNum == 0 || err != nil {
+			break
+		}
+		lines = append(lines, Vector{x, y, z})
+	}
+	return new(Matrix).Init(lines), err
+}
+
+// WriteMatrixToTxt matrix data into file
+func WriteMatrixToTxt(path string, t *Matrix) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, c := t.Dims()
+
+	for i := range t._array {
+		for j := range t._array[i] {
+			_, err = fmt.Fprintf(file, "%f", t._array[i][j])
+			if j == c-1 {
+				_, err = fmt.Fprintf(file, "\n")
+			}
+		}
+	}
+	return err
 }

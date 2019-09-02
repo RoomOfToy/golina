@@ -131,3 +131,20 @@ func TestMatrixElementIter(t *testing.T) {
 		}
 	}
 }
+
+func TestLoad3DToMatrix(t *testing.T) {
+	_, err := Load3DToMatrix("data.txt")
+	if err != nil {
+		println(err.Error())
+		t.Fail()
+	}
+}
+
+func TestWriteMatrixToTxt(t *testing.T) {
+	mat := GenerateRandomMatrix(10, 10)
+	err := WriteMatrixToTxt("test.txt", mat)
+	if err != nil {
+		println(err.Error())
+		t.Fail()
+	}
+}
