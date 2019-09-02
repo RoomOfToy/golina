@@ -13,9 +13,9 @@ func TransformOnRow(t, transMat *Matrix) *Matrix {
 	row, col := t.Dims()
 	resMat := ZeroMatrix(row, col)
 	newRowMat := ZeroMatrix(1, col)
-	for i := range t._array {
-		newRowMat._array[0] = append(t._array[i], 1.)                      // 1 x (col+1)
-		resMat._array[i] = transMat.Mul(newRowMat.T()).T()._array[0][:col] // (col+1) x (col+1) x (col+1) x 1 -> (col+1) x 1 -> 1 x (col+1) -> 1 x col
+	for i := range t.Data {
+		newRowMat.Data[0] = append(t.Data[i], 1.)                      // 1 x (col+1)
+		resMat.Data[i] = transMat.Mul(newRowMat.T()).T().Data[0][:col] // (col+1) x (col+1) x (col+1) x 1 -> (col+1) x 1 -> 1 x (col+1) -> 1 x col
 	}
 	return resMat
 }
@@ -55,10 +55,10 @@ func Rotate3D(t *Matrix, angle float64, axis *Vector) *Matrix {
 	}
 	angle = math.Pi * angle / 180.
 	resMat := ZeroMatrix(row, col)
-	for i := range t._array {
-		p := &t._array[i]
+	for i := range t.Data {
+		p := &t.Data[i]
 		// Prot = Pcos(θ) + (n cross P)sin(θ) + n(n dot P)(1 - cos(θ)) -> θ is clockwise
-		resMat._array[i] = *(p.MulNum(cos(angle)).Add(axis.Cross(p).MulNum(sin(angle))).Add(axis.MulNum(axis.Dot(p) * (1 - cos(angle)))))
+		resMat.Data[i] = *(p.MulNum(cos(angle)).Add(axis.Cross(p).MulNum(sin(angle))).Add(axis.MulNum(axis.Dot(p) * (1 - cos(angle)))))
 	}
 	return resMat
 }

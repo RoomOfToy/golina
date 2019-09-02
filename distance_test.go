@@ -39,7 +39,7 @@ func TestDirectedHausdorffDistance(t *testing.T) {
 	b := Data{{32, 12, 3}, {6, 3, 52}, {9, 2, 15}}
 	pts2 := new(Matrix).Init(b)
 	hd := DirectedHausdorffDistance(pts1, pts2)
-	if !FloatEqual(hd.distance, 43.474130238568314) || hd.lIndex != 1 || hd.rIndex != 2 {
+	if !FloatEqual(hd.Distance, 43.474130238568314) || hd.LIndex != 1 || hd.RIndex != 2 {
 		t.Fail()
 	}
 }
@@ -50,7 +50,7 @@ func TestDirectedHausdorffDistanceBasedOnKNN(t *testing.T) {
 	b := Data{{32, 12, 3}, {6, 3, 52}, {9, 2, 15}}
 	pts2 := new(Matrix).Init(b)
 	hd := DirectedHausdorffDistanceBasedOnKNN(pts1, pts2)
-	if !FloatEqual(hd.distance, 43.474130238568314) || hd.lIndex != 1 || hd.rIndex != 2 {
+	if !FloatEqual(hd.Distance, 43.474130238568314) || hd.LIndex != 1 || hd.RIndex != 2 {
 		fmt.Println(hd)
 		t.Fail()
 	}

@@ -19,14 +19,14 @@ func RBFKernel(a, b *Vector, gamma float64) float64 {
 }
 
 type SVC struct {
-	w, a      *Vector
-	b         float64 // mean of support vectors (bias value)
-	C         float64 // SVC cost
-	tolerance float64 // gradient descent solution accuracy
-	kernel    func(a, v *Vector, x float64) float64
-	args      float64 // power or gamma
-	bOffset   float64
-	sv        *Matrix
+	w, a       *Vector
+	b          float64 // mean of support vectors (bias value)
+	C          float64 // SVC cost
+	Tolerance  float64 // gradient descent solution accuracy
+	Kernel     func(a, v *Vector, x float64) float64
+	KernelArgs float64 // power or gamma
+	bOffset    float64
+	sv         *Matrix
 }
 
 func (svc *SVC) CheckConnected(a, b *Vector, segments int) bool {
@@ -48,9 +48,9 @@ func (svc *SVC) CalRadius(dataSet *Matrix) *Vector {
 	r1, _ := svc.sv.Dims()
 	clss := make(Vector, r)
 	for i := 0; i < r; i++ {
-		clss[i] += svc.kernel(dataSet.Row(i), dataSet.Row(i), svc.args)
+		clss[i] += svc.Kernel(dataSet.Row(i), dataSet.Row(i), svc.KernelArgs)
 		for j := 0; j < r1; j++ {
-			clss[i] -= 2 * svc.a.At(j) * svc.kernel(svc.sv.Row(j), dataSet.Row(i), svc.args)
+			clss[i] -= 2 * svc.a.At(j) * svc.Kernel(svc.sv.Row(j), dataSet.Row(i), svc.KernelArgs)
 		}
 	}
 	clss = *(clss.AddNum(svc.bOffset))
@@ -67,8 +67,8 @@ func (svc *SVC) Fit(dataSet *Matrix) {
 	for i := 0; i < r; i++ {
 		for j := i; j < r; j++ {
 			Qval := 1.
-			Qval *= svc.kernel(dataSet.Row(i), dataSet.Row(j), svc.args)
-			Q._array[i][j], Q._array[j][i] = Qval, Qval
+			Qval *= svc.Kernel(dataSet.Row(i), dataSet.Row(j), svc.KernelArgs)
+			Q.Data[i][j], Q.Data[j][i] = Qval, Qval
 		}
 	}
 
@@ -77,7 +77,7 @@ func (svc *SVC) Fit(dataSet *Matrix) {
 	a := make(Vector, r)
 	svc.w, svc.a = &w, &a
 	delta := 10000000000.0
-	for delta > svc.tolerance {
+	for delta > svc.Tolerance {
 		delta = 0
 		for i := 0; i < r; i++ {
 			g := Q.Row(i).Dot(svc.a) - Q.At(i, i)
@@ -112,9 +112,9 @@ func (svc *SVC) Fit(dataSet *Matrix) {
 
 	svc.sv = new(Matrix)
 
-	svc.sv._array = make(Data, svc.a.Length())
+	svc.sv.Data = make(Data, svc.a.Length())
 	for i := range *(svc.a) {
-		svc.sv._array[i] = dataSet._array[int(svc.a.At(i))]
+		svc.sv.Data[i] = dataSet.Data[int(svc.a.At(i))]
 	}
 
 	// calculate contribution of all SVs

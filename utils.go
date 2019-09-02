@@ -95,7 +95,7 @@ func MEqual(mat1, mat2 *Matrix) bool {
 	if [2]int{row1, col1} != [2]int{row2, col2} {
 		return false
 	}
-	for i, col := range mat1._array {
+	for i, col := range mat1.Data {
 		if !VEqual(&col, mat2.Row(i)) {
 			return false
 		}
@@ -110,7 +110,7 @@ func VectorIter(v *Vector) interface{} {
 
 // Matrix to row iterable
 func MatrixRowIter(t *Matrix) interface{} {
-	return t._array
+	return t.Data
 }
 
 // Matrix to element iterable
@@ -199,9 +199,9 @@ func WriteMatrixToTxt(path string, t *Matrix) error {
 
 	_, c := t.Dims()
 
-	for i := range t._array {
-		for j := range t._array[i] {
-			_, err = fmt.Fprintf(file, "%f ", t._array[i][j])
+	for i := range t.Data {
+		for j := range t.Data[i] {
+			_, err = fmt.Fprintf(file, "%f ", t.Data[i][j])
 			if j == c-1 {
 				_, err = fmt.Fprintf(file, "\n")
 			}

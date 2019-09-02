@@ -27,8 +27,8 @@ type Data []Vector    // 2D array -> backend of Matrix
 
 // matrix entry
 type Entry struct {
-	value    float64
-	row, col int
+	Value    float64
+	Row, Col int
 }
 
 // _Matrix interface
@@ -64,27 +64,27 @@ type _Matrix interface {
 // Matrix struct
 type Matrix struct {
 	_Matrix      // basic interface
-	_array  Data // row-wise
+	Data    Data // row-wise
 }
 
 // generate matrix struct from 2D array
 func (t *Matrix) Init(array Data) *Matrix {
-	return &Matrix{_array: array}
+	return &Matrix{Data: array}
 }
 
 // matrix dimensions in row, col
 func (t *Matrix) Dims() (row, col int) {
-	return len(t._array), len(t._array[0])
+	return len(t.Data), len(t.Data[0])
 }
 
 // get element at row i, column j of matrix
 func (t *Matrix) At(i, j int) float64 {
-	return t._array[i][j]
+	return t.Data[i][j]
 }
 
 // set element at row i, column j of matrix
 func (t *Matrix) Set(i, j int, value float64) {
-	t._array[i][j] = value
+	t.Data[i][j] = value
 }
 
 // transpose matrix
@@ -94,7 +94,7 @@ func (t *Matrix) T() *Matrix {
 	for i := 0; i < col; i++ {
 		ntArray[i] = make([]float64, row)
 		for j := 0; j < row; j++ {
-			ntArray[i][j] = t._array[j][i]
+			ntArray[i][j] = t.Data[j][i]
 		}
 	}
 	nt := new(Matrix).Init(ntArray)
@@ -105,7 +105,7 @@ func (t *Matrix) T() *Matrix {
 func (t *Matrix) Row(m int) *Vector {
 	row, _ := t.Dims()
 	if m > -1 && m < row {
-		return &t._array[m]
+		return &t.Data[m]
 	}
 	panic("row index out of range")
 }
@@ -114,17 +114,17 @@ func (t *Matrix) Row(m int) *Vector {
 func (t *Matrix) Col(n int) *Vector {
 	_, col := t.Dims()
 	if n > -1 && n < col {
-		return &t.T()._array[n]
+		return &t.T().Data[n]
 	}
 	panic("column index out of range")
 }
 
 // make a copy of matrix
 func Copy(t *Matrix) *Matrix {
-	nt := Matrix{_array: make([]Vector, len(t._array))}
-	for i := range t._array {
-		nt._array[i] = make(Vector, len(t._array[i]))
-		copy(nt._array[i], t._array[i])
+	nt := Matrix{Data: make([]Vector, len(t.Data))}
+	for i := range t.Data {
+		nt.Data[i] = make(Vector, len(t.Data[i]))
+		copy(nt.Data[i], t.Data[i])
 	}
 	return &nt
 }
@@ -133,32 +133,32 @@ func Copy(t *Matrix) *Matrix {
 // 	golang make slice has zero value in default, so empty matrix == zero matrix
 func Empty(t *Matrix) *Matrix {
 	row, col := t.Dims()
-	nt := Matrix{_array: make([]Vector, row)}
-	for i := range t._array {
-		nt._array[i] = make(Vector, col)
+	nt := Matrix{Data: make([]Vector, row)}
+	for i := range t.Data {
+		nt.Data[i] = make(Vector, col)
 	}
 	return &nt // nt is a zero matrix
 }
 
 // generate matrix with all elements are zero
 func ZeroMatrix(row, col int) *Matrix {
-	nt := Matrix{_array: make([]Vector, row)}
-	for i := range nt._array {
-		nt._array[i] = make(Vector, col)
+	nt := Matrix{Data: make([]Vector, row)}
+	for i := range nt.Data {
+		nt.Data[i] = make(Vector, col)
 	}
 	return &nt
 }
 
 // generate matrix with all elements are one
 func OneMatrix(row, col int) *Matrix {
-	nt := Matrix{_array: make([]Vector, row)}
+	nt := Matrix{Data: make([]Vector, row)}
 	r := make(Vector, col)
 	for i := range r {
 		r[i] = 1
 	}
-	for i := range nt._array {
-		nt._array[i] = make(Vector, col)
-		copy(nt._array[i], r)
+	for i := range nt.Data {
+		nt.Data[i] = make(Vector, col)
+		copy(nt.Data[i], r)
 	}
 	return &nt
 }
@@ -176,12 +176,12 @@ func IdentityMatrix(n int) *Matrix {
 func (t *Matrix) Max() *Entry {
 	// TODO: how to find all max or min?
 	entry := Entry{}
-	entry.value = math.Inf(-1)
-	for r, i := range t._array {
+	entry.Value = math.Inf(-1)
+	for r, i := range t.Data {
 		for c, j := range i {
-			if j > entry.value {
-				entry.value = j
-				entry.row, entry.col = r, c
+			if j > entry.Value {
+				entry.Value = j
+				entry.Row, entry.Col = r, c
 			}
 		}
 	}
@@ -191,12 +191,12 @@ func (t *Matrix) Max() *Entry {
 // find the first min entry
 func (t *Matrix) Min() *Entry {
 	entry := Entry{}
-	entry.value = math.Inf(1)
-	for r, i := range t._array {
+	entry.Value = math.Inf(1)
+	for r, i := range t.Data {
 		for c, j := range i {
-			if j < entry.value {
-				entry.value = j
-				entry.row, entry.col = r, c
+			if j < entry.Value {
+				entry.Value = j
+				entry.Row, entry.Col = r, c
 			}
 		}
 	}
@@ -260,7 +260,7 @@ func (t *Matrix) Rank() (rank int) {
 
 // swap two rows
 func SwapRow(t *Matrix, row1, row2 int) {
-	t._array[row1], t._array[row2] = *t.Row(row2), *t.Row(row1)
+	t.Data[row1], t.Data[row2] = *t.Row(row2), *t.Row(row1)
 }
 
 // Determinant of N x N matrix based on LU Decomposition
@@ -392,7 +392,7 @@ func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 		panic("both matrices should have the same dimension")
 	}
 	nt := Empty(t)
-	for r, i := range t._array {
+	for r, i := range t.Data {
 		for c, j := range i {
 			nt.Set(r, c, j+mat2.At(r, c))
 		}
@@ -403,7 +403,7 @@ func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 // Add number
 func (t *Matrix) AddNum(n interface{}) *Matrix {
 	nt := Empty(t)
-	for r, i := range t._array {
+	for r, i := range t.Data {
 		for c, j := range i {
 			nt.Set(r, c, j+getFloat64(n))
 		}
@@ -419,7 +419,7 @@ func (t *Matrix) Sub(mat2 *Matrix) *Matrix {
 		panic("both matrices should have the same dimension")
 	}
 	nt := Empty(t)
-	for r, i := range t._array {
+	for r, i := range t.Data {
 		for c, j := range i {
 			nt.Set(r, c, j-mat2.At(r, c))
 		}
@@ -481,8 +481,8 @@ func (t *Matrix) MulNum(n interface{}) *Matrix {
 	multiplier := getFloat64(n)
 	row, col := t.Dims()
 	out := ZeroMatrix(row, col)
-	for i := range t._array {
-		for j, v := range t._array[i] {
+	for i := range t.Data {
+		for j, v := range t.Data[i] {
 			out.Set(i, j, v*multiplier)
 		}
 	}
@@ -492,8 +492,8 @@ func (t *Matrix) MulNum(n interface{}) *Matrix {
 func (t *Matrix) GetDiagonalElements() *Vector {
 	row, _ := t.Dims()
 	v := make(Vector, row)
-	for i := range t._array {
-		v[i] = t._array[i][i]
+	for i := range t.Data {
+		v[i] = t.Data[i][i]
 	}
 	return &v
 }
@@ -512,8 +512,8 @@ func (t *Matrix) Pow(n int) *Matrix {
 		return t
 	} else {
 		V, D := EigenDecompose(t)
-		for i := range D._array {
-			D._array[i][i] = math.Pow(D._array[i][i], float64(n))
+		for i := range D.Data {
+			D.Data[i][i] = math.Pow(D.Data[i][i], float64(n))
 		}
 		return V.Mul(D).Mul(V.Inverse()) // change NaiveInverse to LUPDecomposeInvert
 	}
@@ -547,8 +547,8 @@ func (t *Matrix) Trace() float64 {
 		panic("square matrix only")
 	}
 	res := 0.
-	for i := range t._array {
-		res += t._array[i][i]
+	for i := range t.Data {
+		res += t.Data[i][i]
 	}
 	return res
 }
@@ -556,7 +556,7 @@ func (t *Matrix) Trace() float64 {
 // Frobenius norm
 func (t *Matrix) Norm() float64 {
 	fr := 0.
-	for _, i := range t._array {
+	for _, i := range t.Data {
 		fr += i.SquareSum()
 	}
 	return math.Sqrt(fr)
@@ -566,7 +566,7 @@ func (t *Matrix) Norm() float64 {
 func (t *Matrix) Flat() *Vector {
 	m, n := t.Dims()
 	v := make(Vector, m*n)
-	for i, j := range t._array {
+	for i, j := range t.Data {
 		copy(v[i*n:i*n+n], j)
 	}
 	return &v
@@ -575,8 +575,8 @@ func (t *Matrix) Flat() *Vector {
 // Get a sub-matrix starting at i, j with rows rows and cols columns.
 func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
 	nt := ZeroMatrix(rows, cols)
-	for k := range nt._array {
-		copy(nt._array[k], t._array[i+k][j:j+cols])
+	for k := range nt.Data {
+		copy(nt.Data[k], t.Data[i+k][j:j+cols])
 	}
 	return nt
 }
@@ -675,9 +675,9 @@ func (t *Matrix) IsSymmetric() bool {
 	if m != n {
 		return false
 	}
-	for i := range t._array {
-		for j := range t._array[i] {
-			if t._array[i][j] != t._array[j][i] {
+	for i := range t.Data {
+		for j := range t.Data[i] {
+			if t.Data[i][j] != t.Data[j][i] {
 				return false
 			}
 		}
@@ -766,8 +766,8 @@ func (v *Vector) Dot(v1 *Vector) float64 {
 func (v *Vector) OuterProduct(v1 *Vector) *Matrix {
 	row, col := len(*v), len(*v1)
 	res := ZeroMatrix(row, col)
-	for i := range res._array {
-		for j := range res._array[i] {
+	for i := range res.Data {
+		for j := range res.Data[i] {
 			res.Set(i, j, (*v)[i]*(*v)[j])
 		}
 	}
@@ -812,9 +812,9 @@ func (v *Vector) ToMatrix(rows, cols int) *Matrix {
 		panic(fmt.Sprintf("invalid target matrix dimensions (%d x %d) with vector length %d\n", rows, cols, len(*v)))
 	}
 	nt := ZeroMatrix(rows, cols)
-	for r := range nt._array {
-		for c := range nt._array[r] {
-			nt._array[r][c] = (*v)[r*cols+c]
+	for r := range nt.Data {
+		for c := range nt.Data[r] {
+			nt.Data[r][c] = (*v)[r*cols+c]
 		}
 	}
 	return nt
@@ -873,12 +873,12 @@ func (v *Vector) Max() (int, float64) {
 	sortSlice := make(SortPairSlice, v.Length())
 	for i, j := range *v {
 		sortSlice[i] = SortPair{
-			key:   i,
-			value: j,
+			Key:   i,
+			Value: j,
 		}
 	}
 	sort.Sort(sortSlice)
-	return sortSlice[v.Length()-1].key, sortSlice[v.Length()-1].value
+	return sortSlice[v.Length()-1].Key, sortSlice[v.Length()-1].Value
 }
 
 // min element of vector
@@ -886,12 +886,12 @@ func (v *Vector) Min() (int, float64) {
 	sortSlice := make(SortPairSlice, v.Length())
 	for i, j := range *v {
 		sortSlice[i] = SortPair{
-			key:   i,
-			value: j,
+			Key:   i,
+			Value: j,
 		}
 	}
 	sort.Sort(sortSlice)
-	return sortSlice[0].key, sortSlice[0].value
+	return sortSlice[0].Key, sortSlice[0].Value
 }
 
 // Sorted pairs of vector
@@ -899,8 +899,8 @@ func (v *Vector) SortedToSortPairSlice() SortPairSlice {
 	sortSlice := make(SortPairSlice, v.Length())
 	for i, j := range *v {
 		sortSlice[i] = SortPair{
-			key:   i,
-			value: j,
+			Key:   i,
+			Value: j,
 		}
 	}
 	sort.Sort(sortSlice)

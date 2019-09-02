@@ -19,7 +19,7 @@ func TestEigenDecompose(t *testing.T) {
 	if !MEqual(D, d) {
 		t.Fail()
 	}
-	for i := range V._array {
+	for i := range V.Data {
 		if !VEqual(V.Col(i), evec.Row(i)) && !VEqual(V.Col(i), evec.Row(i).MulNum(-1.)) {
 			t.Fail()
 		}

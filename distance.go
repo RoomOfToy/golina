@@ -18,8 +18,8 @@ func PointToPlaneDistance(pt, planeCenter, planeNormal *Vector) float64 {
 
 // https://en.wikipedia.org/wiki/Hausdorff_distance
 type HausdorffDistance struct {
-	distance       float64
-	lIndex, rIndex int
+	Distance       float64
+	LIndex, RIndex int
 }
 
 func DirectedHausdorffDistance(pts1, pts2 *Matrix) *HausdorffDistance {
@@ -56,9 +56,9 @@ func DirectedHausdorffDistance(pts1, pts2 *Matrix) *HausdorffDistance {
 			jRet = jStore
 		}
 	}
-	hd.distance = math.Sqrt(cMax)
-	hd.lIndex = iRet
-	hd.rIndex = jRet
+	hd.Distance = math.Sqrt(cMax)
+	hd.LIndex = iRet
+	hd.RIndex = jRet
 	return &hd
 }
 
@@ -70,7 +70,7 @@ func DirectedHausdorffDistanceBasedOnKNN(pts1, pts2 *Matrix) *HausdorffDistance 
 		panic("points should have same coordinates")
 	}
 	ch := make(chan Vector, r1)
-	for i, p := range pts1._array {
+	for i, p := range pts1.Data {
 		go func(i int, p Vector) {
 			res := KNearestNeighborsWithDistance(Copy(pts2), &p, 1, SquaredEuclideanDistance).Row(0)
 			ch <- Vector{float64(i), res.At(-2), res.At(-1)} // idx, idx, distance
@@ -85,7 +85,7 @@ func DirectedHausdorffDistanceBasedOnKNN(pts1, pts2 *Matrix) *HausdorffDistance 
 			ridx = int(res.At(1))
 		}
 	}
-	return &HausdorffDistance{lIndex: lidx, rIndex: ridx, distance: math.Sqrt(dist)}
+	return &HausdorffDistance{LIndex: lidx, RIndex: ridx, Distance: math.Sqrt(dist)}
 }
 
 // https://people.revoledu.com/kardi/tutorial/Similarity/

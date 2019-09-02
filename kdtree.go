@@ -7,20 +7,20 @@ import (
 )
 
 type KDTree struct {
-	root  *Node
-	count int
+	Root  *Node
+	Count int
 }
 
 type Node struct {
-	point       *Vector
-	left, right *Node
+	Point       *Vector
+	Left, Right *Node
 }
 
 func NewNode(p *Vector) *Node {
 	return &Node{
-		point: p,
-		left:  nil,
-		right: nil,
+		Point: p,
+		Left:  nil,
+		Right: nil,
 	}
 }
 
@@ -30,10 +30,10 @@ func insert(n *Node, p *Vector, depth int) *Node {
 		return NewNode(p)
 	}
 	currDim := depth % p.Length()
-	if compare(p, n.point, currDim) < 0 {
-		n.left = insert(n.left, p, depth+1)
+	if compare(p, n.Point, currDim) < 0 {
+		n.Left = insert(n.Left, p, depth+1)
 	} else {
-		n.right = insert(n.right, p, depth+1)
+		n.Right = insert(n.Right, p, depth+1)
 	}
 	return n
 }
@@ -47,13 +47,13 @@ func (n *Node) Insert(p *Vector) *Node { // after insert, return node self
 }
 
 func (t *KDTree) Insert(p *Vector) bool {
-	if t.root == nil {
-		t.root = NewNode(p)
-		t.count++
+	if t.Root == nil {
+		t.Root = NewNode(p)
+		t.Count++
 		return true
 	}
-	if t.root.Insert(p) != nil {
-		t.count++
+	if t.Root.Insert(p) != nil {
+		t.Count++
 		return true
 	}
 	return false
@@ -73,18 +73,18 @@ func search(root *Node, p *Vector, depth int) (*Node, bool) {
 	if root == nil {
 		return nil, false
 	}
-	if isPointSame(root.point, p) {
+	if isPointSame(root.Point, p) {
 		return root, true
 	}
 	currDim := depth % p.Length()
-	if compare(p, root.point, currDim) < 0 {
-		return search(root.left, p, depth+1)
+	if compare(p, root.Point, currDim) < 0 {
+		return search(root.Left, p, depth+1)
 	}
-	return search(root.right, p, depth+1)
+	return search(root.Right, p, depth+1)
 }
 
 func (t *KDTree) Search(p *Vector) (*Node, bool) {
-	return search(t.root, p, 0)
+	return search(t.Root, p, 0)
 }
 
 func ternaryMinValue(x, y, z float64) float64 {
@@ -95,26 +95,26 @@ func findMinValue(root *Node, dim, depth int) float64 {
 	if root == nil {
 		return math.MaxFloat64
 	}
-	currDim := depth % root.point.Length()
+	currDim := depth % root.Point.Length()
 	if currDim == dim {
-		if root.left == nil {
-			return root.point.At(dim)
+		if root.Left == nil {
+			return root.Point.At(dim)
 		}
-		return math.Min(root.point.At(dim), findMinValue(root.left, dim, depth+1))
+		return math.Min(root.Point.At(dim), findMinValue(root.Left, dim, depth+1))
 	}
-	return ternaryMinValue(root.point.At(dim), findMinValue(root.left, dim, depth+1), findMinValue(root.right, dim, depth+1))
+	return ternaryMinValue(root.Point.At(dim), findMinValue(root.Left, dim, depth+1), findMinValue(root.Right, dim, depth+1))
 }
 
 func (t *KDTree) FindMinValue(dim int) float64 {
-	return findMinValue(t.root, dim, 0)
+	return findMinValue(t.Root, dim, 0)
 }
 
 func ternaryMinNode(x, y, z *Node, dim int) *Node {
 	res := x
-	if y != nil && y.point.At(dim) < res.point.At(dim) {
+	if y != nil && y.Point.At(dim) < res.Point.At(dim) {
 		res = y
 	}
-	if z != nil && z.point.At(dim) < res.point.At(dim) {
+	if z != nil && z.Point.At(dim) < res.Point.At(dim) {
 		res = z
 	}
 	return res
@@ -124,18 +124,18 @@ func findMinNode(root *Node, dim, depth int) *Node {
 	if root == nil {
 		return nil
 	}
-	currDim := depth % root.point.Length()
+	currDim := depth % root.Point.Length()
 	if currDim == dim {
-		if root.left == nil {
+		if root.Left == nil {
 			return root
 		}
-		return findMinNode(root.left, dim, depth+1)
+		return findMinNode(root.Left, dim, depth+1)
 	}
-	return ternaryMinNode(root, findMinNode(root.left, dim, depth+1), findMinNode(root.right, dim, depth+1), dim)
+	return ternaryMinNode(root, findMinNode(root.Left, dim, depth+1), findMinNode(root.Right, dim, depth+1), dim)
 }
 
 func (t *KDTree) FindMinNode(dim int) *Node {
-	return findMinNode(t.root, dim, 0)
+	return findMinNode(t.Root, dim, 0)
 }
 
 func deleteNode(root *Node, p *Vector, depth int) *Node { // return root after modification
@@ -143,34 +143,34 @@ func deleteNode(root *Node, p *Vector, depth int) *Node { // return root after m
 		return nil
 	}
 	currDim := depth % p.Length()
-	if isPointSame(root.point, p) {
-		if root.right != nil {
-			rminNode := findMinNode(root.right, currDim, 0)
-			root.point = rminNode.point
-			root.right = deleteNode(root.right, rminNode.point, depth+1)
-		} else if root.left != nil {
-			lminNode := findMinNode(root.left, currDim, 0)
-			root.point = lminNode.point
-			root.right = deleteNode(root.left, lminNode.point, depth+1)
+	if isPointSame(root.Point, p) {
+		if root.Right != nil {
+			rminNode := findMinNode(root.Right, currDim, 0)
+			root.Point = rminNode.Point
+			root.Right = deleteNode(root.Right, rminNode.Point, depth+1)
+		} else if root.Left != nil {
+			lminNode := findMinNode(root.Left, currDim, 0)
+			root.Point = lminNode.Point
+			root.Right = deleteNode(root.Left, lminNode.Point, depth+1)
 		} else {
 			root = nil
 		}
 		return root
 	}
-	if compare(p, root.point, currDim) < 0 {
-		root.left = deleteNode(root.left, p, depth+1)
+	if compare(p, root.Point, currDim) < 0 {
+		root.Left = deleteNode(root.Left, p, depth+1)
 	} else {
-		root.right = deleteNode(root.right, p, depth+1)
+		root.Right = deleteNode(root.Right, p, depth+1)
 	}
 	return root
 }
 
 func (t *KDTree) DeleteNode(p *Vector) *Node { // return root of modified tree
-	return deleteNode(t.root, p, 0)
+	return deleteNode(t.Root, p, 0)
 }
 
 func (n *Node) String() string {
-	return fmt.Sprintf("Node->point: %s", n.point.String())
+	return fmt.Sprintf("Node->point: %s", n.Point.String())
 }
 
 // TODO: find a better way for pretty print
@@ -180,13 +180,13 @@ func printPreOrder(n *Node, depth int) string {
 	}
 	res := "depth: " + strconv.Itoa(depth) + " root: " + n.String()
 	depth++
-	res += "Left: " + printPreOrder(n.left, depth)
-	res += "Right: " + printPreOrder(n.right, depth)
+	res += "Left: " + printPreOrder(n.Left, depth)
+	res += "Right: " + printPreOrder(n.Right, depth)
 	return res
 }
 
 func (t *KDTree) String() string {
-	root := t.root
+	root := t.Root
 	if root == nil {
 		return "<nil>"
 	}

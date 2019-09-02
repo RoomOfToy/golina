@@ -6,8 +6,8 @@ import (
 )
 
 type ObservationWithClusterID struct {
-	clusterID   int
-	observation Vector
+	ClusterID   int
+	Observation Vector
 }
 
 type ClusteredObservationSet []ObservationWithClusterID
@@ -16,9 +16,9 @@ type DistFunc func(v1, v2 *Vector) float64
 
 func nearestMean(means *Matrix, observation ObservationWithClusterID, distFunc DistFunc) (idx int, minDistance float64) {
 	d := 0.
-	minDistance = distFunc(&(observation.observation), &(means._array[0]))
-	for i := 1; i < len(means._array); i++ {
-		d = distFunc(&(observation.observation), &(means._array[i]))
+	minDistance = distFunc(&(observation.Observation), &(means.Data[0]))
+	for i := 1; i < len(means.Data); i++ {
+		d = distFunc(&(observation.Observation), &(means.Data[i]))
 		if d < minDistance {
 			minDistance = d
 			idx = i
@@ -28,18 +28,18 @@ func nearestMean(means *Matrix, observation ObservationWithClusterID, distFunc D
 }
 
 func observationInit(rawData *Matrix) ClusteredObservationSet {
-	observationSet := make([]ObservationWithClusterID, len(rawData._array))
-	for i, d := range rawData._array {
-		observationSet[i].observation = d
+	observationSet := make([]ObservationWithClusterID, len(rawData.Data))
+	for i, d := range rawData.Data {
+		observationSet[i].Observation = d
 	}
 	return observationSet
 }
 
 func RandomMeans(dataSet *Matrix, k int) *Matrix {
-	means := ZeroMatrix(k, len(dataSet._array))
+	means := ZeroMatrix(k, len(dataSet.Data))
 	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < k; i++ {
-		means._array[i] = dataSet._array[rand.Intn(len(dataSet._array))]
+		means.Data[i] = dataSet.Data[rand.Intn(len(dataSet.Data))]
 	}
 	return means
 }
@@ -52,38 +52,38 @@ func KMeans(dataSet *Matrix, means *Matrix, distFunc DistFunc, iterLimit int) (C
 	// Assign Step
 	for i, d := range data {
 		id, _ := nearestMean(means, d, distFunc)
-		data[i].clusterID = id
+		data[i].ClusterID = id
 	}
-	initDistribution := make([]int, len(means._array))
+	initDistribution := make([]int, len(means.Data))
 	for i := range data {
-		initDistribution[data[i].clusterID]++
+		initDistribution[data[i].ClusterID]++
 	}
 	// Update Step
-	setVolume := make([]int, len(means._array))
+	setVolume := make([]int, len(means.Data))
 	change := false
 	for {
 		// generate new means
 		means = Empty(means)
-		setVolume = make([]int, len(means._array))
+		setVolume = make([]int, len(means.Data))
 		for _, d := range data {
-			means._array[d.clusterID] = *(means._array[d.clusterID].Add(&(d.observation)))
-			setVolume[d.clusterID]++
+			means.Data[d.ClusterID] = *(means.Data[d.ClusterID].Add(&(d.Observation)))
+			setVolume[d.ClusterID]++
 		}
-		for i := range means._array {
-			means._array[i] = *(means._array[i].MulNum(1. / float64(setVolume[i])))
+		for i := range means.Data {
+			means.Data[i] = *(means.Data[i].MulNum(1. / float64(setVolume[i])))
 		}
 		change = false
 		for i, d := range data {
-			if id, _ := nearestMean(means, d, distFunc); id != d.clusterID {
+			if id, _ := nearestMean(means, d, distFunc); id != d.ClusterID {
 				change = true
-				data[i].clusterID = id
+				data[i].ClusterID = id
 			}
 		}
 		cnt++
 		if change == false || cnt > iterLimit {
-			finalDistribution := make([]int, len(means._array))
+			finalDistribution := make([]int, len(means.Data))
 			for i := range data {
-				finalDistribution[data[i].clusterID]++
+				finalDistribution[data[i].ClusterID]++
 			}
 			return data, initDistribution, finalDistribution, cnt
 		}
@@ -104,18 +104,18 @@ func KMeansPP(dataSet *Matrix, k int, distFunc DistFunc, iterLimit int) (Cluster
 }
 
 func PPMeans(dataSet *Matrix, k int, distFunc DistFunc) *Matrix {
-	dataLen := len(dataSet._array)
+	dataLen := len(dataSet.Data)
 	means := ZeroMatrix(k, dataLen)
 	rand.Seed(time.Now().UnixNano())
 	// step 1
-	means._array[0] = dataSet._array[rand.Intn(dataLen)]
+	means.Data[0] = dataSet.Data[rand.Intn(dataLen)]
 	// step 2
 	dx2 := make([]float64, dataLen)
 	sum := 0.
 	for i := 1; i < k; i++ {
 		sum = 0.
-		for j, d := range dataSet._array {
-			_, minDistance := nearestMean(new(Matrix).Init(means._array[:i]), ObservationWithClusterID{observation: d}, distFunc)
+		for j, d := range dataSet.Data {
+			_, minDistance := nearestMean(new(Matrix).Init(means.Data[:i]), ObservationWithClusterID{Observation: d}, distFunc)
 			dx2[j] = minDistance * minDistance
 			sum += dx2[j]
 		}
@@ -125,7 +125,7 @@ func PPMeans(dataSet *Matrix, k int, distFunc DistFunc) *Matrix {
 		for sum = dx2[0]; sum < target; sum += dx2[idx] {
 			idx++
 		}
-		means._array[i] = dataSet._array[idx]
+		means.Data[i] = dataSet.Data[idx]
 	}
 	return means
 }

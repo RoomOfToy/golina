@@ -7,15 +7,15 @@ import (
 
 func TestSVC_Predict(t *testing.T) {
 	clss := SVC{
-		w:         nil,
-		a:         nil,
-		b:         0,
-		C:         0.1,
-		tolerance: 1e-10,
-		kernel:    RBFKernel,
-		args:      3.5,
-		bOffset:   0,
-		sv:        nil,
+		w:          nil,
+		a:          nil,
+		b:          0,
+		C:          0.1,
+		Tolerance:  1e-10,
+		Kernel:     RBFKernel,
+		KernelArgs: 3.5,
+		bOffset:    0,
+		sv:         nil,
 	}
 	dataSet, err := Load3DToMatrix("data.txt")
 	if err != nil {

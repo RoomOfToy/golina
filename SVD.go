@@ -16,7 +16,7 @@ import (
 // 	https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
 func SVD(t *Matrix) (U, S, V *Matrix) {
 	// Initialize
-	A := Copy(t)._array
+	A := Copy(t).Data
 	m, n := t.Dims()
 	if m < n {
 		panic("error dimensions of input matrix, rows should be larger or equal to columns")
@@ -462,7 +462,7 @@ func SVD(t *Matrix) (U, S, V *Matrix) {
 	ls := len(s)
 	S = ZeroMatrix(ls, ls)
 	for i := 0; i < ls; i++ {
-		S._array[i][i] = s[i]
+		S.Data[i][i] = s[i]
 	}
 	V = new(Matrix).Init(v)
 

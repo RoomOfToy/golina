@@ -19,7 +19,7 @@ func EigenDecompose(A *Matrix) (V, D *Matrix) {
 	if m != n {
 		panic("Eigen Decomposition requires Squared Matrix")
 	}
-	Va := Copy(A)._array
+	Va := Copy(A).Data
 	d := make([]float64, n)
 	e := make([]float64, n)
 	if A.IsSymmetric() {
@@ -28,7 +28,7 @@ func EigenDecompose(A *Matrix) (V, D *Matrix) {
 		// Diagonalize.
 		tql2(Va[:], d[:], e[:])
 	} else {
-		H := Copy(A)._array
+		H := Copy(A).Data
 		ort := make([]float64, n)
 		// Reduce to Hessenberg form.
 		orthes(Va[:], H[:], ort[:])
@@ -43,11 +43,11 @@ func getDiagonalMatrix(d, e []float64) *Matrix {
 	n := len(d)
 	D := ZeroMatrix(n, n)
 	for i := 0; i < n; i++ {
-		D._array[i][i] = d[i]
+		D.Data[i][i] = d[i]
 		if e[i] > 0 {
-			D._array[i][i+1] = e[i]
+			D.Data[i][i+1] = e[i]
 		} else if e[i] < 0 {
-			D._array[i][i-1] = e[i]
+			D.Data[i][i-1] = e[i]
 		}
 	}
 	return D
@@ -825,7 +825,7 @@ func Eigen33(t *Matrix) (eig_val *Vector, eig_vec *Matrix) {
 
 	// Eigenvectors
 	// eig_vec.Sub(IdentityMatrix(3).MulNum((*eig_val)[1]))
-	if t._array[0][1]*t._array[0][1]+t._array[0][2]*t._array[0][2]+t._array[1][2]*t._array[1][2] == 0 {
+	if t.Data[0][1]*t.Data[0][1]+t.Data[0][2]*t.Data[0][2]+t.Data[1][2]*t.Data[1][2] == 0 {
 		eig_vec = IdentityMatrix(3)
 		return
 	}
@@ -840,15 +840,15 @@ func EigenValues33(t *Matrix) (eig_val *Vector) {
 	// Eigenvalues
 	eig0, eig1, eig2 := 0., 0., 0.
 	// upper triangle
-	p1 := t._array[0][1]*t._array[0][1] + t._array[0][2]*t._array[0][2] + t._array[1][2]*t._array[1][2]
+	p1 := t.Data[0][1]*t.Data[0][1] + t.Data[0][2]*t.Data[0][2] + t.Data[1][2]*t.Data[1][2]
 	if p1 == 0 {
 		// t is diagonal
-		eig0 = t._array[0][0]
-		eig1 = t._array[1][1]
-		eig2 = t._array[2][2]
+		eig0 = t.Data[0][0]
+		eig1 = t.Data[1][1]
+		eig2 = t.Data[2][2]
 	} else {
 		q := t.Trace() / 3
-		p2 := (t._array[0][0]-q)*(t._array[0][0]-q) + (t._array[1][1]-q)*(t._array[1][1]-q) + (t._array[2][2]-q)*(t._array[2][2]-q) + 2*p1
+		p2 := (t.Data[0][0]-q)*(t.Data[0][0]-q) + (t.Data[1][1]-q)*(t.Data[1][1]-q) + (t.Data[2][2]-q)*(t.Data[2][2]-q) + 2*p1
 		p := math.Sqrt(p2 / 6)
 		B := t.Sub(IdentityMatrix(3).MulNum(q)).MulNum(1 / p)
 		r := B.Det() / 2
@@ -875,11 +875,11 @@ func EigenValues33(t *Matrix) (eig_val *Vector) {
 func EigenVector33(t *Matrix, eig_val *Vector) (eig_vec *Matrix) {
 	eig_vec = ZeroMatrix(3, 3)
 	// algebraic multiplicity 1
-	eig_vec._array[2] = *computeEigenVector0(Copy(t), (*eig_val)[2])
+	eig_vec.Data[2] = *computeEigenVector0(Copy(t), (*eig_val)[2])
 	// algebraic multiplicity 2
-	eig_vec._array[1] = *computeEigenVector1(Copy(t), &eig_vec._array[2], (*eig_val)[1])
+	eig_vec.Data[1] = *computeEigenVector1(Copy(t), &eig_vec.Data[2], (*eig_val)[1])
 	// TODO: the sign does not matter, but can it be decided?
-	eig_vec._array[0] = *(eig_vec.Row(2).Cross(eig_vec.Row(1)))
+	eig_vec.Data[0] = *(eig_vec.Row(2).Cross(eig_vec.Row(1)))
 	return
 }
 

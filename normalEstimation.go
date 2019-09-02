@@ -52,7 +52,7 @@ func PlaneLinearSolveWeighted(points *Matrix) *Vector {
 	/*
 		// calculate cov
 		mean := points.Mean(0)
-		for _, p := range points._array {
+		for _, p := range points.Data {
 			r := p.Sub(mean)
 			xx += r.At(0) * r.At(0)
 			xy += r.At(0) * r.At(1)

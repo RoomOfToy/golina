@@ -55,7 +55,7 @@ func GenerateRandomMatrix(row, col int) *Matrix {
 func TestMatrix_Init(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
-	if matA._array == nil {
+	if matA.Data == nil {
 		t.Fail()
 	}
 }
@@ -129,7 +129,7 @@ func TestMatrix_Max(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
 	maxA := matA.Max()
-	if maxA.value != 9 && maxA.row != 2 && maxA.col != 2 {
+	if maxA.Value != 9 && maxA.Row != 2 && maxA.Col != 2 {
 		t.Fail()
 	}
 }
@@ -138,7 +138,7 @@ func TestMatrix_Min(t *testing.T) {
 	a := Data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
 	matA := new(Matrix).Init(a)
 	minA := matA.Min()
-	if minA.value != 1 && minA.row != 0 && minA.col != 0 {
+	if minA.Value != 1 && minA.Row != 0 && minA.Col != 0 {
 		t.Fail()
 	}
 }
@@ -652,7 +652,7 @@ func TestVector_SortedToSortPairSlice(t *testing.T) {
 	v := &Vector{1, 2, 3}
 	sorted := v.SortedToSortPairSlice()
 	for i := 1; i < v.Length(); i++ {
-		if sorted[i].value < sorted[i-1].value {
+		if sorted[i].Value < sorted[i-1].Value {
 			t.Fail()
 		}
 	}

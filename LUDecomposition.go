@@ -41,9 +41,9 @@ func LUPDecompose(t *Matrix, N int, Tol float64) (*Matrix, *[]int) {
 			P[imax] = j
 
 			// pivoting rows of t
-			tmp = nt._array[i]
-			nt._array[i] = nt._array[imax]
-			nt._array[imax] = tmp
+			tmp = nt.Data[i]
+			nt.Data[i] = nt.Data[imax]
+			nt.Data[imax] = tmp
 
 			// counting pivots starting from N (for determinant)
 			P[N]++
