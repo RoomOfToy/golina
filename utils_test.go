@@ -1,6 +1,7 @@
 package golina
 
 import (
+	"os"
 	"reflect"
 	"testing"
 )
@@ -133,7 +134,14 @@ func TestMatrixElementIter(t *testing.T) {
 }
 
 func TestLoad3DToMatrix(t *testing.T) {
-	_, err := Load3DToMatrix("data.txt")
+	mat := GenerateRandomMatrix(10, 3)
+	err := WriteMatrixToTxt("data.txt", mat)
+	defer os.Remove("data.txt")
+	if err != nil {
+		println(err.Error())
+		t.Fail()
+	}
+	_, err = Load3DToMatrix("data.txt")
 	if err != nil {
 		println(err.Error())
 		t.Fail()
@@ -143,6 +151,7 @@ func TestLoad3DToMatrix(t *testing.T) {
 func TestWriteMatrixToTxt(t *testing.T) {
 	mat := GenerateRandomMatrix(10, 10)
 	err := WriteMatrixToTxt("test.txt", mat)
+	defer os.Remove("test.txt")
 	if err != nil {
 		println(err.Error())
 		t.Fail()
