@@ -107,7 +107,7 @@ func MEqual(mat1, mat2 *Matrix) bool {
 
 func GenerateRandomFloat() float64 {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Float64()
+	return rand.Float64() - rand.Float64()
 }
 
 func GenerateRandomVector(size int) *Vector {
@@ -145,6 +145,15 @@ func GenerateRandomMatrix(row, col int) *Matrix {
 	}
 	m := new(Matrix).Init(rows)
 	return m
+}
+
+func GenerateRandomSparseMatrix(rows, cols, entriesNum int) *SparseMatrix {
+	nsm := ZeroSparseMatrix(rows, cols)
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < entriesNum; i++ {
+		nsm.Set(rand.Intn(rows), rand.Intn(cols), rand.Float64()-rand.Float64())
+	}
+	return nsm
 }
 
 // Vector to iterable
