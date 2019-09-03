@@ -3,9 +3,11 @@ package golina
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"reflect"
 	"sync"
+	"time"
 )
 
 // simple function for simulating ternary operator
@@ -101,6 +103,48 @@ func MEqual(mat1, mat2 *Matrix) bool {
 		}
 	}
 	return true
+}
+
+func GenerateRandomFloat() float64 {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Float64()
+}
+
+func GenerateRandomVector(size int) *Vector {
+	slice := make(Vector, size, size)
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < size; i++ {
+		slice[i] = rand.Float64() - rand.Float64()
+	}
+	return &slice
+}
+
+func GenerateRandomSymmetric33Matrix() *Matrix {
+	entries := *GenerateRandomVector(6)
+	m := ZeroMatrix(3, 3)
+	m.Set(0, 0, entries[0])
+	m.Set(1, 1, entries[1])
+	m.Set(2, 2, entries[2])
+	m.Set(0, 1, entries[3])
+	m.Set(1, 0, entries[3])
+	m.Set(0, 2, entries[4])
+	m.Set(2, 0, entries[4])
+	m.Set(1, 2, entries[5])
+	m.Set(2, 1, entries[5])
+	return m
+}
+
+func GenerateRandomSquareMatrix(size int) *Matrix {
+	return GenerateRandomMatrix(size, size)
+}
+
+func GenerateRandomMatrix(row, col int) *Matrix {
+	rows := make(Data, row)
+	for i := range rows {
+		rows[i] = *GenerateRandomVector(col)
+	}
+	m := new(Matrix).Init(rows)
+	return m
 }
 
 // Vector to iterable
