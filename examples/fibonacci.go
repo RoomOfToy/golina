@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"golina"
+	"golina/matrix"
 )
 
 func fibonacci(n int) int {
@@ -11,8 +11,8 @@ func fibonacci(n int) int {
 	// Transfer function: An = An-2 + An-1 => Fn = Fn-1 * [[0, 1], [1, 1]]
 	// F0 = [0, 1] => [[1, 0], [0, 1]]
 	// Fn = [[1, 0], [0, 1]] * ([[0, 1], [1, 1]]).Power(n)
-	f0 := new(golina.Matrix).Init(golina.Data{{1, 0}, {0, 1}})
-	stateTransMatrix := new(golina.Matrix).Init(golina.Data{{0, 1}, {1, 1}})
+	f0 := new(matrix.Matrix).Init(matrix.Data{{1, 0}, {0, 1}})
+	stateTransMatrix := new(matrix.Matrix).Init(matrix.Data{{0, 1}, {1, 1}})
 	fn := f0.Mul(stateTransMatrix.Pow(n))
 	return int(fn.At(1, 1))
 }
