@@ -270,6 +270,9 @@ func (t *Matrix) Det() float64 {
 		panic("need N x N matrix for determinant calculation")
 	}
 	nt, P := LUPDecompose(t, row, EPS)
+	if nt == nil {
+		panic("Can Not do LUP Decomposition with tolerance 1e-6")
+	}
 	return LUPDeterminant(nt, P, row)
 }
 
@@ -279,6 +282,9 @@ func (t *Matrix) Inverse() *Matrix {
 		panic("only inverse only support square matrix, left/right is not supported")
 	}
 	nt, P := LUPDecompose(t, row, EPS)
+	if nt == nil {
+		panic("Can Not do LUP Decomposition with tolerance 1e-6")
+	}
 	return LUPInvert(nt, P, row)
 }
 
