@@ -1,6 +1,9 @@
 package golina
 
 import (
+	"fmt"
+	"math"
+	"strconv"
 	"testing"
 )
 
@@ -125,5 +128,120 @@ func TestSparseMatrix_ToMatrix(t *testing.T) {
 	}
 	if ma.At(0, 5) != 0.1 || ma.At(1, 6) != 0.2 {
 		t.Fail()
+	}
+}
+
+func TestSparseMatrix_T(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(20, 20, 10)
+	SB := SA.T()
+	for idx, value := range SA.Data {
+		r, c := SA.IndexToRowCol(idx)
+		if value != SB.At(c, r) {
+			t.Fail()
+		}
+	}
+}
+
+func TestSparseMatrix_Add(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(20, 20, 10)
+	SB := GenerateRandomSparseMatrix(20, 20, 10)
+	SC := SA.Add(SB)
+	for idx, value := range SC.Data {
+		if value == 0. || !FloatEqual(value, SA.AtIndex(idx)+SB.AtIndex(idx)) {
+			t.Fail()
+		}
+	}
+}
+
+func TestSparseMatrix_AddNum(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(20, 20, 10)
+	n := GenerateRandomFloat()
+	SB := SA.AddNum(n)
+	for idx, value := range SB.Data {
+		if value == 0. || !FloatEqual(value, SA.AtIndex(idx)+n) {
+			t.Fail()
+		}
+	}
+}
+
+func TestSparseMatrix_Mul(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(30, 20, 10)
+	SB := GenerateRandomSparseMatrix(20, 10, 10)
+	SC := SA.Mul(SB)
+	if SC.Rows != 30 || SC.Cols != 10 {
+		t.Fail()
+	}
+	for _, value := range SC.Data {
+		if value == 0. {
+			t.Fail()
+		}
+	}
+}
+
+func TestSparseMatrix_MulNum(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(20, 20, 10)
+	n := GenerateRandomFloat()
+	SB := SA.MulNum(n)
+	for idx, value := range SB.Data {
+		if value == 0. || !FloatEqual(value, SA.AtIndex(idx)*n) {
+			t.Fail()
+		}
+	}
+}
+
+func TestSparseMatrix_MulVec(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(30, 20, 10)
+	v := GenerateRandomVector(20)
+	nv := SA.MulVec(v)
+
+	if nv.Length() != SA.Rows {
+		t.Fail()
+	}
+}
+
+func TestSparseMatrix_Det(t *testing.T) {
+	SA := GenerateRandomSparseMatrix(10, 10, 50)
+	mat := SA.ToMatrix()
+	fmt.Println(mat.Dims())
+	fmt.Println(mat)
+	fmt.Println(SA.Det())
+}
+
+func BenchmarkGenerateRandomSparseMatrix(b *testing.B) {
+	for k := 5; k <= 8; k++ {
+		n := int(math.Pow(10, float64(k)))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				GenerateRandomSparseMatrix(n, n, n/1000)
+			}
+		})
+	}
+}
+
+func BenchmarkSparseMatrix_Mul(b *testing.B) {
+	for k := 5; k <= 6; k++ {
+		n := int(math.Pow(10, float64(k)))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			SA := GenerateRandomSparseMatrix(n, n, n/1000)
+			SB := GenerateRandomSparseMatrix(n, n, n/1000)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				SA.Mul(SB)
+			}
+		})
+	}
+}
+
+func BenchmarkSparseMatrix_MulVec(b *testing.B) {
+	for k := 5; k <= 8; k++ {
+		n := int(math.Pow(10, float64(k)))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			SA := GenerateRandomSparseMatrix(n, n, n/1000)
+			v := GenerateRandomVector(n)
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				SA.MulVec(v)
+			}
+		})
 	}
 }

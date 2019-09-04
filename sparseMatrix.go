@@ -1,8 +1,11 @@
 package golina
 
+import "math"
+
 // Sparse Matrix
 //	https://en.wikipedia.org/wiki/Sparse_matrix
 //	Dictionary of keys (DOK)
+//	Row-wise
 type SparseMatrix struct {
 	Rows, Cols int
 	Data       map[int]float64 // key = row * Cols + col - Offset + Offset % Cols + Offset / Cols
@@ -38,6 +41,9 @@ func (sm *SparseMatrix) IndexToRowCol(idx int) (row, col int) {
 func (sm *SparseMatrix) At(row, col int) float64 {
 	entry, ok := sm.Data[sm.RowColToIndex(row, col)]
 	if !ok {
+		if row < sm.Rows && col < sm.Cols && row >= 0 && col >= 0 {
+			return 0.
+		}
 		panic("invalid index")
 	}
 	return entry
@@ -46,6 +52,9 @@ func (sm *SparseMatrix) At(row, col int) float64 {
 func (sm *SparseMatrix) AtIndex(idx int) float64 {
 	entry, ok := sm.Data[idx]
 	if !ok {
+		if idx < sm.Rows*sm.Cols && idx >= 0 {
+			return 0.
+		}
 		panic("invalid index")
 	}
 	return entry
@@ -146,4 +155,97 @@ func (sm *SparseMatrix) ToMatrix() *Matrix {
 		nm.Set(i, j, value)
 	}
 	return nm
+}
+
+func (sm *SparseMatrix) T() *SparseMatrix {
+	nsm := ZeroSparseMatrix(sm.Cols, sm.Rows)
+	for idx, value := range sm.Data {
+		nc, nr := sm.IndexToRowCol(idx)
+		nsm.Set(nr, nc, value)
+	}
+	return nsm
+}
+
+func (sm *SparseMatrix) Add(sm2 *SparseMatrix) *SparseMatrix {
+	if sm.Rows != sm2.Rows || sm.Cols != sm2.Cols {
+		panic("Dimension mismatch")
+	}
+	nsm := ZeroSparseMatrix(sm.Rows, sm.Cols)
+	for idx, value := range sm.Data {
+		if _, ok := sm2.Data[idx]; !ok {
+			nsm.SetIndex(idx, value)
+		} else {
+			nsm.SetIndex(idx, value+sm2.Data[idx])
+		}
+	}
+	return nsm
+}
+
+func (sm *SparseMatrix) AddNum(n float64) *SparseMatrix {
+	nsm := ZeroSparseMatrix(sm.Rows, sm.Cols)
+	for idx, value := range sm.Data {
+		if value+n != 0. {
+			nsm.SetIndex(idx, value+n)
+		}
+	}
+	return nsm
+}
+
+// Sparse Matrix Multiplication
+//	TODO: Need Optimize
+func (sm *SparseMatrix) Mul(sm2 *SparseMatrix) *SparseMatrix {
+	if sm.Cols != sm2.Rows {
+		panic("Dimension mismatch")
+	}
+	nsm := ZeroSparseMatrix(sm.Rows, sm2.Cols)
+	for idx, value := range sm.Data {
+		i, j := sm.IndexToRowCol(idx)
+		for k := 0; k < sm2.Cols; k++ {
+			nv := nsm.At(i, k) + value*sm2.At(j, k)
+			if nv != 0. {
+				nsm.Set(i, k, nv)
+			}
+		}
+	}
+	return nsm
+}
+
+func (sm *SparseMatrix) MulVec(v *Vector) *Vector {
+	if sm.Cols != v.Length() {
+		panic("Dimension mismatch")
+	}
+	nVec := make(Vector, sm.Rows)
+	for idx, value := range sm.Data {
+		r, c := sm.IndexToRowCol(idx)
+		nVec[r] += value * v.At(c)
+	}
+	return &nVec
+}
+
+func (sm *SparseMatrix) MulNum(n float64) *SparseMatrix {
+	nsm := ZeroSparseMatrix(sm.Rows, sm.Cols)
+	if n == 0. {
+		return nsm
+	}
+	for idx, value := range sm.Data {
+		nsm.SetIndex(idx, value*n)
+	}
+	return nsm
+}
+
+// Determinant of Sparse Matrix
+//	transfer to dense matrix and use LUP decomposition
+//	Notice: easy OOM and slow...
+//	TODO: Any better way???
+func (sm *SparseMatrix) Det() float64 {
+	defer func() {
+		if r := recover(); r != nil { // Can Not do LUP Decomposition with tolerance 1e-6
+			// return zero value of the specified return type
+		}
+	}()
+	det := sm.ToMatrix().Det()
+	if math.IsNaN(det) {
+		return 0.
+	}
+	return det
 }
