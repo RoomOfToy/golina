@@ -221,7 +221,7 @@ func BenchmarkGenerateRandomSparseMatrix(b *testing.B) {
 func BenchmarkSparseMatrix_Mul(b *testing.B) {
 	for k := 5; k <= 6; k++ {
 		n := int(math.Pow(10, float64(k)))
-		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+		b.Run("size-"+strconv.Itoa(n)+"x"+strconv.Itoa(n), func(b *testing.B) {
 			SA := GenerateRandomSparseMatrix(n, n, n/1000)
 			SB := GenerateRandomSparseMatrix(n, n, n/1000)
 			b.ResetTimer()
@@ -235,7 +235,7 @@ func BenchmarkSparseMatrix_Mul(b *testing.B) {
 func BenchmarkSparseMatrix_MulVec(b *testing.B) {
 	for k := 5; k <= 8; k++ {
 		n := int(math.Pow(10, float64(k)))
-		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+		b.Run("size-"+strconv.Itoa(n)+"x"+strconv.Itoa(n), func(b *testing.B) {
 			SA := GenerateRandomSparseMatrix(n, n, n/1000)
 			v := GenerateRandomVector(n)
 			b.ResetTimer()
