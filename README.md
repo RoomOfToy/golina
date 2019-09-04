@@ -98,4 +98,13 @@ BenchmarkPlaneLinearSolveWeighted/size-1000x3-8    10000            148080 ns/op
 BenchmarkKabsch/size-10x3-8                       100000             17576 ns/op
 BenchmarkKabsch/size-100x3-8                       20000             73274 ns/op
 BenchmarkKabsch/size-1000x3-8                       2000            580883 ns/op
+
+BenchmarkGenerateRandomSparseMatrix/size-100000-8  50000             28520 ns/op
+BenchmarkGenerateRandomSparseMatrix/size-1000000-8  5000            236498 ns/op
+BenchmarkGenerateRandomSparseMatrix/size-10000000-8 1000           2176181 ns/op
+BenchmarkGenerateRandomSparseMatrix/size-100000000-8 100          22174043 ns/op
+BenchmarkSparseMatrix_MulVec/size-100000-8         10000            161415 ns/op
+BenchmarkSparseMatrix_MulVec/size-1000000-8         1000           1289630 ns/op
+BenchmarkSparseMatrix_MulVec/size-10000000-8         300           5338996 ns/op
+BenchmarkSparseMatrix_MulVec/size-100000000-8        100          63072924 ns/op
 ```
