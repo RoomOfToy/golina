@@ -11,7 +11,7 @@ Pure Golang, No Dependencies.
 Realized functions up to now:
 
 - Matrix Operations: `Add`, `AddNum`, `Sub`, `Mul`, `MulVec`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
-`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`, `IsSymmetric`
+`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`, `IsSymmetric`, `Unique`, `UniqueWithCount`
 - Eigen-Decomposition: `EigenDecompose`, `Eigen33`, `EigenValues33`, `EigenVector33`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
@@ -20,7 +20,8 @@ Realized functions up to now:
 - Matrix Transform: `Stretch`, `Rotate2D`, `Rotate3D`, `Translate`, `Shear2D`, `Shear3D`, 
 `TransformOnRow` (for custom transform matrix), `ToAffineMatrix`, `Kabsch` (Superimpose)
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `OuterProduct`, `Cross`, `SquareSum`, `Norm`, 
-`Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`, `Max`, `Min`
+`Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`, `Max`, `Min`, `SortedAscending`, `SortedDescending`, 
+`Reversed`, `Unique`, `UniqueWithCount`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
 `TaxicabDistance`, `EuclideanDistance`, `SquaredEuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, 
 `HammingDistance`, `CanberraDistance`

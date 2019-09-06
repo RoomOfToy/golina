@@ -689,6 +689,38 @@ func (t *Matrix) IsSymmetric() bool {
 	return true
 }
 
+// get unique elements in matrix
+//	it need to loop the whole matrix
+func (t *Matrix) Unique() *Vector {
+	uSet := map[float64]bool{}
+	for _, r := range t.Data {
+		for _, val := range r {
+			uSet[val] = true
+		}
+	}
+	uv := make(Vector, len(uSet))
+	i := 0
+	for k := range uSet {
+		uv[i] = k
+		i++
+	}
+	return &uv
+}
+
+func (t *Matrix) UniqueWithCount() map[float64]int {
+	uSet := map[float64]int{}
+	for _, r := range t.Data {
+		for _, val := range r {
+			if _, exist := uSet[val]; !exist {
+				uSet[val] = 1
+			} else {
+				uSet[val]++
+			}
+		}
+	}
+	return uSet
+}
+
 // Vector
 // 	get vector element at index n
 func (v *Vector) At(n int) float64 {
@@ -935,6 +967,33 @@ func (v *Vector) Reversed() *Vector {
 		nv[i], nv[j] = nv[j], nv[i]
 	}
 	return &nv
+}
+
+// Find unique elements in a vector
+func (v *Vector) Unique() *Vector {
+	uSet := map[float64]bool{}
+	for _, val := range *v {
+		uSet[val] = true
+	}
+	uv := make(Vector, len(uSet))
+	i := 0
+	for k := range uSet {
+		uv[i] = k
+		i++
+	}
+	return &uv
+}
+
+func (v *Vector) UniqueWithCount() map[float64]int {
+	uSet := map[float64]int{}
+	for _, val := range *v {
+		if _, exist := uSet[val]; !exist {
+			uSet[val] = 1
+		} else {
+			uSet[val]++
+		}
+	}
+	return uSet
 }
 
 func mul(u, v *Vector, k int) (res float64) {

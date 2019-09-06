@@ -444,6 +444,26 @@ func TestCrossCovMatrix(t *testing.T) {
 	}
 }
 
+func TestMatrix_Unique(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !VEqual(matA.Unique().SortedAscending(), &Vector{-4, -2, -1, 1, 2, 3}) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_UniqueWithCount(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	ua := matA.UniqueWithCount()
+	uaa := map[float64]int{-4: 1, -2: 1, -1: 2, 1: 2, 2: 2, 3: 1}
+	for k, val := range ua {
+		if uaa[k] != val {
+			t.Fail()
+		}
+	}
+}
+
 // Vector
 func TestVector_At(t *testing.T) {
 	v := &Vector{1, 2, 3}
@@ -643,6 +663,25 @@ func TestVector_Reversed(t *testing.T) {
 	v := &Vector{1, 2, 3}
 	if !VEqual(v, v.Reversed().Reversed()) {
 		t.Fail()
+	}
+}
+
+func TestVector_Unique(t *testing.T) {
+	v := &Vector{1, 1, 2, 3, 4, 5, 2, 6, 9, 8, 6, 11, 12}
+	vv := &Vector{1, 2, 3, 4, 5, 6, 8, 9, 11, 12}
+	if !VEqual(v.Unique().SortedAscending(), vv) {
+		t.Fail()
+	}
+}
+
+func TestVector_UniqueWithCount(t *testing.T) {
+	v := &Vector{1, 1, 2, 3, 4, 5, 2, 6, 9, 8, 6, 11, 12}
+	vv := map[float64]int{1: 2, 2: 2, 3: 1, 4: 1, 5: 1, 6: 2, 8: 1, 9: 1, 11: 1, 12: 1}
+	vc := v.UniqueWithCount()
+	for k, val := range vc {
+		if vv[k] != val {
+			t.Fail()
+		}
 	}
 }
 
