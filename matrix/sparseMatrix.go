@@ -80,9 +80,11 @@ func (sm *SparseMatrix) SetIndex(idx int, value float64) {
 }
 
 func (sm *SparseMatrix) GetAllIndexes() (idxes []int) {
-	idxes = make([]int, 0, len(sm.Data))
+	idxes = make([]int, len(sm.Data))
+	i := 0
 	for idx := range sm.Data {
-		idxes = append(idxes, idx)
+		idxes[i] = idx
+		i++
 	}
 	return
 }
