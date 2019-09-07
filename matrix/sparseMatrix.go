@@ -79,6 +79,8 @@ func (sm *SparseMatrix) SetIndex(idx int, value float64) {
 	}
 }
 
+// map is unordered
+// need sort.Ints(idxes) if want to keep ascending order
 func (sm *SparseMatrix) GetAllIndexes() (idxes []int) {
 	idxes = make([]int, len(sm.Data))
 	i := 0

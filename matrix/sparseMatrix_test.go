@@ -3,6 +3,7 @@ package matrix
 import (
 	"fmt"
 	"math"
+	"sort"
 	"strconv"
 	"testing"
 )
@@ -76,7 +77,8 @@ func TestSparseMatrix_SetIndex(t *testing.T) {
 func TestSparseMatrix_GetAllIndexes(t *testing.T) {
 	SA := NewSparseMatrix(map[int]float64{1: 0.1, 500: 0.2}, 100, 100)
 	s := SA.GetAllIndexes()
-	if s[0] != 1 || s[1] != 500 {
+	sort.Ints(s)
+	if s[0] != 1 && s[1] != 500 {
 		t.Fail()
 	}
 }
