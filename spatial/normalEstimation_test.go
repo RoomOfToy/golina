@@ -35,6 +35,26 @@ func TestPlaneLinearSolveWeighted(t *testing.T) {
 	}
 }
 
+/*
+// PlaneLinearSolveWeighted has different result from  PlanePCA (Eigen, SVD) when use Random Points Set.
+// Random Points Set actually always is NOT able to form a plane, so PlaneLinearSolveWeighted is not fitted here.
+// But if setting points num to 3, which can exactly form a plane, their results will keep the same.
+func TestPlanePCA(t *testing.T) {
+	cnt := 0
+	for i := 0; i < 100; i++ {
+		points := matrix.GenerateRandomMatrix(100, 3)  // (3, 3)
+		ve, vs, vl := PlanePcaEigen(points), PlanePcaSVD(points), PlaneLinearSolveWeighted(points)
+		equal := matrix.VEqual
+		if !equal(ve, vs) && !equal(ve.MulNum(-1), vs) || !equal(ve, vl) && !equal(ve.MulNum(-1), vl) {
+			cnt += 1
+			fmt.Println(ve, vs, vl)
+			t.Fail()
+		}
+	}
+	defer fmt.Println(cnt)
+}
+*/
+
 func BenchmarkPlanePcaEigen(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
