@@ -10,6 +10,35 @@ A toy repo for reviewing linear algebra.
 
 Pure Golang, No Dependencies.
 
+Package structure:
+
+```bash
+.
+├── cluster
+│   └── kMeans.go
+├── matrix
+│   ├── CholeskyDecomposition.go
+│   ├── EigenDecomposition.go
+│   ├── LUDecomposition.go
+│   ├── QRDecomposition.go
+│   ├── SVD.go
+│   ├── matrix.go
+│   ├── sparseMatrix.go
+│   ├── transform.go
+│   └── utils.go
+├── numerical
+│   └── numerical.go
+├── spatial
+│   ├── distance.go
+│   ├── kNearestNeighbors.go
+│   ├── kdtree.go
+│   ├── normalEstimation.go
+│   └── octree.go
+└── stats
+    ├── PCA.go
+    └── stats.go
+```
+
 Realized functions up to now:
 
 - Matrix Operations: `Add`, `AddNum`, `Sub`, `Mul`, `MulVec`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
@@ -93,18 +122,18 @@ BenchmarkKMeans/size-1000x3-4                        100          47704397 ns/op
 BenchmarkKMeansPP/size-10x3-4                      50000             27485 ns/op
 BenchmarkKMeansPP/size-100x3-4                      2000            595368 ns/op
 BenchmarkKMeansPP/size-1000x3-4                      100          51592136 ns/op
-BenchmarkPlanePcaEigen/size-10x3-4         	      300000	          4422 ns/op
-BenchmarkPlanePcaEigen/size-100x3-4        	      100000	         15250 ns/op
-BenchmarkPlanePcaEigen/size-1000x3-4       	       10000	        121912 ns/op
-BenchmarkPlanePcaSVD/size-10x3-4         	      200000	          6280 ns/op
-BenchmarkPlanePcaSVD/size-100x3-4        	       50000	         34519 ns/op
-BenchmarkPlanePcaSVD/size-1000x3-4       	        5000	        329981 ns/op
-BenchmarkPlaneLinearSolveWeighted/size-10x3-4     300000	          3867 ns/op
-BenchmarkPlaneLinearSolveWeighted/size-100x3-4    100000	         14778 ns/op
-BenchmarkPlaneLinearSolveWeighted/size-1000x3-4    10000	        122538 ns/op
-BenchmarkPrincipalComponents/size-10x3-4          300000	          4885 ns/op
-BenchmarkPrincipalComponents/size-100x3-4         100000	         15637 ns/op
-BenchmarkPrincipalComponents/size-1000x3-4         10000	        120132 ns/op
+BenchmarkPlanePcaEigen/size-10x3-4                300000              4422 ns/op
+BenchmarkPlanePcaEigen/size-100x3-4               100000             15250 ns/op
+BenchmarkPlanePcaEigen/size-1000x3-4               10000            121912 ns/op
+BenchmarkPlanePcaSVD/size-10x3-4                  200000              6280 ns/op
+BenchmarkPlanePcaSVD/size-100x3-4                  50000             34519 ns/op
+BenchmarkPlanePcaSVD/size-1000x3-4                  5000            329981 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-10x3-4     300000              3867 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-100x3-4    100000             14778 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-1000x3-4    10000            122538 ns/op
+BenchmarkPrincipalComponents/size-10x3-4          300000              4885 ns/op
+BenchmarkPrincipalComponents/size-100x3-4         100000             15637 ns/op
+BenchmarkPrincipalComponents/size-1000x3-4         10000            120132 ns/op
 BenchmarkKabsch/size-10x3-8                       100000             17576 ns/op
 BenchmarkKabsch/size-100x3-8                       20000             73274 ns/op
 BenchmarkKabsch/size-1000x3-8                       2000            580883 ns/op
