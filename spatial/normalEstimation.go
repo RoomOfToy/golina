@@ -9,7 +9,7 @@ import (
 
 // common solution: `Principle Component Analysis`
 // https://en.wikipedia.org/wiki/Principal_component_analysis
-func PlanePCA(points *matrix.Matrix) *matrix.Vector {
+func PlanePcaEigen(points *matrix.Matrix) *matrix.Vector {
 	row, col := points.Dims()
 	if col > 3 {
 		panic("Only 3D points is supported")
@@ -21,6 +21,19 @@ func PlanePCA(points *matrix.Matrix) *matrix.Vector {
 	// _, eigVec := Eigen33(cov)
 	eigVec, _ := matrix.EigenDecompose(cov) // new `EigenDecompose` function is about one times faster than `Eigen33`
 	return eigVec.Col(0)
+}
+
+// PCA with SVD is slower than PCA with Eigen Decomposition
+func PlanePcaSVD(points *matrix.Matrix) *matrix.Vector {
+	row, col := points.Dims()
+	if col > 3 {
+		panic("Only 3D points is supported")
+	}
+	if row < 3 {
+		panic("Not enough points to fit a plane")
+	}
+	_, _, V := matrix.SVD(points.Sub(points.Mean(0).Tile(0, row))) // U, S, V
+	return V.Col(2)                                                // V's column corresponding to smallest value in S
 }
 
 // https://www.ilikebigbits.com/2017_09_25_plane_from_points_2.html

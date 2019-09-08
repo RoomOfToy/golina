@@ -29,7 +29,7 @@ Realized functions up to now:
 `HammingDistance`, `CanberraDistance`
 - k-Nearest-Neighbors: `KNearestNeighbor`, `KNearestNeighborsWithDistance` (work with above distance functions)
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
-- normal-Estimation: `PlanePCA`, `PlaneLinearSolveWeighted`
+- normal-Estimation: `PlanePcaEigen`, `PlanePcaSVD`, `PlaneLinearSolveWeighted`
 - Octree (concept only): `Octree` (based on hash map), `OctreeNode` (location encoded as map key)
 - KD-Tree: `Insert`, `Search`, `FindMinValue`, `FindMinNode`, `DeleteNode`
 - Utils Functions: `FloatEqual`, `MEqual`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print), 
@@ -92,12 +92,15 @@ BenchmarkKMeans/size-1000x3-4                        100          47704397 ns/op
 BenchmarkKMeansPP/size-10x3-4                      50000             27485 ns/op
 BenchmarkKMeansPP/size-100x3-4                      2000            595368 ns/op
 BenchmarkKMeansPP/size-1000x3-4                      100          51592136 ns/op
-BenchmarkPlanePCA/size-10x3-8                     300000              5055 ns/op
-BenchmarkPlanePCA/size-100x3-8                    100000             18980 ns/op
-BenchmarkPlanePCA/size-1000x3-8                    10000            147370 ns/op
-BenchmarkPlaneLinearSolveWeighted/size-10x3-8     300000              3989 ns/op
-BenchmarkPlaneLinearSolveWeighted/size-100x3-8    100000             18511 ns/op
-BenchmarkPlaneLinearSolveWeighted/size-1000x3-8    10000            148080 ns/op
+BenchmarkPlanePcaEigen/size-10x3-4         	      300000	          4422 ns/op
+BenchmarkPlanePcaEigen/size-100x3-4        	      100000	         15250 ns/op
+BenchmarkPlanePcaEigen/size-1000x3-4       	       10000	        121912 ns/op
+BenchmarkPlanePcaSVD/size-10x3-4         	      200000	          6280 ns/op
+BenchmarkPlanePcaSVD/size-100x3-4        	       50000	         34519 ns/op
+BenchmarkPlanePcaSVD/size-1000x3-4       	        5000	        329981 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-10x3-4     300000	          3867 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-100x3-4    100000	         14778 ns/op
+BenchmarkPlaneLinearSolveWeighted/size-1000x3-4    10000	        122538 ns/op
 BenchmarkKabsch/size-10x3-8                       100000             17576 ns/op
 BenchmarkKabsch/size-100x3-8                       20000             73274 ns/op
 BenchmarkKabsch/size-1000x3-8                       2000            580883 ns/op
