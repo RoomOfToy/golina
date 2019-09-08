@@ -29,6 +29,7 @@ Realized functions up to now:
 `HammingDistance`, `CanberraDistance`
 - k-Nearest-Neighbors: `KNearestNeighbor`, `KNearestNeighborsWithDistance` (work with above distance functions)
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
+- Principal Component Analysis: `PrincipalComponents`
 - normal-Estimation: `PlanePcaEigen`, `PlanePcaSVD`, `PlaneLinearSolveWeighted`
 - Octree (concept only): `Octree` (based on hash map), `OctreeNode` (location encoded as map key)
 - KD-Tree: `Insert`, `Search`, `FindMinValue`, `FindMinNode`, `DeleteNode`
@@ -101,6 +102,9 @@ BenchmarkPlanePcaSVD/size-1000x3-4       	        5000	        329981 ns/op
 BenchmarkPlaneLinearSolveWeighted/size-10x3-4     300000	          3867 ns/op
 BenchmarkPlaneLinearSolveWeighted/size-100x3-4    100000	         14778 ns/op
 BenchmarkPlaneLinearSolveWeighted/size-1000x3-4    10000	        122538 ns/op
+BenchmarkPrincipalComponents/size-10x3-4          300000	          4885 ns/op
+BenchmarkPrincipalComponents/size-100x3-4         100000	         15637 ns/op
+BenchmarkPrincipalComponents/size-1000x3-4         10000	        120132 ns/op
 BenchmarkKabsch/size-10x3-8                       100000             17576 ns/op
 BenchmarkKabsch/size-100x3-8                       20000             73274 ns/op
 BenchmarkKabsch/size-1000x3-8                       2000            580883 ns/op
