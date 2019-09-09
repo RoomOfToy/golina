@@ -1,6 +1,7 @@
 package matrix
 
 import (
+	"fmt"
 	"math"
 	"strconv"
 	"testing"
@@ -225,6 +226,18 @@ func TestVector_UniqueWithCount(t *testing.T) {
 			t.Fail()
 		}
 	}
+}
+
+func TestCrossCov(t *testing.T) {
+	u, v := &Vector{1, 2, 3}, &Vector{4, 5, 6}
+	cc := CrossCov(u, v)
+	fmt.Println(cc)
+}
+
+func TestCrossCorr(t *testing.T) {
+	u, v := &Vector{1, 2, 3}, &Vector{4, 5, 6}
+	cc := CrossCorr(u, v)
+	fmt.Println(cc)
 }
 
 // Vector convolve

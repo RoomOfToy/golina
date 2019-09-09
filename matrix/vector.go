@@ -284,6 +284,40 @@ func (v *Vector) UniqueWithCount() map[float64]int {
 	return uSet
 }
 
+// cross covariance matrix
+// 	https://en.wikipedia.org/wiki/Cross-covariance
+//	https://www.quora.com/What-is-the-difference-between-cross-correlation-and-cross-covariance
+//	Element to Element
+//	TODO: am i right on cross covariance and cross correlation???
+func CrossCov(u, v *Vector) *Matrix {
+	m, n := u.Length(), v.Length()
+	mat := ZeroMatrix(m, n)
+	um, vm := u.Mean(), v.Mean()
+	f := float64(m * n)
+	for i := range mat.Data {
+		for j := range mat.Data[i] {
+			mat.Data[i][j] = (u.At(i) - um) * (v.At(j) - vm) / f
+		}
+	}
+	return mat
+}
+
+// Cross Correlation
+//	https://en.wikipedia.org/wiki/Cross-correlation
+//	https://www.quora.com/What-is-the-difference-between-cross-correlation-and-cross-covariance
+//	Element to Element
+func CrossCorr(u, v *Vector) *Matrix {
+	m, n := u.Length(), v.Length()
+	mat := ZeroMatrix(m, n)
+	f := float64(m * n)
+	for i := range mat.Data {
+		for j := range mat.Data[i] {
+			mat.Data[i][j] = (u.At(i) * v.At(j)) / f
+		}
+	}
+	return mat
+}
+
 func mul(u, v *Vector, k int) (res float64) {
 	n := MinInt(k+1, len(*u))
 	j := MinInt(k, len(*v)-1)
