@@ -46,3 +46,12 @@ func TestCorrelation(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestHistogram(t *testing.T) {
+	data := &matrix.Vector{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	dividers := &matrix.Vector{-1, 2, 4, 5, 8, 11}
+	hist := Histogram(dividers, data, nil)
+	if !matrix.VEqual(hist, &matrix.Vector{2, 2, 1, 3, 3}) {
+		t.Fail()
+	}
+}
