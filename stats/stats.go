@@ -22,3 +22,26 @@ func RBFKernel(a, b *matrix.Vector, gamma float64) float64 {
 func SigmoidKernel(a, b *matrix.Vector, gamma, coef0 float64) float64 {
 	return math.Tanh(gamma*a.Dot(b) + coef0)
 }
+
+// Covariance
+//	biased -> divide by x.Length(), unbiased -> divide by x.Length() - 1
+//	biased here
+func Covariance(x, y *matrix.Vector) float64 {
+	if x.Length() != y.Length() {
+		panic("x, y length mismatch")
+	}
+	return x.SubNum(x.Mean()).Dot(y.SubNum(y.Mean())) / float64(x.Length())
+}
+
+func Variance(x *matrix.Vector) float64 {
+	return x.SubNum(x.Mean()).SquareSum() / float64(x.Length())
+}
+
+func Correlation(x, y *matrix.Vector) float64 {
+	if x.Length() != y.Length() {
+		panic("x, y length mismatch")
+	}
+	// return Covariance(x, y) / math.Sqrt(Variance(x) * Variance(y))
+	ex, ey := x.SubNum(x.Mean()), y.SubNum(y.Mean())
+	return ex.Dot(ey) / math.Sqrt(ex.SquareSum()*ey.SquareSum())
+}

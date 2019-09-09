@@ -28,3 +28,21 @@ func TestSigmoidKernel(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestCovariance(t *testing.T) {
+	if !matrix.FloatEqual(2.1666666666666665, Covariance(&matrix.Vector{1, 5, 7, 2, 6, 9}, &matrix.Vector{1, 2, 3, 1, 2, 3})) {
+		t.Fail()
+	}
+}
+
+func TestVariance(t *testing.T) {
+	if !matrix.FloatEqual(7.666666666666667, Variance(&matrix.Vector{1, 5, 7, 2, 6, 9})) {
+		t.Fail()
+	}
+}
+
+func TestCorrelation(t *testing.T) {
+	if !matrix.FloatEqual(0.95837272, Correlation(&matrix.Vector{1, 5, 7, 2, 6, 9}, &matrix.Vector{1, 2, 3, 1, 2, 3})) {
+		t.Fail()
+	}
+}
