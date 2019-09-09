@@ -23,8 +23,9 @@ func TestNewSparseMatrix(t *testing.T) {
 }
 
 func TestSparseMatrix_GetSubSparseMatrix(t *testing.T) {
-	SA := GenerateRandomSparseMatrix(100, 100, 20)
-	if len(SA.Data) != 20 || SA.Rows != 100 || SA.Cols != 100 {
+	SA := NewSparseMatrix(map[int]float64{1: 0.1, 50: 0.2}, 100, 100)
+	SB := SA.GetSubSparseMatrix(0, 0, 25, 25)
+	if SB.AtIndex(1) != 0.1 {
 		t.Fail()
 	}
 }
