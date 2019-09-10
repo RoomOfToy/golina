@@ -640,9 +640,9 @@ func (t *Matrix) Mean(dim int) *Vector {
 	row, col := t.Dims()
 	switch dim {
 	case 0:
-		return t.Sum(0).MulNum(1. / float64(col)) // Notice: without float64(col), this will be int, e.g. col=3, 1./col=0
+		return t.Sum(0).MulNum(1. / float64(row)) // Notice: without float64(col), this will be int, e.g. col=3, 1./col=0
 	case 1:
-		return t.Sum(1).MulNum(1. / float64(row))
+		return t.Sum(1).MulNum(1. / float64(col))
 	case -1:
 		return t.Sum(-1).MulNum(1. / float64(row*col))
 	default:
