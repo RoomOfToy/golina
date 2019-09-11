@@ -14,6 +14,8 @@ func PrincipalComponents(dataSet *matrix.Matrix, weights *matrix.Vector) (pcs *m
 	if weights != nil && weights.Length() != row {
 		panic("length of weights vector should be equal to data matrix's rows")
 	}
+	// From wiki: https://en.wikipedia.org/wiki/Mahalanobis_distance
+	// the ellipsoid that best represents the set's probability distribution can be estimated by building the covariance matrix of the samples
 	cov := new(matrix.Matrix)
 	if weights == nil {
 		cov = dataSet.CovMatrix()
