@@ -14,29 +14,12 @@ Package structure:
 
 ```bash
 .
-├── cluster
-│   └── kMeans.go
 ├── matrix
-│   ├── CholeskyDecomposition.go
-│   ├── EigenDecomposition.go
-│   ├── LUDecomposition.go
-│   ├── QRDecomposition.go
-│   ├── SVD.go
-│   ├── matrix.go
-│   ├── sparseMatrix.go
-│   ├── transform.go
-│   └── utils.go
 ├── numerical
-│   └── numerical.go
 ├── spatial
-│   ├── distance.go
-│   ├── kNearestNeighbors.go
-│   ├── kdtree.go
-│   ├── normalEstimation.go
-│   └── octree.go
-└── stats
-    ├── PCA.go
-    └── stats.go
+├── cluster
+├── stats
+└── examples
 ```
 
 Realized functions up to now:
@@ -66,8 +49,9 @@ Realized functions up to now:
 `Map`, `Reduce`, `Filter` (`Map`, `Reduce`, `Filter` here are just for tests, if you want to use it, you'd better change 
 them from using `interface` with `reflect` module to `[]float64` for performance, since you have known the data type...), 
 `Load3DToMatrix`, `WriteMatrixToTxt`
+- Some Optimization Trials: matrix `Mul`, `MatrixChainMultiplication`, vector `Convolve`
 
-Benchmark(simple parallel `Mul`, need more optimization):
+Benchmark:
 
 ```bash
 CPU, 64-bit Linux
