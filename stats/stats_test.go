@@ -61,13 +61,25 @@ func TestStandardDeviation(t *testing.T) {
 	}
 }
 
+func TestStandardScore(t *testing.T) {
+	if !matrix.FloatEqual(-1.444630237, StandardScore(1, &matrix.Vector{1, 5, 7, 2, 6, 9})) {
+		t.Fail()
+	}
+}
+
+func TestStandardError(t *testing.T) {
+	if !matrix.FloatEqual(1.130388331, StandardError(&matrix.Vector{1, 5, 7, 2, 6, 9})) {
+		t.Fail()
+	}
+}
+
 func TestCoefficientOfVariance(t *testing.T) {
 	if !matrix.FloatEqual(0.553774924, CoefficientOfVariance(&matrix.Vector{1, 5, 7, 2, 6, 9})) {
 		t.Fail()
 	}
 }
 
-func TestCorrelation(t *testing.T) {
+func TestCorrelationCoefficient(t *testing.T) {
 	if !matrix.FloatEqual(0.95837272, CorrelationCoefficient(&matrix.Vector{1, 5, 7, 2, 6, 9}, &matrix.Vector{1, 2, 3, 1, 2, 3})) {
 		t.Fail()
 	}

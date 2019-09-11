@@ -64,6 +64,16 @@ func StandardDeviation(x *matrix.Vector) float64 {
 	return math.Sqrt(Variance(x))
 }
 
+// Standard Score (z-score)
+//	https://en.wikipedia.org/wiki/Standard_score
+func StandardScore(xi float64, x *matrix.Vector) float64 {
+	return (xi - x.Mean()) / StandardDeviation(x)
+}
+
+func StandardError(x *matrix.Vector) float64 {
+	return StandardDeviation(x) / math.Sqrt(float64(x.Length()))
+}
+
 // Coefficient of Variance (CV) or Relative Standard Deviation (RSD)
 //	https://en.wikipedia.org/wiki/Coefficient_of_variation
 func CoefficientOfVariance(x *matrix.Vector) float64 {
