@@ -24,6 +24,52 @@ func SigmoidKernel(a, b *matrix.Vector, gamma, coef0 float64) float64 {
 	return math.Tanh(gamma*a.Dot(b) + coef0)
 }
 
+// Mode: Most common value
+//	https://en.wikipedia.org/wiki/Mode_(statistics)
+//	since it may exist many modes, the return value is a Vector
+//	TODO: any efficient way?
+func Mode(x *matrix.Vector) *matrix.Vector {
+	cnt := x.UniqueWithCount()
+	type kv struct {
+		key   float64
+		value int
+	}
+	ss := make([]kv, len(cnt))
+	i := 0
+	for k, v := range cnt {
+		ss[i] = kv{
+			key:   k,
+			value: v,
+		}
+		i++
+	}
+	sort.Slice(ss, func(i, j int) bool {
+		return ss[i].value > ss[j].value
+	})
+	tmp := matrix.Vector{}
+	for i := range ss {
+		if ss[i].value != ss[0].value {
+			break
+		}
+		tmp = append(tmp, ss[i].key)
+	}
+	return &tmp
+}
+
+func Variance(x *matrix.Vector) float64 {
+	return x.SubNum(x.Mean()).SquareSum() / float64(x.Length())
+}
+
+func StandardDeviation(x *matrix.Vector) float64 {
+	return math.Sqrt(Variance(x))
+}
+
+// Coefficient of Variance (CV) or Relative Standard Deviation (RSD)
+//	https://en.wikipedia.org/wiki/Coefficient_of_variation
+func CoefficientOfVariance(x *matrix.Vector) float64 {
+	return StandardDeviation(x) / x.Mean()
+}
+
 // Covariance
 //	biased -> divide by x.Length(), unbiased -> divide by x.Length() - 1
 //	biased here
@@ -34,11 +80,9 @@ func Covariance(x, y *matrix.Vector) float64 {
 	return x.SubNum(x.Mean()).Dot(y.SubNum(y.Mean())) / float64(x.Length())
 }
 
-func Variance(x *matrix.Vector) float64 {
-	return x.SubNum(x.Mean()).SquareSum() / float64(x.Length())
-}
-
-func Correlation(x, y *matrix.Vector) float64 {
+// Correlation Coefficient
+//	https://en.wikipedia.org/wiki/Correlation_and_dependence
+func CorrelationCoefficient(x, y *matrix.Vector) float64 {
 	if x.Length() != y.Length() {
 		panic("x, y length mismatch")
 	}

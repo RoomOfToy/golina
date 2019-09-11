@@ -29,6 +29,20 @@ func TestSigmoidKernel(t *testing.T) {
 	}
 }
 
+func TestMode(t *testing.T) {
+	x := &matrix.Vector{1, 5, 7, 2, 6, 9, 3, 3, 2, 1, 8}
+	res := Mode(x)
+	if res.Length() != 3 {
+		t.Fail()
+	}
+	n := map[float64]int{1: 0, 2: 0, 3: 0}
+	for _, v := range *res {
+		if _, exists := n[v]; !exists {
+			t.Fail()
+		}
+	}
+}
+
 func TestCovariance(t *testing.T) {
 	if !matrix.FloatEqual(2.1666666666666665, Covariance(&matrix.Vector{1, 5, 7, 2, 6, 9}, &matrix.Vector{1, 2, 3, 1, 2, 3})) {
 		t.Fail()
@@ -41,8 +55,20 @@ func TestVariance(t *testing.T) {
 	}
 }
 
+func TestStandardDeviation(t *testing.T) {
+	if !matrix.FloatEqual(2.768874621, StandardDeviation(&matrix.Vector{1, 5, 7, 2, 6, 9})) {
+		t.Fail()
+	}
+}
+
+func TestCoefficientOfVariance(t *testing.T) {
+	if !matrix.FloatEqual(0.553774924, CoefficientOfVariance(&matrix.Vector{1, 5, 7, 2, 6, 9})) {
+		t.Fail()
+	}
+}
+
 func TestCorrelation(t *testing.T) {
-	if !matrix.FloatEqual(0.95837272, Correlation(&matrix.Vector{1, 5, 7, 2, 6, 9}, &matrix.Vector{1, 2, 3, 1, 2, 3})) {
+	if !matrix.FloatEqual(0.95837272, CorrelationCoefficient(&matrix.Vector{1, 5, 7, 2, 6, 9}, &matrix.Vector{1, 2, 3, 1, 2, 3})) {
 		t.Fail()
 	}
 }
