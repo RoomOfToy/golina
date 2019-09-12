@@ -42,6 +42,8 @@ Realized functions up to now:
 - k-Nearest-Neighbors: `KNearestNeighbor`, `KNearestNeighborsWithDistance` (work with above distance functions)
 - k-Means: `KMeans`, `RandomMeans`, `KMeansPP`, `PPMeans`
 - Principal Component Analysis: `PrincipalComponents`
+- Canonical Correlation Analysis: `CanonicalCorrelation`
+- Independent Component Analysis: `FastICA`
 - normal-Estimation: `PlanePcaEigen`, `PlanePcaSVD`, `PlaneLinearSolveWeighted`
 - Octree (concept only): `Octree` (based on hash map), `OctreeNode` (location encoded as map key)
 - KD-Tree: `Insert`, `Search`, `FindMinValue`, `FindMinNode`, `DeleteNode`
