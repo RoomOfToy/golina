@@ -238,7 +238,7 @@ func getFileSize(filename string) int64 {
 	return fileSize
 }
 
-// Read data into matrix
+// Read 3D data into matrix
 func Load3DToMatrix(path string) (*Matrix, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -257,6 +257,29 @@ func Load3DToMatrix(path string) (*Matrix, error) {
 			break
 		}
 		lines = append(lines, Vector{x, y, z})
+	}
+	return new(Matrix).Init(lines), err
+}
+
+// Read 2D data into matrix
+func Load2DToMatrix(path string) (*Matrix, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	fileSize := getFileSize(path)
+	est := 3 * fileSize / (4*8*2 + 1)
+	lines := make(Data, 0, est)
+
+	var x, y float64
+	for {
+		rowNum, err := fmt.Fscanln(file, &x, &y)
+		if rowNum == 0 || err != nil {
+			break
+		}
+		lines = append(lines, Vector{x, y})
 	}
 	return new(Matrix).Init(lines), err
 }
