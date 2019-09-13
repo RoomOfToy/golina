@@ -167,6 +167,14 @@ func (v *Vector) Mean() float64 {
 	return v.Sum() / float64(len(*v))
 }
 
+func (v *Vector) Variance() float64 {
+	return v.SubNum(v.Mean()).SquareSum() / float64(v.Length())
+}
+
+func (v *Vector) StandardDeviation() float64 {
+	return math.Sqrt(v.Variance())
+}
+
 // tile vector alone certain dimension into matrix, 0 -> vector as row, 1 -> vector as column
 func (v *Vector) Tile(dim, n int) *Matrix {
 	switch dim {

@@ -130,6 +130,18 @@ func TestVector_Mean(t *testing.T) {
 	}
 }
 
+func TestVector_Variance(t *testing.T) {
+	if !FloatEqual(7.666666666666667, (&Vector{1, 5, 7, 2, 6, 9}).Variance()) {
+		t.Fail()
+	}
+}
+
+func TestVector_StandardDeviation(t *testing.T) {
+	if !FloatEqual(2.768874621, (&Vector{1, 5, 7, 2, 6, 9}).StandardDeviation()) {
+		t.Fail()
+	}
+}
+
 func TestVector_Tile(t *testing.T) {
 	v := &Vector{1, 2, 3}
 	m := Data{{1, 2, 3}, {1, 2, 3}}

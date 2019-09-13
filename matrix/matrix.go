@@ -650,6 +650,47 @@ func (t *Matrix) Mean(dim int) *Vector {
 	}
 }
 
+// dim: 0 -> |, 1 -> -, -1 -> all
+func (t *Matrix) Variance(dim int) *Vector {
+	row, col := t.Dims()
+	switch dim {
+	case 0:
+		m := t.Mean(0)
+		v := make(Vector, col)
+		for i := range v {
+			v[i] = t.Sub(m.Tile(0, row)).Col(i).Variance()
+		}
+		return &v
+	case 1:
+		m := t.Mean(1)
+		v := make(Vector, row)
+		for i := range v {
+			v[i] = t.Sub(m.Tile(0, col).T()).Row(i).Variance()
+		}
+		return &v
+	case -1:
+		m := t.Mean(-1).At(0)
+		s := 0.
+		for _, r := range t.Sub(OneMatrix(row, col).MulNum(m)).Data {
+			for _, v := range r {
+				s += v * v
+			}
+		}
+		return &Vector{s / float64(row*col)}
+	default:
+		panic("invalid variance dimension")
+	}
+}
+
+func (t *Matrix) StandardDeviation(dim int) *Vector {
+	v := t.Variance(dim)
+	nv := make(Vector, v.Length())
+	for i := range *(v) {
+		nv[i] = math.Sqrt(v.At(i))
+	}
+	return &nv
+}
+
 // covariance matrix
 func (t *Matrix) CovMatrix() *Matrix {
 	row, col := t.Dims()

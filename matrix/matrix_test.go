@@ -428,6 +428,34 @@ func TestMatrix_Mean(t *testing.T) {
 	}
 }
 
+func TestMatrix_Variance(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !VEqual(matA.Variance(0), &Vector{2., 8.66666667, 0.88888889}) {
+		t.Fail()
+	}
+	if !VEqual(matA.Variance(1), &Vector{2.88888889, 3.55555556, 6.88888889}) {
+		t.Fail()
+	}
+	if !FloatEqual(matA.Variance(-1).At(0), 4.54320987654321) {
+		t.Fail()
+	}
+}
+
+func TestMatrix_StandardDeviation(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	matA := new(Matrix).Init(a)
+	if !VEqual(matA.StandardDeviation(0), &Vector{1.41421356, 2.94392029, 0.94280904}) {
+		t.Fail()
+	}
+	if !VEqual(matA.StandardDeviation(1), &Vector{1.69967317, 1.88561808, 2.62466929}) {
+		t.Fail()
+	}
+	if !FloatEqual(matA.StandardDeviation(-1).At(0), 2.1314806770278754) {
+		t.Fail()
+	}
+}
+
 func TestMatrix_CovMatrix(t *testing.T) {
 	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
 	matA := new(Matrix).Init(a)

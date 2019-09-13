@@ -57,11 +57,11 @@ func Mode(x *matrix.Vector) *matrix.Vector {
 }
 
 func Variance(x *matrix.Vector) float64 {
-	return x.SubNum(x.Mean()).SquareSum() / float64(x.Length())
+	return x.Variance()
 }
 
 func StandardDeviation(x *matrix.Vector) float64 {
-	return math.Sqrt(Variance(x))
+	return x.StandardDeviation()
 }
 
 // Standard Score (z-score)
