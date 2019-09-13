@@ -22,21 +22,25 @@ import (
 //		3. Complexity: The temporal complexity of any signal mixture is greater than that of its simplest constituent
 //		source signal.
 // FastICA (https://en.wikipedia.org/wiki/FastICA)
-func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector), dataSet *matrix.Matrix) (W, S *matrix.Matrix) {
+func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector), dataSet *matrix.Matrix) (W, S, K *matrix.Matrix) {
+	dataSet = dataSet.T() // M x N -> N x M
 	N, _ := dataSet.Dims()
 	if C > N || C < 0 {
 		panic("independent components should be less or equal to observations")
 	}
 
 	if whitening {
-		X, K := PreWhitening(C, dataSet)
+		// X: C x N, K: C x N
+		X, k := PreWhitening(C, dataSet)
+		// W: C x N
 		W = CalW(C, tol, maxIter, nonLinearFunc, X)
-		fmt.Println(W.Dims())
-		fmt.Println(K.Dims())
-		S = W.Mul(K.T()).Mul(dataSet)
+		// S: M x C
+		S = W.T().Mul(dataSet).T()
+		K = k
 	} else {
 		W = CalW(C, tol, maxIter, nonLinearFunc, dataSet)
-		S = W.Mul(dataSet)
+		S = W.T().Mul(dataSet).T()
+		K = nil
 	}
 	return
 }
@@ -44,33 +48,18 @@ func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func
 // Pre-whitening the data
 func PreWhitening(C int, dataSet *matrix.Matrix) (X, K *matrix.Matrix) {
 	// step 1: centering
-	N, M := dataSet.Dims()
-	data := dataSet.Sub(dataSet.Mean(0).Tile(0, N))
+	M, N := dataSet.Dims()
+	data := dataSet.Sub(dataSet.Mean(0).Tile(0, M))
 	// step 2: whitening
-
-	/*
-		// by Eigen
-		// too slow for large dataset...
-		cov := data.Mul(data.T()).MulNum(1. / float64(N))
-		V, D := matrix.EigenDecompose(cov)
-		for i := range D.Data {
-			D.Data[i][i] = math.Sqrt(1. / D.Data[i][i])
-		}
-		return matrix.MatrixChainMultiplication(V, D, V.T(), data)
-		// return V.Mul(D).Mul(V.T()).Mul(data)
-
-		/*/
-	// by SVD
-	U, D, _ := matrix.SVD(data)
+	_, D, V := matrix.SVD(data.T())
 	K = matrix.ZeroMatrix(C, M)
 	for i := range K.Data {
 		for j := range K.Data[i] {
-			K.Data[i][j] = U.Data[i][j] / D.Data[j][j]
+			K.Data[i][j] = V.Data[i][j] / D.Data[j][j]
 		}
 	}
-	X = K.T().Mul(data).MulNum(math.Sqrt(float64(M)))
+	X = K.Mul(data).MulNum(math.Sqrt(float64(N)))
 	return
-	//*/
 }
 
 func CalW(C int, tol float64, maxIter int, nonLinearFunc func(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector), dataSet *matrix.Matrix) *matrix.Matrix {
