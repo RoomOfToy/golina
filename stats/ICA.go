@@ -22,7 +22,7 @@ import (
 //		3. Complexity: The temporal complexity of any signal mixture is greater than that of its simplest constituent
 //		source signal.
 // FastICA (https://en.wikipedia.org/wiki/FastICA)
-func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector), dataSet *matrix.Matrix) (W, S, K *matrix.Matrix) {
+func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector), dataSet *matrix.Matrix) (W, S, K, X *matrix.Matrix) {
 	dataSet = dataSet.T() // M x N -> N x M
 	N, _ := dataSet.Dims()
 	if C > N || C < 0 {
@@ -31,16 +31,16 @@ func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func
 
 	if whitening {
 		// X: C x N, K: C x N
-		X, k := PreWhitening(C, dataSet)
+		X, K = PreWhitening(C, dataSet)
 		// W: C x N
 		W = CalW(C, tol, maxIter, nonLinearFunc, X)
 		// S: M x C
 		S = W.T().Mul(dataSet).T()
-		K = k
 	} else {
 		W = CalW(C, tol, maxIter, nonLinearFunc, dataSet)
 		S = W.T().Mul(dataSet).T()
 		K = nil
+		X = nil
 	}
 	return
 }
@@ -48,17 +48,19 @@ func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func
 // Pre-whitening the data
 func PreWhitening(C int, dataSet *matrix.Matrix) (X, K *matrix.Matrix) {
 	// step 1: centering
-	M, N := dataSet.Dims()
-	data := dataSet.Sub(dataSet.Mean(0).Tile(0, M))
+	N, M := dataSet.Dims()
+	data := dataSet.Sub(dataSet.Mean(1).Tile(1, M))
 	// step 2: whitening
 	_, D, V := matrix.SVD(data.T())
-	K = matrix.ZeroMatrix(C, M)
+	fmt.Println(D)
+	fmt.Println(V)
+	K = matrix.ZeroMatrix(C, N)
 	for i := range K.Data {
 		for j := range K.Data[i] {
 			K.Data[i][j] = V.Data[i][j] / D.Data[j][j]
 		}
 	}
-	X = K.Mul(data).MulNum(math.Sqrt(float64(N)))
+	X = K.Mul(data).MulNum(math.Sqrt(float64(M)))
 	return
 }
 
