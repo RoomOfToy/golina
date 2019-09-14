@@ -271,6 +271,12 @@ func TestVector_String(t *testing.T) {
 	}
 }
 
+func TestARRange(t *testing.T) {
+	if !VEqual(ARRange(0, 1, 6), &Vector{0, 1, 2, 3, 4, 5}) {
+		t.Fail()
+	}
+}
+
 func BenchmarkVector_SquareSum(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))

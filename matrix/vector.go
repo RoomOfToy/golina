@@ -395,3 +395,12 @@ func (v *Vector) String() string {
 	outString += "}\n"
 	return outString
 }
+
+func ARRange(start, step, stop int) *Vector {
+	l := (stop - start) / step
+	v := make(Vector, l)
+	for i := start; i < stop; i += step {
+		v[i] = float64(i)
+	}
+	return &v
+}
