@@ -11,13 +11,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	W, S, K, X := stats.FastICA(2, 1e-2, 200, true, stats.FuncLogcosh, dataSet)
+	W, S, K, X := stats.FastICA(2, 1e-3, 200, true, stats.FuncLogcosh, dataSet)
 	fmt.Println(W.Dims())
 	fmt.Println(S.Dims())
 	fmt.Println(K.Dims())
 	fmt.Println(X.Dims())
 	fmt.Println(W)
 	fmt.Println(K)
-	M, _ := dataSet.Dims()
-	_ = matrix.WriteMatrixToTxt("ica_res.txt", W.Mul(K).Mul(dataSet.Sub(dataSet.Mean(0).Tile(0, M)).T()).T())
+	recovered := S.Mul(W.T())
+	recovered = recovered.MulNum(1. / recovered.StandardDeviation(-1).At(0))
+	_ = matrix.WriteMatrixToTxt("ica_res.txt", recovered)
 }

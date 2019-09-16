@@ -30,15 +30,17 @@ func FastICA(C int, tol float64, maxIter int, whitening bool, nonLinearFunc func
 	}
 
 	if whitening {
-		// X: C x N, K: C x N
+		// X: C x M, K: C x N
 		X, K = PreWhitening(C, dataSet)
-		// W: C x N
+		// W: C x C
 		W = CalW(C, tol, maxIter, nonLinearFunc, X)
 		// S: M x C
-		S = W.T().Mul(dataSet).T()
+		S = W.Mul(K).Mul(dataSet).T()
 	} else {
+		// W: C x N
 		W = CalW(C, tol, maxIter, nonLinearFunc, dataSet)
-		S = W.T().Mul(dataSet).T()
+		// S: M x C
+		S = W.Mul(dataSet).T()
 		K = nil
 		X = nil
 	}
@@ -52,8 +54,6 @@ func PreWhitening(C int, dataSet *matrix.Matrix) (X, K *matrix.Matrix) {
 	data := dataSet.Sub(dataSet.Mean(1).Tile(1, M))
 	// step 2: whitening
 	_, D, V := matrix.SVD(data.T())
-	fmt.Println(D)
-	fmt.Println(V)
 	K = matrix.ZeroMatrix(C, N)
 	for i := range K.Data {
 		for j := range K.Data[i] {
@@ -65,35 +65,41 @@ func PreWhitening(C int, dataSet *matrix.Matrix) (X, K *matrix.Matrix) {
 }
 
 func CalW(C int, tol float64, maxIter int, nonLinearFunc func(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector), dataSet *matrix.Matrix) *matrix.Matrix {
+	// dataSet: N x M
 	N, _ := dataSet.Dims()
+	// w: 1 x N
+	// W: C x N
 	W := matrix.GenerateRandomMatrix(C, N)
 	iter := make([]int, C)
 	for i := 0; i < C; i++ {
 		cnt := 0
 		w := W.Row(i)
+		w = w.MulNum(1. / w.Norm())
+		wp := w
 		for {
-			wp := nonLinearFunc(w, dataSet)
+			wp = nonLinearFunc(w, dataSet)
 			s := make(matrix.Vector, N)
 			for j := 1; j < i-1; j++ {
 				s.Add(W.Row(j).MulNum(wp.Dot(W.Row(j))))
 			}
 			wp = wp.Sub(&s)
 			wp = wp.MulNum(1. / wp.Norm())
-			lim := math.Abs(math.Abs(wp.Sub(w).AbsSum()))
-			W.Data[i] = *wp
+			lim := math.Abs(math.Abs(wp.Dot(w)) - 1)
+			w = wp
 			cnt++
 			if lim < tol || cnt >= maxIter {
 				iter[i] = cnt
 				break
 			}
 		}
+		W.Data[i] = *wp
 	}
 	fmt.Println("iteration times for each component: ", iter)
 	return W
 }
 
 // standard non-linear function
-//	w: 1xN, X: NxM, wp: 1xM
+//	w: 1xN, X: NxM, wp: 1xN
 func FuncLogcosh(w *matrix.Vector, X *matrix.Matrix) (wp *matrix.Vector) {
 	N, M := X.Dims()
 	wtx := w.ToMatrix(1, N).Mul(X).Row(0)
