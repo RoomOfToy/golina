@@ -1,4 +1,4 @@
-name: TestAndBuild
+name: build
 on: [push]
 jobs:
 
@@ -23,12 +23,6 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
-        
-    - name: Test
-      run: |
-        go test `go list ./... | grep -v examples` -coverprofile=coverage.out
-        go tool cover -func=coverage.out
 
     - name: Build
       run: go build -v .
-     

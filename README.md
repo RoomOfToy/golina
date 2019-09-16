@@ -2,7 +2,8 @@
 
 ## Golina
 
-[![Actions Status](https://github.com/Harold2017/golina/workflows/TestAndBuild/badge.svg)](https://github.com/Harold2017/golina/actions)
+[![Actions Status](https://github.com/Harold2017/golina/workflows/build/badge.svg)](https://github.com/Harold2017/golina/actions)
+[![codecov](https://codecov.io/gh/Harold2017/golina/branch/master/graph/badge.svg)](https://codecov.io/gh/Harold2017/golina)
 
 A toy repo for reviewing linear algebra.
 
