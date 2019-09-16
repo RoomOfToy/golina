@@ -502,6 +502,17 @@ func TestMatrix_UniqueWithCount(t *testing.T) {
 	}
 }
 
+func TestMatrix_Concatenate(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	b := Data{{3, -6, 2}, {-6, 13, -4}, {2, -4, 5}}
+	if !MEqual(new(Matrix).Init(a).Concatenate(new(Matrix).Init(b), 0), new(Matrix).Init(Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}, {3, -6, 2}, {-6, 13, -4}, {2, -4, 5}})) {
+		t.Fail()
+	}
+	if !MEqual(new(Matrix).Init(a).Concatenate(new(Matrix).Init(b), 1), new(Matrix).Init(Data{{2, -2, 1, 3, -6, 2}, {-1, 3, -1, -6, 13, -4}, {2, -4, 1, 2, -4, 5}})) {
+		t.Fail()
+	}
+}
+
 /*
 BenchmarkMatrix_Mul/size-10-8     500000              3418 ns/op
 BenchmarkMatrix_Mul/size-100-8       500           2845713 ns/op

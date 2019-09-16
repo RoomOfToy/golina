@@ -277,6 +277,13 @@ func TestARRange(t *testing.T) {
 	}
 }
 
+func TestVector_Concatenate(t *testing.T) {
+	u, v := &Vector{1, 2, 3}, &Vector{4, 5, 6}
+	if !VEqual(u.Concatenate(v), &Vector{1, 2, 3, 4, 5, 6}) {
+		t.Fail()
+	}
+}
+
 func BenchmarkVector_SquareSum(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))

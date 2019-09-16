@@ -368,6 +368,11 @@ func Convolve(u, v *Vector) *Vector {
 	return &w
 }
 
+func (v *Vector) Concatenate(v1 *Vector) *Vector {
+	nv := append(*v, *v1...)
+	return &nv
+}
+
 // pretty-print for vector
 func (v *Vector) String() string {
 	if v == nil {

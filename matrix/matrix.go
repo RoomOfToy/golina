@@ -759,6 +759,31 @@ func (t *Matrix) UniqueWithCount() map[float64]int {
 	return uSet
 }
 
+func (t *Matrix) Concatenate(mat *Matrix, dim int) *Matrix {
+	rt, ct := t.Dims()
+	rm, cm := mat.Dims()
+	switch dim {
+	case 0:
+		if ct != cm {
+			panic("both matrix should have same columns")
+		}
+		nt := Copy(t)
+		nt.Data = append(nt.Data, mat.Data...)
+		return nt
+	case 1:
+		if rt != rm {
+			panic("both matrix should have same rows")
+		}
+		nt := Copy(t)
+		for i := range nt.Data {
+			nt.Data[i] = append(nt.Data[i], mat.Data[i]...)
+		}
+		return nt
+	default:
+		panic("concatenate only support dim 0 -> vertical, dim 1 -> horizontal")
+	}
+}
+
 // pretty-print for matrix
 func (t *Matrix) String() string {
 	if t == nil {
