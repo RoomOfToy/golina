@@ -513,6 +513,13 @@ func TestMatrix_Concatenate(t *testing.T) {
 	}
 }
 
+func TestMatrix_ElementsNum(t *testing.T) {
+	a := Data{{2, -2, 1}, {-1, 3, -1}, {2, -4, 1}}
+	if new(Matrix).Init(a).ElementsNum() != 9 {
+		t.Fail()
+	}
+}
+
 /*
 BenchmarkMatrix_Mul/size-10-8     500000              3418 ns/op
 BenchmarkMatrix_Mul/size-100-8       500           2845713 ns/op

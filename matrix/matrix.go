@@ -784,6 +784,11 @@ func (t *Matrix) Concatenate(mat *Matrix, dim int) *Matrix {
 	}
 }
 
+func (t *Matrix) ElementsNum() int {
+	r, c := t.Dims()
+	return r * c
+}
+
 // pretty-print for matrix
 func (t *Matrix) String() string {
 	if t == nil {
