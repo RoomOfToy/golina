@@ -1,6 +1,7 @@
 package pcl2mesh
 
 import (
+	"golina/container"
 	"golina/matrix"
 	"math"
 )
@@ -13,25 +14,29 @@ type Voxel struct {
 	PlaneNormal    Point
 	PlaneMSE       float64
 	PlaneCurvature float64
+	NeighborIDs    container.IntSet
+	IsGood         bool
 }
 
 func NewVoxel(id int, points Points) *Voxel {
 	return &Voxel{
 		Id:          id,
 		Points:      points,
-		NumOfPoints: points.ElementsNum(),
-		PlaneCenter: Point{points.Mean(0)},
-		PlaneNormal: Point{},
+		NumOfPoints: points.PointsNum(),
 	}
 }
 
+// in place
 func (v *Voxel) AddPoints(points Points) {
 	v.Points = Points{v.Points.Concatenate(points.Matrix, 0)}
+	v.NumOfPoints = v.Points.PointsNum()
 }
 
+// compute plane on valid voxels, call on demand
 func (v *Voxel) ComputePlane() {
 	cov := v.Points.CovMatrix()
 	eigVec, eigVal := matrix.EigenDecompose(cov)
+	v.PlaneCenter = Point{v.Points.Mean(0)}
 	v.PlaneNormal = Point{eigVec.Col(0)}
 	v.PlaneMSE = eigVal.At(0, 0)
 	v.PlaneCurvature = eigVal.At(0, 0) / eigVal.Sum(-1).At(0)
