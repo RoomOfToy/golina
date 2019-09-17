@@ -4,10 +4,11 @@
 
 [![Actions Status](https://github.com/Harold2017/golina/workflows/build/badge.svg)](https://github.com/Harold2017/golina/actions)
 [![codecov](https://codecov.io/gh/Harold2017/golina/branch/master/graph/badge.svg)](https://codecov.io/gh/Harold2017/golina)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Harold2017/golina)](https://goreportcard.com/report/github.com/Harold2017/golina)
+![License](https://img.shields.io/github/license/Harold2017/golina)
+[![](https://godoc.org/github.com/Harold2017/golina?status.svg)](https://godoc.org/github.com/Harold2017/golina)
 
 A toy repo for reviewing linear algebra.
-
-[doc](https://godoc.org/github.com/Harold2017/golina)
 
 Pure Golang, No Dependencies.
 
@@ -26,7 +27,8 @@ Package structure:
 Realized functions up to now:
 
 - Matrix Operations: `Add`, `AddNum`, `Sub`, `Mul`, `MulVec`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
-`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`, `IsSymmetric`, `Unique`, `UniqueWithCount`
+`Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`, `IsSymmetric`, `Unique`, 
+`UniqueWithCount`, `Concatenate`, `ElementsNum`
 - Eigen-Decomposition: `EigenDecompose`, `Eigen33`, `EigenValues33`, `EigenVector33`
 - LU-Decomposition: `LUPDecompose`, `LUPSolve`, `LUPInvert`, `LUPDeterminant`, `LUPRank`
 - QR-Decomposition: `Householder`, `QRDecomposition`
@@ -36,7 +38,7 @@ Realized functions up to now:
 `TransformOnRow` (for custom transform matrix), `ToAffineMatrix`, `Kabsch` (Superimpose)
 - Vector Operations: `Add`, `AddNum`, `Sub`, `SubNum`, `MulNum`, `Dot`, `OuterProduct`, `Cross`, `SquareSum`, `Norm`, 
 `Normalize`, `ToMatrix`, `Sum`, `AbsSum`, `Mean`, `Tile`, `Convolve`, `Max`, `Min`, `SortedAscending`, `SortedDescending`, 
-`Reversed`, `Unique`, `UniqueWithCount`
+`Reversed`, `Unique`, `UniqueWithCount`, `Concatenate`
 - Distances: `PointToPointDistance`, `PointToLineDistance`, `PointToPlaneDistance`, `DirectedHausdorffDistance`; 
 `TaxicabDistance`, `EuclideanDistance`, `SquaredEuclideanDistance`, `MinkowskiDistance`, `ChebyshevDistance`, 
 `HammingDistance`, `CanberraDistance`
