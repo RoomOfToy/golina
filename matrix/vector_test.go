@@ -284,6 +284,28 @@ func TestVector_Concatenate(t *testing.T) {
 	}
 }
 
+func TestVector_MapFloat(t *testing.T) {
+	f := func(x float64) float64 {
+		return x * x
+	}
+	v := &Vector{1, 2, 3}
+	if !VEqual(v.MapFloat(f), &Vector{1, 4, 9}) {
+		t.Fail()
+	}
+}
+
+func TestVector_MapInt(t *testing.T) {
+	f := func(x float64) int {
+		return int(x)
+	}
+	v := &Vector{1, 2, 3}
+	for i, val := range *(v.MapInt(f)) {
+		if val != int(v.At(i)) {
+			t.Fail()
+		}
+	}
+}
+
 func BenchmarkVector_SquareSum(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))

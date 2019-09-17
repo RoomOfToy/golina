@@ -409,3 +409,19 @@ func ARRange(start, step, stop int) *Vector {
 	}
 	return &v
 }
+
+func (v *Vector) MapFloat(f func(float64) float64) *Vector {
+	nv := make(Vector, v.Length())
+	for i := range *v {
+		nv[i] = f((*v)[i])
+	}
+	return &nv
+}
+
+func (v *Vector) MapInt(f func(float64) int) *[]int {
+	nv := make([]int, v.Length())
+	for i := range *v {
+		nv[i] = f((*v)[i])
+	}
+	return &nv
+}
