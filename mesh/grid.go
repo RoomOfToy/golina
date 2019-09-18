@@ -1,4 +1,4 @@
-package pcl2mesh
+package mesh
 
 import (
 	"fmt"

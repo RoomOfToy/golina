@@ -9,7 +9,7 @@ import (
 
 // result not correct...
 func TestSVM(t *testing.T) {
-	dataSet, err := matrix.Load3DToMatrix("../examples/data.txt")
+	dataSet, err := matrix.Load3DToMatrix("../examples/kMeans/data.txt")
 	if err != nil {
 		panic(err)
 	}

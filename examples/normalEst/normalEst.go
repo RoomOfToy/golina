@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"golina/examples/pcl2mesh"
 	"golina/matrix"
+	"golina/mesh"
 	"time"
 )
 
 func main() {
 	start := time.Now()
-	iv := pcl2mesh.GetInitVar()
-	ne := pcl2mesh.NewNormalEst("ism_train_cat.txt", iv)
+	iv := mesh.GetInitVar()
+	ne := mesh.NewNormalEst("ism_train_cat.txt", iv)
 	fmt.Printf("generate grid system time consumption: %f\n", time.Now().Sub(start).Seconds())
 	fmt.Println(ne.Grid.NumOfPoints)
 	fmt.Println(ne.Grid.MinXYZ, ne.Grid.MaxXYZ)
