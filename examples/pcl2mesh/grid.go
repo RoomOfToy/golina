@@ -9,7 +9,7 @@ type Grid struct {
 	VoxelSize                                  []float64
 	GridSize                                   []float64
 	NumOfVoxel, NumOfValidVoxel                int
-	ColsOfVoxels, RowsOfVoxels, DepthsOfVoxels int
+	ColsOfVoxels, RowsOfVoxels, DepthsOfVoxels int // X: col, Y: row, Z: depth
 	MinXYZ, MaxXYZ                             Point
 	Points                                     Points
 	NumOfPoints                                int
@@ -57,13 +57,13 @@ func (pwv PointsWithVoxelID) String() string {
 	return fmt.Sprintf("Points: \n%+v\nVoxelID: \n%+v\n", pwv.Points, pwv.VoxelID)
 }
 
+// voxel_id = depth_idx * (cols * rows) + row_idx * cols + col_idx
+// []int
 func (g *Grid) ConvertXYZToVoxelID() PointsWithVoxelID {
 	idx := g.Points.Sub(g.MinXYZ.Tile(0, g.NumOfPoints))
 	idxX := idx.Col(0).MulNum(1. / g.VoxelSize[0]).MapFloat(math.Floor)
 	idxY := idx.Col(1).MulNum(1. / g.VoxelSize[1]).MapFloat(math.Floor)
 	idxZ := idx.Col(2).MulNum(1. / g.VoxelSize[2]).MapFloat(math.Floor)
-	// voxel_id = depth_idx * (cols + rows) + row_idx * cols + col_idx
-	// []int
 	voxelID := idxZ.MulNum(g.ColsOfVoxels * g.RowsOfVoxels).Add(idxY.MulNum(g.ColsOfVoxels)).Add(idxX).MapInt(func(x float64) int {
 		return int(x)
 	})
@@ -71,4 +71,11 @@ func (g *Grid) ConvertXYZToVoxelID() PointsWithVoxelID {
 		Points:  g.Points,
 		VoxelID: voxelID,
 	}
+}
+
+func (g *Grid) ConvertVoxelIDToGridCoord(voxelID int) (gridCoord []int) {
+	depthIdx := voxelID / (g.ColsOfVoxels * g.RowsOfVoxels)
+	rowIdx := (voxelID - depthIdx*(g.ColsOfVoxels*g.RowsOfVoxels)) / g.ColsOfVoxels
+	colIdx := voxelID - depthIdx*(g.ColsOfVoxels*g.RowsOfVoxels) - rowIdx*g.ColsOfVoxels
+	return []int{colIdx, rowIdx, depthIdx}
 }

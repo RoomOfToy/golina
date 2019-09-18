@@ -8,10 +8,11 @@ import (
 // Singleton
 type initVar struct {
 	voxelSize                 []float64
-	searchRadius              float64
+	searchRadius              int // kNN
 	normalSimilarityThreshold float64
 	badCnt                    int
 	planeMinPointNum          int
+	planeMaxMSE               float64
 }
 
 var singleton *initVar
@@ -22,10 +23,11 @@ func GetInitVar() *initVar {
 	once.Do(func() {
 		singleton = &initVar{
 			voxelSize:                 []float64{5, 5, 5},
-			searchRadius:              10,
+			searchRadius:              5,
 			normalSimilarityThreshold: 25,
 			badCnt:                    3,
 			planeMinPointNum:          3,
+			planeMaxMSE:               10,
 		}
 	})
 	return singleton
@@ -43,11 +45,11 @@ func (v *initVar) SetVoxelSize(voxelSize []float64) {
 	}
 }
 
-func (v *initVar) GetSearchRadius() float64 {
+func (v *initVar) GetSearchRadius() int {
 	return v.searchRadius
 }
 
-func (v *initVar) SetSearchRadius(radius float64) {
+func (v *initVar) SetSearchRadius(radius int) {
 	if radius > 0 {
 		v.searchRadius = radius
 	} else {
@@ -88,5 +90,17 @@ func (v *initVar) SetPlaneMinPointNum(planeMinPointNum int) {
 		v.planeMinPointNum = planeMinPointNum
 	} else {
 		log.Println("plain minimum point number should >= 3")
+	}
+}
+
+func (v *initVar) GetPlaneMaxMSE() float64 {
+	return v.planeMaxMSE
+}
+
+func (v *initVar) SetPlaneMaxMSE(planeMaxMSE float64) {
+	if planeMaxMSE >= 0 {
+		v.planeMaxMSE = planeMaxMSE
+	} else {
+		log.Println("plain maximum MSE should >= 0")
 	}
 }

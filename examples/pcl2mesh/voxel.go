@@ -15,6 +15,7 @@ type Voxel struct {
 	PlaneMSE       float64
 	PlaneCurvature float64
 	NeighborIDs    container.IntSet
+	IsValid        bool
 	IsGood         bool
 }
 
