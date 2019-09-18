@@ -106,8 +106,8 @@ func (ne *NormalEst) Voxelization() {
 	ne.Voxels = make(map[int]Voxel, len(voxelIDs))
 	for voxel_id, idx_array := range voxelIDs {
 		points := Points{matrix.ZeroMatrix(len(idx_array), 3)}
-		for i := range idx_array {
-			points.Data[i] = ne.PointsWithVoxelID.Points.Data[i]
+		for i, dix := range idx_array {
+			points.Data[i] = ne.PointsWithVoxelID.Points.Data[dix]
 		}
 		ne.Voxels[voxel_id] = *(NewVoxel(voxel_id, points))
 	}
@@ -193,25 +193,26 @@ func (ne *NormalEst) GetPointNormals() {
 				ne.PointNormals.Data[pointIdx] = *(p.Concatenate(v.PlaneNormal.Vector))
 				pointIdx++
 			}
-		}
-		// not valid -> point normal compute from point to point normal calculation
-		// kNN
-		if len(v.NeighborIDs) == 0 {
-			ne.GetNeighbors(&v)
-		}
-		points := v.Points
-		for id := range v.NeighborIDs {
-			nv = ne.Voxels[id]
-			points.Concatenate(nv.Points.Matrix, 0)
-		}
-		// compute every point in voxel
-		for _, p := range v.Points.Data {
-			searchMat = spatial.KNearestNeighbors(points.Matrix, &p, ne.InitVar.searchRadius, spatial.EuclideanDistance)
-			cov := searchMat.CovMatrix()
-			// TODO: whether use MSE (eigVal) for further determination
-			eigVec, _ := matrix.EigenDecompose(cov)
-			ne.PointNormals.Data[pointIdx] = *(p.Concatenate(eigVec.Col(0)))
-			pointIdx++
+		} else {
+			// not valid -> point normal compute from point to point normal calculation
+			// kNN
+			if len(v.NeighborIDs) == 0 {
+				ne.GetNeighbors(&v)
+			}
+			points := v.Points
+			for id := range v.NeighborIDs {
+				nv = ne.Voxels[id]
+				points.Concatenate(nv.Points.Matrix, 0)
+			}
+			// compute every point in voxel
+			for _, p := range v.Points.Data {
+				searchMat = spatial.KNearestNeighbors(points.Matrix, &p, ne.InitVar.searchRadius, spatial.EuclideanDistance)
+				cov := searchMat.CovMatrix()
+				// TODO: whether use MSE (eigVal) for further determination
+				eigVec, _ := matrix.EigenDecompose(cov)
+				ne.PointNormals.Data[pointIdx] = *(p.Concatenate(eigVec.Col(0)))
+				pointIdx++
+			}
 		}
 	}
 }

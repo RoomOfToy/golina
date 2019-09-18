@@ -13,6 +13,7 @@ func main() {
 	ne := pcl2mesh.NewNormalEst("ism_train_cat.txt", iv)
 	fmt.Printf("generate grid system time consumption: %f\n", time.Now().Sub(start).Seconds())
 	fmt.Println(ne.Grid.NumOfPoints)
+	fmt.Println(ne.Grid.MinXYZ, ne.Grid.MaxXYZ)
 
 	start = time.Now()
 	ne.Voxelization()

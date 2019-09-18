@@ -22,7 +22,7 @@ var once sync.Once
 func GetInitVar() *initVar {
 	once.Do(func() {
 		singleton = &initVar{
-			voxelSize:                 []float64{5, 5, 5},
+			voxelSize:                 []float64{15, 15, 15},
 			searchRadius:              5,
 			normalSimilarityThreshold: 25,
 			badCnt:                    3,
