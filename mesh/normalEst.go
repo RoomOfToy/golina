@@ -9,7 +9,7 @@ import (
 )
 
 type NormalEst struct {
-	InitVar *initVar
+	InitVar *initVarNormalEst
 	Grid    *Grid
 	// encode like lattice, current voxel as center, from left-bottom to right-top
 	RelativeNeighborPosition [][]int
@@ -19,7 +19,7 @@ type NormalEst struct {
 	ValidVoxelIDs            []int
 }
 
-func NewNormalEst(path string, iv *initVar) *NormalEst {
+func NewNormalEst(path string, iv *initVarNormalEst) *NormalEst {
 	ne := new(NormalEst)
 	ne.InitVar = iv
 	ne.Grid = NewGrid(path, iv.voxelSize[0], iv.voxelSize[1], iv.voxelSize[2])
@@ -115,7 +115,7 @@ func (ne *NormalEst) Voxelization() {
 	}
 }
 
-// Generate ValidVoxelIDs according to initVar.planeMinPointNum
+// Generate ValidVoxelIDs according to initVarNormalEst.planeMinPointNum
 func (ne *NormalEst) FindValidVoxel() {
 	if len(ne.Voxels) == 0 {
 		ne.Voxelization()
@@ -167,7 +167,7 @@ func (ne *NormalEst) AlignVoxelNormal() {
 	}
 }
 
-// Find good voxels according to conditions in initVar
+// Find good voxels according to conditions in initVarNormalEst
 func (ne *NormalEst) FindGoodVoxel() {
 	var v Voxel
 	for _, id := range ne.ValidVoxelIDs {

@@ -1,6 +1,7 @@
 package mesh
 
 import (
+	"fmt"
 	"golina/matrix"
 	"log"
 )
@@ -11,6 +12,14 @@ type Point struct {
 
 func NewPoint(x, y, z float64) Point {
 	return Point{&(matrix.Vector{x, y, z})}
+}
+
+func PEqual(pt1, pt2 *Point) bool {
+	return pt1.At(0) == pt2.At(0) && pt1.At(1) == pt2.At(1) && pt1.At(2) == pt2.At(2)
+}
+
+func (point *Point) String() string {
+	return fmt.Sprintf("%s", point.Vector)
 }
 
 type Points struct {
@@ -42,4 +51,8 @@ func (points *Points) MinXYZ() Point {
 func (points *Points) PointsNum() int {
 	r, _ := points.Dims()
 	return r
+}
+
+func (points *Points) String() string {
+	return fmt.Sprintf("%s", points.Matrix)
 }

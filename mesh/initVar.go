@@ -6,7 +6,7 @@ import (
 )
 
 // Singleton
-type initVar struct {
+type initVarNormalEst struct {
 	voxelSize                 []float64
 	searchRadius              int // kNN
 	normalSimilarityThreshold float64
@@ -15,13 +15,13 @@ type initVar struct {
 	planeMaxMSE               float64
 }
 
-var singleton *initVar
+var singleton *initVarNormalEst
 var once sync.Once
 
 // Get init vars for point normal estimation
-func GetInitVar() *initVar {
+func GetInitVarNormalEst() *initVarNormalEst {
 	once.Do(func() {
-		singleton = &initVar{
+		singleton = &initVarNormalEst{
 			voxelSize:                 []float64{15, 15, 15},
 			searchRadius:              5,
 			normalSimilarityThreshold: 25,
@@ -33,11 +33,11 @@ func GetInitVar() *initVar {
 	return singleton
 }
 
-func (v *initVar) GetVoxelSize() []float64 {
+func (v *initVarNormalEst) GetVoxelSize() []float64 {
 	return v.voxelSize
 }
 
-func (v *initVar) SetVoxelSize(voxelSize []float64) {
+func (v *initVarNormalEst) SetVoxelSize(voxelSize []float64) {
 	if len(voxelSize) == 3 {
 		v.voxelSize = voxelSize
 	} else {
@@ -45,11 +45,11 @@ func (v *initVar) SetVoxelSize(voxelSize []float64) {
 	}
 }
 
-func (v *initVar) GetSearchRadius() int {
+func (v *initVarNormalEst) GetSearchRadius() int {
 	return v.searchRadius
 }
 
-func (v *initVar) SetSearchRadius(radius int) {
+func (v *initVarNormalEst) SetSearchRadius(radius int) {
 	if radius > 0 {
 		v.searchRadius = radius
 	} else {
@@ -57,11 +57,11 @@ func (v *initVar) SetSearchRadius(radius int) {
 	}
 }
 
-func (v *initVar) GetNormalSimilarityThreshold() float64 {
+func (v *initVarNormalEst) GetNormalSimilarityThreshold() float64 {
 	return v.normalSimilarityThreshold
 }
 
-func (v *initVar) SetNormalSimilarityThreshold(similarityThreshold float64) {
+func (v *initVarNormalEst) SetNormalSimilarityThreshold(similarityThreshold float64) {
 	if similarityThreshold > 0 {
 		v.normalSimilarityThreshold = similarityThreshold
 	} else {
@@ -69,11 +69,11 @@ func (v *initVar) SetNormalSimilarityThreshold(similarityThreshold float64) {
 	}
 }
 
-func (v *initVar) GetBadCount() int {
+func (v *initVarNormalEst) GetBadCount() int {
 	return v.badCnt
 }
 
-func (v *initVar) SetBadCount(badCnt int) {
+func (v *initVarNormalEst) SetBadCount(badCnt int) {
 	if badCnt > 0 {
 		v.badCnt = badCnt
 	} else {
@@ -81,11 +81,11 @@ func (v *initVar) SetBadCount(badCnt int) {
 	}
 }
 
-func (v *initVar) GetPlaneMinPointNum() int {
+func (v *initVarNormalEst) GetPlaneMinPointNum() int {
 	return v.planeMinPointNum
 }
 
-func (v *initVar) SetPlaneMinPointNum(planeMinPointNum int) {
+func (v *initVarNormalEst) SetPlaneMinPointNum(planeMinPointNum int) {
 	if planeMinPointNum >= 3 {
 		v.planeMinPointNum = planeMinPointNum
 	} else {
@@ -93,11 +93,11 @@ func (v *initVar) SetPlaneMinPointNum(planeMinPointNum int) {
 	}
 }
 
-func (v *initVar) GetPlaneMaxMSE() float64 {
+func (v *initVarNormalEst) GetPlaneMaxMSE() float64 {
 	return v.planeMaxMSE
 }
 
-func (v *initVar) SetPlaneMaxMSE(planeMaxMSE float64) {
+func (v *initVarNormalEst) SetPlaneMaxMSE(planeMaxMSE float64) {
 	if planeMaxMSE >= 0 {
 		v.planeMaxMSE = planeMaxMSE
 	} else {
