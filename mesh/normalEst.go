@@ -1,9 +1,11 @@
 package mesh
 
 import (
+	"fmt"
 	"golina/matrix"
 	"golina/spatial"
 	"math"
+	"time"
 )
 
 type NormalEst struct {
@@ -218,4 +220,38 @@ func (ne *NormalEst) GetPointNormals() {
 }
 
 // Call methods above in right order
-func (ne *NormalEst) Process() {}
+func (ne *NormalEst) Process(OutPath string) {
+	fmt.Println("	Number of Points", ne.Grid.NumOfPoints)
+	fmt.Println("	Grid system minimum / maximum coordinates:")
+	fmt.Printf("		Min: %s", ne.Grid.MinXYZ)
+	fmt.Printf("		Max: %s", ne.Grid.MaxXYZ)
+
+	start := time.Now()
+	ne.Voxelization()
+	fmt.Printf("Voxelization time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	fmt.Println("	Number of Voxels", ne.Grid.NumOfVoxel)
+
+	start = time.Now()
+	ne.FindValidVoxel()
+	fmt.Printf("Voxel validation time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	fmt.Println("	Number of Valid Voxels", ne.Grid.NumOfValidVoxel)
+
+	start = time.Now()
+	ne.ComputeVoxelPlaneInfo()
+	fmt.Printf("Compute plane info on valid voxel time consumption: %fs\n", time.Now().Sub(start).Seconds())
+
+	start = time.Now()
+	ne.AlignVoxelNormal()
+	fmt.Printf("Align voxel normal on valid voxel time consumption: %fs\n", time.Now().Sub(start).Seconds())
+
+	start = time.Now()
+	ne.GetPointNormals()
+	fmt.Printf("Get point normals time consumption: %fs\n", time.Now().Sub(start).Seconds())
+
+	start = time.Now()
+	err := matrix.WriteMatrixToTxt(OutPath, ne.PointNormals.Matrix)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("Write point normals to %s time consumption: %fs\n", OutPath, time.Now().Sub(start).Seconds())
+}
