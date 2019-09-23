@@ -159,7 +159,7 @@ func (ne *NormalEst) AlignVoxelNormal() {
 			nv = ne.Voxels[nid]
 			// flip normal if vn dot nvn < 0
 			if v.PlaneNormal.Dot(nv.PlaneNormal.Vector) < 0 {
-				v.PlaneNormal = Point{v.PlaneNormal.MulNum(-1)}
+				v.PlaneNormal = Point{v.PlaneNormal.MulNum(-1), false}
 			}
 			// just randomly pick one
 			break
@@ -220,38 +220,52 @@ func (ne *NormalEst) GetPointNormals() {
 }
 
 // Call methods above in right order
-func (ne *NormalEst) Process(OutPath string) {
+func NormalEstProcess(InPath, OutPath string) {
+	start := time.Now()
+	iv := GetInitVarNormalEst()
+	ne := NewNormalEst(InPath, iv)
+	tGenerateGridSystem := time.Now().Sub(start).Seconds()
+	fmt.Printf("Generate grid system time consumption: %fs\n", tGenerateGridSystem)
 	fmt.Println("	Number of Points", ne.Grid.NumOfPoints)
 	fmt.Println("	Grid system minimum / maximum coordinates:")
-	fmt.Printf("		Min: %s", ne.Grid.MinXYZ)
-	fmt.Printf("		Max: %s", ne.Grid.MaxXYZ)
+	fmt.Printf("		Min: %s", ne.Grid.MinXYZ.Vector)
+	fmt.Printf("		Max: %s", ne.Grid.MaxXYZ.Vector)
 
-	start := time.Now()
+	start = time.Now()
 	ne.Voxelization()
-	fmt.Printf("Voxelization time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	tVoxelization := time.Now().Sub(start).Seconds()
+	fmt.Printf("Voxelization time consumption: %fs\n", tVoxelization)
 	fmt.Println("	Number of Voxels", ne.Grid.NumOfVoxel)
 
 	start = time.Now()
 	ne.FindValidVoxel()
-	fmt.Printf("Voxel validation time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	tFindValidVoxel := time.Now().Sub(start).Seconds()
+	fmt.Printf("Voxel validation time consumption: %fs\n", tFindValidVoxel)
 	fmt.Println("	Number of Valid Voxels", ne.Grid.NumOfValidVoxel)
 
 	start = time.Now()
 	ne.ComputeVoxelPlaneInfo()
-	fmt.Printf("Compute plane info on valid voxel time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	tComputeVoxelPlaneInfo := time.Now().Sub(start).Seconds()
+	fmt.Printf("Compute plane info on valid voxel time consumption: %fs\n", tComputeVoxelPlaneInfo)
 
 	start = time.Now()
 	ne.AlignVoxelNormal()
-	fmt.Printf("Align voxel normal on valid voxel time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	tAlignVoxelNormal := time.Now().Sub(start).Seconds()
+	fmt.Printf("Align voxel normal on valid voxel time consumption: %fs\n", tAlignVoxelNormal)
 
 	start = time.Now()
 	ne.GetPointNormals()
-	fmt.Printf("Get point normals time consumption: %fs\n", time.Now().Sub(start).Seconds())
+	tGetPointNormals := time.Now().Sub(start).Seconds()
+	fmt.Printf("Get point normals time consumption: %fs\n", tGetPointNormals)
 
 	start = time.Now()
 	err := matrix.WriteMatrixToTxt(OutPath, ne.PointNormals.Matrix)
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("Write point normals to %s time consumption: %fs\n", OutPath, time.Now().Sub(start).Seconds())
+	tWriteMatrixToTxt := time.Now().Sub(start).Seconds()
+	fmt.Printf("Write point normals to %s time consumption: %fs\n", OutPath, tWriteMatrixToTxt)
+
+	tTotal := tGenerateGridSystem + tVoxelization + tFindValidVoxel + tComputeVoxelPlaneInfo + tAlignVoxelNormal + tGetPointNormals + tWriteMatrixToTxt
+	fmt.Printf("Total process time consumption: %fs\n", tTotal)
 }

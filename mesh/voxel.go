@@ -37,8 +37,8 @@ func (v *Voxel) AddPoints(points Points) {
 func (v *Voxel) ComputePlane() {
 	cov := v.Points.CovMatrix()
 	eigVec, eigVal := matrix.EigenDecompose(cov)
-	v.PlaneCenter = Point{v.Points.Mean(0)}
-	v.PlaneNormal = Point{eigVec.Col(0)}
+	v.PlaneCenter = Point{v.Points.Mean(0), false}
+	v.PlaneNormal = Point{eigVec.Col(0), false}
 	v.PlaneMSE = eigVal.At(0, 0)
 	v.PlaneCurvature = eigVal.At(0, 0) / eigVal.Sum(-1).At(0)
 }

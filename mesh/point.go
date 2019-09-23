@@ -8,13 +8,17 @@ import (
 
 type Point struct {
 	*matrix.Vector
+	IsVisited bool
 }
 
 func NewPoint(x, y, z float64) Point {
-	return Point{&(matrix.Vector{x, y, z})}
+	return Point{
+		Vector:    &(matrix.Vector{x, y, z}),
+		IsVisited: false,
+	}
 }
 
-func PEqual(pt1, pt2 *Point) bool {
+func PEqual(pt1, pt2 Point) bool {
 	return pt1.At(0) == pt2.At(0) && pt1.At(1) == pt2.At(1) && pt1.At(2) == pt2.At(2)
 }
 

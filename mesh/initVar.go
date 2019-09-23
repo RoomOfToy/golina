@@ -104,3 +104,17 @@ func (v *initVarNormalEst) SetPlaneMaxMSE(planeMaxMSE float64) {
 		log.Println("plain maximum MSE should >= 0")
 	}
 }
+
+type initVarTriangulation struct {
+	initHullVerticesCnt int
+	initHullFacesCnt    int
+	unitSphereRadius    int
+}
+
+func GetInitVarTriangulation() *initVarTriangulation {
+	return &initVarTriangulation{
+		initHullVerticesCnt: 6,
+		initHullFacesCnt:    8,
+		unitSphereRadius:    1,
+	}
+}
