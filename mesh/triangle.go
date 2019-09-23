@@ -31,7 +31,7 @@ func (tr *Triangle) AssignNeighbors(tr0, tr1, tr2 *Triangle) {
 }
 
 func (tr *Triangle) String() string {
-	return fmt.Sprintf("Triangle ID: %d\n", tr.Id) + fmt.Sprintf("	Vertex[0]: %s	Vertex[1]: %s	Vertex[2]: %s", tr.Vertexes[0], tr.Vertexes[1], tr.Vertexes[2]) + fmt.Sprintf("	Neighbors[0] ID: %d	Neighbors[0] ID: %d	Neighbors[0] ID: %d", tr.Neighbors[0].Id, tr.Neighbors[1].Id, tr.Neighbors[2].Id)
+	return fmt.Sprintf("Triangle ID: %d\n", tr.Id) + fmt.Sprintf("	Vertex[0]: %s	Vertex[1]: %s	Vertex[2]: %s", tr.Vertexes[0].Vector, tr.Vertexes[1].Vector, tr.Vertexes[2].Vector) + fmt.Sprintf("	Neighbors[0] ID: %d	Neighbors[0] ID: %d	Neighbors[0] ID: %d", tr.Neighbors[0].Id, tr.Neighbors[1].Id, tr.Neighbors[2].Id)
 }
 
 // Incremental Insertion Algorithm
