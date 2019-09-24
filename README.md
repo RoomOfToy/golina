@@ -5,6 +5,7 @@
 [![Actions Status](https://github.com/Harold2017/golina/workflows/build/badge.svg)](https://github.com/Harold2017/golina/actions)
 [![codecov](https://codecov.io/gh/Harold2017/golina/branch/master/graph/badge.svg)](https://codecov.io/gh/Harold2017/golina)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Harold2017/golina)](https://goreportcard.com/report/github.com/Harold2017/golina)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dbe40c0dce2343409586248619e93a97)](https://www.codacy.com/manual/Harold2017/golina?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Harold2017/golina&amp;utm_campaign=Badge_Grade)
 ![License](https://img.shields.io/github/license/Harold2017/golina)
 [![](https://godoc.org/github.com/Harold2017/golina?status.svg)](https://godoc.org/github.com/Harold2017/golina)
 
