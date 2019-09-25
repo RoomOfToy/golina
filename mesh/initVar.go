@@ -108,7 +108,7 @@ func (v *initVarNormalEst) SetPlaneMaxMSE(planeMaxMSE float64) {
 type initVarTriangulation struct {
 	initHullVerticesCnt int
 	initHullFacesCnt    int
-	unitSphereRadius    int
+	unitSphereRadius    float64
 }
 
 func GetInitVarTriangulation() *initVarTriangulation {
