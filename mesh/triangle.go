@@ -177,6 +177,9 @@ func (dt *DelaunayTriangle) RemoveExtraTriangles() {
 					break
 				}
 			}
+			if isExtraTri == true {
+				break
+			}
 		}
 
 		if isExtraTri {
