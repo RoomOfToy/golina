@@ -306,6 +306,14 @@ func TestVector_MapInt(t *testing.T) {
 	}
 }
 
+func TestVector_Angle(t *testing.T) {
+	v := &Vector{math.Sqrt(3), 1}
+	v1 := &Vector{math.Sqrt(3), 0}
+	if FloatEqual(v.Angle(v1), 0.5) {
+		t.Fail()
+	}
+}
+
 func BenchmarkVector_SquareSum(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))

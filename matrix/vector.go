@@ -425,3 +425,10 @@ func (v *Vector) MapInt(f func(float64) int) *[]int {
 	}
 	return &nv
 }
+
+func (v *Vector) Angle(v1 *Vector) float64 {
+	if v.Norm() == 0 || v1.Norm() == 0 {
+		panic("zero division error: vector normal can NOT be zero")
+	}
+	return math.Acos(v.Dot(v1) / (v.Norm() * v1.Norm()))
+}
