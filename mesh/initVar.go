@@ -118,3 +118,10 @@ func GetInitVarTriangulation() *initVarTriangulation {
 		unitSphereRadius:    1,
 	}
 }
+
+func (v *initVarTriangulation) SetUnitSphereRadius(radius float64) {
+	if radius <= 0 {
+		panic("unit sphere radius for projection should be larger than 0")
+	}
+	v.unitSphereRadius = radius
+}

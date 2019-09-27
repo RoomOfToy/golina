@@ -8,13 +8,11 @@ import (
 
 type Point struct {
 	*matrix.Vector
-	IsVisited bool
 }
 
 func NewPoint(x, y, z float64) Point {
 	return Point{
-		Vector:    &(matrix.Vector{x, y, z}),
-		IsVisited: false,
+		Vector: &(matrix.Vector{x, y, z}),
 	}
 }
 

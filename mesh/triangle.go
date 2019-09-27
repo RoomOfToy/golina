@@ -4,27 +4,49 @@ import (
 	"container/list"
 	"fmt"
 	"golina/matrix"
+	"os"
 )
+
+var vcnt uint
+
+type Vertex struct {
+	Id uint
+	Point
+	IsVisited bool
+}
+
+func NewVertex(x, y, z float64) Vertex {
+	vcnt++
+	return Vertex{
+		Id:        vcnt,
+		Point:     Point{&(matrix.Vector{x, y, z})},
+		IsVisited: false,
+	}
+}
+
+func VertexEqual(pt1, pt2 Vertex) bool {
+	return pt1.At(0) == pt2.At(0) && pt1.At(1) == pt2.At(1) && pt1.At(2) == pt2.At(2)
+}
 
 type Triangle struct {
 	Id        uint
-	Vertexes  []Point
+	Vertexes  []Vertex
 	Neighbors []*Triangle
 }
 
 var cnt uint
 
-func NewTriangle(v0, v1, v2 Point) *Triangle {
+func NewTriangle(v0, v1, v2 Vertex) *Triangle {
 	cnt++
 	return &Triangle{
 		Id:        cnt,
-		Vertexes:  []Point{v0, v1, v2},
+		Vertexes:  []Vertex{v0, v1, v2},
 		Neighbors: make([]*Triangle, 3),
 	}
 }
 
-func (tr *Triangle) IsCoincidentWith(pt Point) bool {
-	return PEqual(tr.Vertexes[0], pt) || PEqual(tr.Vertexes[1], pt) || PEqual(tr.Vertexes[2], pt)
+func (tr *Triangle) IsCoincidentWith(pt Vertex) bool {
+	return VertexEqual(tr.Vertexes[0], pt) || VertexEqual(tr.Vertexes[1], pt) || VertexEqual(tr.Vertexes[2], pt)
 }
 
 func (tr *Triangle) AssignNeighbors(tr0, tr1, tr2 *Triangle) {
@@ -39,15 +61,15 @@ func (tr *Triangle) String() string {
 type DelaunayTriangle struct {
 	iv              *initVarTriangulation
 	Points          Points
-	AuxiliaryPoints []Point
-	ProjectedPoints []Point
+	AuxiliaryPoints []Vertex
+	ProjectedPoints []Vertex
 	Triangles       *list.List
 }
 
 func NewDelaunayTriangle(points Points, iv *initVarTriangulation) *DelaunayTriangle {
-	ap := make([]Point, iv.initHullVerticesCnt)
+	ap := make([]Vertex, iv.initHullVerticesCnt)
 	for i := 0; i < iv.initHullVerticesCnt; i++ {
-		ap[i] = NewPoint(
+		ap[i] = NewVertex(
 			matrix.Ternary(i%2 == 0, 1., -1.).(float64)*matrix.Ternary(i/2 == 0, iv.unitSphereRadius, 0.).(float64),
 			matrix.Ternary(i%2 == 0, 1., -1.).(float64)*matrix.Ternary(i/2 == 1, iv.unitSphereRadius, 0.).(float64),
 			matrix.Ternary(i%2 == 0, 1., -1.).(float64)*matrix.Ternary(i/2 == 2, iv.unitSphereRadius, 0.).(float64),
@@ -59,7 +81,7 @@ func NewDelaunayTriangle(points Points, iv *initVarTriangulation) *DelaunayTrian
 		iv:              iv,
 		Points:          points,
 		AuxiliaryPoints: ap,
-		ProjectedPoints: make([]Point, len(points.Data)),
+		ProjectedPoints: make([]Vertex, len(points.Data)),
 		Triangles:       list.New(),
 		// Triangles:       make([]*Triangle, 0, 8+(len(points.Data)-6)*2),
 	}
@@ -67,19 +89,17 @@ func NewDelaunayTriangle(points Points, iv *initVarTriangulation) *DelaunayTrian
 
 func (dt *DelaunayTriangle) ProjectPointsToUnitSphere() {
 	for i := range dt.Points.Data {
-		dt.ProjectedPoints[i] = Point{
-			Vector:    dt.Points.Data[i].MulNum(dt.iv.unitSphereRadius / dt.Points.Data[i].Norm()),
-			IsVisited: false,
-		}
+		p := dt.Points.Data[i].MulNum(dt.iv.unitSphereRadius / dt.Points.Data[i].Norm())
+		dt.ProjectedPoints[i] = NewVertex(p.At(0), p.At(1), p.At(2))
 	}
 }
 
 // after projection
 func (dt *DelaunayTriangle) BuildInitialHull() {
-	initialVertices := make([]Point, dt.iv.initHullVerticesCnt)
+	initialVertices := make([]Vertex, dt.iv.initHullVerticesCnt)
 	for i := range initialVertices {
-		initialVertices[i] = Point{
-			Vector:    dt.AuxiliaryPoints[i].Vector.Normalize(),
+		initialVertices[i] = Vertex{
+			Point:     Point{dt.AuxiliaryPoints[i].Vector.Normalize()},
 			IsVisited: true,
 		}
 	}
@@ -132,7 +152,7 @@ func (dt *DelaunayTriangle) BuildInitialHull() {
 	}
 }
 
-func (dt *DelaunayTriangle) InsertPoint(point Point) {
+func (dt *DelaunayTriangle) InsertPoint(point Vertex) {
 	det := []float64{0, 0, 0}
 	for e := dt.Triangles.Front(); e != nil; e = e.Next() {
 		tri := e.Value.(*Triangle)
@@ -172,7 +192,7 @@ func (dt *DelaunayTriangle) RemoveExtraTriangles() {
 		isExtraTri := false
 		for _, v := range tri.Vertexes {
 			for _, p := range dt.AuxiliaryPoints {
-				if PEqual(v, p) {
+				if VertexEqual(v, p) {
 					isExtraTri = true
 					break
 				}
@@ -188,7 +208,7 @@ func (dt *DelaunayTriangle) RemoveExtraTriangles() {
 	}
 }
 
-func (dt *DelaunayTriangle) SplitTriangle(tri *Triangle, point Point) {
+func (dt *DelaunayTriangle) SplitTriangle(tri *Triangle, point Vertex) {
 	newTri1 := NewTriangle(point, tri.Vertexes[1], tri.Vertexes[2])
 	newTri2 := NewTriangle(point, tri.Vertexes[2], tri.Vertexes[0])
 
@@ -208,9 +228,9 @@ func (dt *DelaunayTriangle) SplitTriangle(tri *Triangle, point Point) {
 	dt.Triangles.PushBack(newTri2)
 
 	// optimize triangles according to delaunay triangulation definition
-	dt.DoLocalOptimization(tri, tri.Neighbors[1])
-	dt.DoLocalOptimization(newTri1, newTri1.Neighbors[1])
-	dt.DoLocalOptimization(newTri2, newTri2.Neighbors[1])
+	//dt.DoLocalOptimization(tri, tri.Neighbors[1])
+	//dt.DoLocalOptimization(newTri1, newTri1.Neighbors[1])
+	//dt.DoLocalOptimization(newTri2, newTri2.Neighbors[1])
 }
 
 func (dt *DelaunayTriangle) FixNeighborhood(target, oldNeighbor, newNeighbor *Triangle) {
@@ -268,14 +288,29 @@ func (dt *DelaunayTriangle) TrySwapDiagonal(tri0, tri1 *Triangle) bool {
 	return false
 }
 
-func (dt *DelaunayTriangle) GetDistance(pt0, pt1 Point) float64 {
+func (dt *DelaunayTriangle) GetDistance(pt0, pt1 Vertex) float64 {
 	return pt0.Sub(pt1.Vector).Norm()
 }
 
-func (dt *DelaunayTriangle) GetDetPoints(pt0, pt1, pt2 Point) float64 {
+func (dt *DelaunayTriangle) GetDetPoints(pt0, pt1, pt2 Vertex) float64 {
 	return new(matrix.Matrix).Init(matrix.Data{*(pt0.Vector), *(pt1.Vector), *(pt2.Vector)}).Det()
 }
 
 func (dt *DelaunayTriangle) GetDetMatrix(pts Points) float64 {
 	return pts.Det()
+}
+
+// 3 vertexes to form a triangle
+func (dt *DelaunayTriangle) WriteVertexIDToTxt(path string) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	for e := dt.Triangles.Front(); e != nil; e = e.Next() {
+		_, err = fmt.Fprintf(file, "%d %d %d\n", e.Value.(*Triangle).Vertexes[0].Id, e.Value.(*Triangle).Vertexes[1].Id, e.Value.(*Triangle).Vertexes[2].Id)
+	}
+
+	return err
 }

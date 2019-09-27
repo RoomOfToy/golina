@@ -159,7 +159,7 @@ func (ne *NormalEst) AlignVoxelNormal() {
 			nv = ne.Voxels[nid]
 			// flip normal if vn dot nvn < 0
 			if v.PlaneNormal.Dot(nv.PlaneNormal.Vector) < 0 {
-				v.PlaneNormal = Point{v.PlaneNormal.MulNum(-1), false}
+				v.PlaneNormal = Point{v.PlaneNormal.MulNum(-1)}
 			}
 			// just randomly pick one
 			break
