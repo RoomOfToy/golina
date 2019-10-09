@@ -5,6 +5,11 @@ type void struct{}
 // Int Set
 type IntSet map[int]void
 
+func containerInterfaceAssertion() {
+	var _ Container = (*IntSet)(nil)
+	var _ Container = (*FloatSet)(nil)
+}
+
 func NewIntSet(capacity int) *IntSet {
 	if capacity < 0 {
 		capacity = 0
@@ -22,10 +27,29 @@ func NewIntSetFromIntArray(array []int) *IntSet {
 }
 
 func IntSetEqual(s, s1 *IntSet) bool {
-	if s.Length() != s1.Length() || s.Difference(s1).Length() != 0 {
+	if s.Size() != s1.Size() || s.Difference(s1).Size() != 0 {
 		return false
 	}
 	return true
+}
+
+func (s *IntSet) Empty() bool {
+	return s.Size() == 0
+}
+
+// it is meaningless... should use s := NewIntSet(s.Size())
+func (s *IntSet) Clear() {
+	for k := range *s {
+		delete(*s, k)
+	}
+}
+
+func (s *IntSet) Values() []interface{} {
+	keys := make([]interface{}, 0, s.Size())
+	for k := range *s {
+		keys = append(keys, k)
+	}
+	return keys
 }
 
 func (s *IntSet) Get(x int) bool {
@@ -41,12 +65,12 @@ func (s *IntSet) Delete(x int) {
 	delete(*s, x)
 }
 
-func (s *IntSet) Length() int {
+func (s *IntSet) Size() int {
 	return len(*s)
 }
 
 func (s *IntSet) Union(s1 *IntSet) *IntSet {
-	ns := make(IntSet, s.Length()+s1.Length())
+	ns := make(IntSet, s.Size()+s1.Size())
 	for k := range *s {
 		ns[k] = void{}
 	}
@@ -58,11 +82,11 @@ func (s *IntSet) Union(s1 *IntSet) *IntSet {
 
 func (s *IntSet) Intersection(s1 *IntSet) *IntSet {
 	tmp0, tmp1 := s, s1
-	if s.Length() > s1.Length() {
+	if s.Size() > s1.Size() {
 		tmp0 = s1
 		tmp1 = s
 	}
-	ns := make(IntSet, tmp0.Length())
+	ns := make(IntSet, tmp0.Size())
 	for k := range *tmp0 {
 		if _, ok := (*tmp1)[k]; ok {
 			ns[k] = void{}
@@ -99,10 +123,29 @@ func NewFloatSetFromFloatArray(array []float64) *FloatSet {
 }
 
 func FloatSetEqual(s, s1 *FloatSet) bool {
-	if s.Length() != s1.Length() || s.Difference(s1).Length() != 0 {
+	if s.Size() != s1.Size() || s.Difference(s1).Size() != 0 {
 		return false
 	}
 	return true
+}
+
+func (s *FloatSet) Empty() bool {
+	return s.Size() == 0
+}
+
+// it is meaningless... should use s := NewIntSet(s.Size())
+func (s *FloatSet) Clear() {
+	for k := range *s {
+		delete(*s, k)
+	}
+}
+
+func (s *FloatSet) Values() []interface{} {
+	keys := make([]interface{}, 0, s.Size())
+	for k := range *s {
+		keys = append(keys, k)
+	}
+	return keys
 }
 
 func (s *FloatSet) Get(x float64) bool {
@@ -118,12 +161,12 @@ func (s *FloatSet) Delete(x float64) {
 	delete(*s, x)
 }
 
-func (s *FloatSet) Length() int {
+func (s *FloatSet) Size() int {
 	return len(*s)
 }
 
 func (s *FloatSet) Union(s1 *FloatSet) *FloatSet {
-	ns := make(FloatSet, s.Length()+s1.Length())
+	ns := make(FloatSet, s.Size()+s1.Size())
 	for k := range *s {
 		ns[k] = void{}
 	}
@@ -135,11 +178,11 @@ func (s *FloatSet) Union(s1 *FloatSet) *FloatSet {
 
 func (s *FloatSet) Intersection(s1 *FloatSet) *FloatSet {
 	tmp0, tmp1 := s, s1
-	if s.Length() > s1.Length() {
+	if s.Size() > s1.Size() {
 		tmp0 = s1
 		tmp1 = s
 	}
-	ns := make(FloatSet, tmp0.Length())
+	ns := make(FloatSet, tmp0.Size())
 	for k := range *tmp0 {
 		if _, ok := (*tmp1)[k]; ok {
 			ns[k] = void{}

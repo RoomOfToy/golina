@@ -9,7 +9,7 @@ func TestNewIntSet(t *testing.T) {
 	s.Add(1)
 	s.Add(2)
 	s.Add(3)
-	if s.Length() != 3 {
+	if s.Size() != 3 {
 		t.Fail()
 	}
 }
@@ -18,6 +18,32 @@ func TestNewIntSetFromIntArray(t *testing.T) {
 	s := NewIntSetFromIntArray([]int{1, 2, 3})
 	if !s.Get(1) || !s.Get(2) || !s.Get(3) {
 		t.Fail()
+	}
+}
+
+func TestIntSet_Empty(t *testing.T) {
+	s := NewIntSet(10)
+	if !s.Empty() {
+		t.Fail()
+	}
+}
+
+func TestIntSet_Clear(t *testing.T) {
+	s := NewIntSetFromIntArray([]int{1, 2, 3})
+	s.Clear()
+	if !s.Empty() {
+		t.Fail()
+	}
+}
+
+func TestIntSet_Values(t *testing.T) {
+	a := []int{1, 2, 3}
+	s := NewIntSetFromIntArray(a)
+	values := GetSortedValues(s, IntComparator, false)
+	for i, v := range a {
+		if v != values[i].(int) {
+			t.Fail()
+		}
 	}
 }
 
@@ -55,10 +81,10 @@ func TestIntSet_Delete(t *testing.T) {
 	}
 }
 
-func TestIntSet_Length(t *testing.T) {
+func TestIntSet_Size(t *testing.T) {
 	s := NewIntSet(1)
 	s.Add(1)
-	if s.Length() != 1 {
+	if s.Size() != 1 {
 		t.Fail()
 	}
 }
@@ -97,7 +123,7 @@ func TestNewFloatSet(t *testing.T) {
 	s.Add(1)
 	s.Add(2)
 	s.Add(3)
-	if s.Length() != 3 {
+	if s.Size() != 3 {
 		t.Fail()
 	}
 }
@@ -106,6 +132,32 @@ func TestNewFloatSetFromFloatArray(t *testing.T) {
 	s := NewFloatSetFromFloatArray([]float64{1, 2, 3})
 	if !s.Get(1) || !s.Get(2) || !s.Get(3) {
 		t.Fail()
+	}
+}
+
+func TestFloatSet_Empty(t *testing.T) {
+	s := NewFloatSet(10)
+	if !s.Empty() {
+		t.Fail()
+	}
+}
+
+func TestFloatSet_Clear(t *testing.T) {
+	s := NewFloatSetFromFloatArray([]float64{1, 2, 3})
+	s.Clear()
+	if !s.Empty() {
+		t.Fail()
+	}
+}
+
+func TestFloatSet_Values(t *testing.T) {
+	a := []float64{1, 2, 3}
+	s := NewFloatSetFromFloatArray(a)
+	values := GetSortedValues(s, Float64Comparator, false)
+	for i, v := range a {
+		if v != values[i].(float64) {
+			t.Fail()
+		}
 	}
 }
 
@@ -143,10 +195,10 @@ func TestFloatSet_Delete(t *testing.T) {
 	}
 }
 
-func TestFloatSet_Length(t *testing.T) {
+func TestFloatSet_Size(t *testing.T) {
 	s := NewFloatSet(1)
 	s.Add(1)
-	if s.Length() != 1 {
+	if s.Size() != 1 {
 		t.Fail()
 	}
 }
