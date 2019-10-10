@@ -6,7 +6,7 @@ import (
 )
 
 func TestBSTree_Insert(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Comparator = container.IntComparator
 	a := []int{1, 2, 3, -5, -3, 5, -8, 8, 4, 6}
 	for _, v := range a {
@@ -21,7 +21,7 @@ func TestBSTree_Insert(t *testing.T) {
 }
 
 func TestBSTree_Empty(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	if !bst.Empty() {
 		t.Fail()
 	}
@@ -32,7 +32,7 @@ func TestBSTree_Empty(t *testing.T) {
 }
 
 func TestBSTree_Size(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Insert(1)
 	if bst.Size() != 1 {
 		t.Fail()
@@ -40,7 +40,7 @@ func TestBSTree_Size(t *testing.T) {
 }
 
 func TestBSTree_Clear(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Insert(1)
 	bst.Clear()
 	if !bst.Empty() {
@@ -49,7 +49,7 @@ func TestBSTree_Clear(t *testing.T) {
 }
 
 func TestBSTree_Lookup(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Comparator = container.IntComparator
 	a := []int{1, 2, 3, -5, -3, 5, -8, 8, 4, 6}
 	for _, v := range a {
@@ -66,7 +66,7 @@ func TestBSTree_Lookup(t *testing.T) {
 }
 
 func TestBSTree_MaxDepth(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	if bst.MaxDepth() != 0 {
 		t.Fail()
 	}
@@ -81,7 +81,7 @@ func TestBSTree_MaxDepth(t *testing.T) {
 }
 
 func TestBSTree_MinValue(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Comparator = container.IntComparator
 	a := []int{1, 2, 3, -5, -3, 5, -8, 8, 4, 6}
 	for _, v := range a {
@@ -93,7 +93,7 @@ func TestBSTree_MinValue(t *testing.T) {
 }
 
 func TestBSTree_HasPathSum(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Comparator = container.IntComparator
 	bst.Diffidence = func(sum, data interface{}) interface{} {
 		return sum.(int) - data.(int)
@@ -108,7 +108,7 @@ func TestBSTree_HasPathSum(t *testing.T) {
 }
 
 func TestBSTree_PrintPaths(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Comparator = container.IntComparator
 	a := []int{1, 2, 3, -5, -3, 5, -8, 8, 4, 6}
 	for _, v := range a {
@@ -118,7 +118,7 @@ func TestBSTree_PrintPaths(t *testing.T) {
 }
 
 func TestBSTree_Mirror(t *testing.T) {
-	bst := NewBTree()
+	bst := NewBSTree()
 	bst.Comparator = container.IntComparator
 	a := []int{1, 2, 3, -5, -3, 5, -8, 8, 4, 6}
 	for _, v := range a {
@@ -130,5 +130,63 @@ func TestBSTree_Mirror(t *testing.T) {
 		if v.(int) != aReverseSorted[i] {
 			t.Fail()
 		}
+	}
+}
+
+func TestBSTree_DoubleTree(t *testing.T) {
+	bst := NewBSTree()
+	bst.Comparator = container.IntComparator
+	a := []int{2, 1, 3}
+	for _, v := range a {
+		bst.Insert(v)
+	}
+	bst.DoubleTree()
+	aSorted := []int{1, 1, 2, 2, 3, 3}
+	for i, v := range bst.Values() {
+		if v.(int) != aSorted[i] {
+			t.Fail()
+		}
+	}
+}
+
+func TestBSTree_SameTree(t *testing.T) {
+	bstA, bstB := NewBSTree(), NewBSTree()
+	bstA.Comparator, bstB.Comparator = container.IntComparator, container.IntComparator
+	a := []int{2, 1, 3}
+	for _, v := range a {
+		bstA.Insert(v)
+		bstB.Insert(v)
+	}
+	if !bstA.SameTree(bstB) {
+		t.Fail()
+	}
+	bstB.Insert(5)
+	if bstA.SameTree(bstB) {
+		t.Fail()
+	}
+}
+
+func TestCountTrees(t *testing.T) {
+	if CountTrees(4) != 14 {
+		t.Fail()
+	}
+}
+
+func TestBSTree_IsBST(t *testing.T) {
+	bst := NewBSTree()
+	bst.Comparator = container.IntComparator
+	a := []int{2, 1, 3}
+	for _, v := range a {
+		bst.Insert(v)
+	}
+	if !bst.IsBST(0, 5) {
+		t.Fail()
+	}
+	bst.Clear()
+	bst.Root = NewNode(1)
+	bst.Root.left = NewNode(3)
+	bst.Root.right = NewNode(2)
+	if bst.IsBST(0, 5) {
+		t.Fail()
 	}
 }

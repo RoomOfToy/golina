@@ -17,7 +17,7 @@ func treeInterfaceAssertion() {
 	var _ Tree = (*BSTree)(nil)
 }
 
-func NewBTree() *BSTree {
+func NewBSTree() *BSTree {
 	return &BSTree{
 		Root:       nil,
 		Comparator: nil,
@@ -207,4 +207,67 @@ func (bst *BSTree) mirror(node *Node) {
 // in-place change
 func (bst *BSTree) Mirror() {
 	bst.mirror(bst.Root)
+}
+
+func (bst *BSTree) doubleTree(node *Node) {
+	if node == nil {
+		return
+	}
+
+	bst.doubleTree(node.left)
+	bst.doubleTree(node.right)
+
+	oldLeft := node.left
+	node.left = NewNode(node.data)
+	node.left.left = oldLeft
+}
+
+func (bst *BSTree) DoubleTree() {
+	bst.doubleTree(bst.Root)
+}
+
+func (bst *BSTree) sameTree(nodeA, nodeB *Node) bool {
+	if nodeA == nil && nodeB == nil {
+		return true
+	} else if nodeA != nil && nodeB != nil {
+		return nodeA.data == nodeB.data && bst.sameTree(nodeA.left, nodeB.left) && bst.sameTree(nodeA.right, nodeB.right)
+	} else {
+		return false
+	}
+}
+
+func (bst *BSTree) SameTree(bstB *BSTree) bool {
+	return bst.sameTree(bst.Root, bstB.Root)
+}
+
+func CountTrees(numKeys int) int {
+	if numKeys <= 1 {
+		return 1
+	} else {
+		sum, left, right := 0, 0, 0
+		for root := 0; root < numKeys; root++ {
+			// left tree node num
+			left = CountTrees(root)
+			// right tree node num
+			right = CountTrees(numKeys - 1 - root)
+			sum += left * right
+		}
+		return sum
+	}
+}
+
+func (bst *BSTree) isBST(node *Node, min, max interface{}) bool {
+	if node == nil {
+		return true
+	}
+
+	if bst.Comparator(node.data, min) < 0 || bst.Comparator(node.data, max) > 0 {
+		return false
+	}
+
+	return bst.isBST(node.left, min, node.data) && bst.isBST(node.right, node.data, max)
+}
+
+func (bst *BSTree) IsBST(min, max interface{}) bool {
+	return bst.isBST(bst.Root, min, max)
 }
