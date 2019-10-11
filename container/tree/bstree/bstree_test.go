@@ -1,4 +1,4 @@
-package tree
+package bstree
 
 import (
 	"golina/container"

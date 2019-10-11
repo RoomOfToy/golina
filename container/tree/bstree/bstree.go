@@ -1,8 +1,9 @@
-package tree
+package bstree
 
 import (
 	"fmt"
 	"golina/container"
+	"golina/container/tree"
 )
 
 // Binary Search Tree
@@ -14,7 +15,7 @@ type BSTree struct {
 }
 
 func treeInterfaceAssertion() {
-	var _ Tree = (*BSTree)(nil)
+	var _ tree.Tree = (*BSTree)(nil)
 }
 
 func NewBSTree() *BSTree {

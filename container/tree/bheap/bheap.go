@@ -1,4 +1,4 @@
-package tree
+package bheap
 
 import (
 	"container/heap"

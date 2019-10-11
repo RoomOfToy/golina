@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"golina/container/tree"
+	"golina/container/tree/bheap"
 )
 
 type Item struct {
@@ -11,7 +11,7 @@ type Item struct {
 }
 
 type PriorityQueue struct {
-	items *tree.MaxHeap
+	items *bheap.MaxHeap
 }
 
 func ItemComparator(a, b interface{}) int {
@@ -27,7 +27,7 @@ func ItemComparator(a, b interface{}) int {
 }
 
 func NewPQ() *PriorityQueue {
-	maxH := tree.MaxHeap{
+	maxH := bheap.MaxHeap{
 		Comparator: ItemComparator,
 	}
 	maxH.Init()
