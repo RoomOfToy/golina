@@ -5,8 +5,6 @@ import (
 	"math"
 	"math/rand"
 	"os"
-	"reflect"
-	"sync"
 	"time"
 )
 
@@ -175,6 +173,7 @@ func GenerateRandomSparseMatrix(rows, cols, entriesNum int) *SparseMatrix {
 	return nsm
 }
 
+/*
 // Vector to iterable
 func VectorIter(v *Vector) interface{} {
 	return *v
@@ -228,6 +227,7 @@ func Filter(input interface{}, filter func(interface{}) bool) interface{} {
 	}
 	return out
 }
+*/
 
 func getFileSize(filename string) int64 {
 	fileStat, err := os.Stat(filename)

@@ -2,7 +2,6 @@ package matrix
 
 import (
 	"os"
-	"reflect"
 	"testing"
 )
 
@@ -29,6 +28,7 @@ func TestVEqual(t *testing.T) {
 	}
 }
 
+/*
 func TestMap(t *testing.T) {
 	v := GenerateRandomVector(10)
 	m := Map(VectorIter(v), func(item interface{}) interface{} {
@@ -132,6 +132,7 @@ func TestMatrixElementIter(t *testing.T) {
 		}
 	}
 }
+*/
 
 func TestLoad3DToMatrix(t *testing.T) {
 	mat := GenerateRandomMatrix(10, 3)
