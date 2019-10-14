@@ -18,6 +18,14 @@ type Node struct {
 	leftTree, rightTree, parent *Node
 }
 
+var NIL = &Node{
+	value:     nil,
+	color:     Black,
+	leftTree:  nil,
+	rightTree: nil,
+	parent:    nil,
+}
+
 func NewNode(value interface{}) *Node {
 	return &Node{
 		value:     value,
@@ -56,8 +64,8 @@ func (node *Node) sibling() *Node {
 
 // in-order
 func (node *Node) String() string {
-	if node == nil {
-		return "[nil]"
+	if node == NIL {
+		return "NIL"
 	}
 	s := ""
 	if node.leftTree != nil {
@@ -71,7 +79,7 @@ func (node *Node) String() string {
 	if node.rightTree != nil {
 		s += " " + node.rightTree.String()
 	}
-	return "[" + s + "]\n"
+	return "[" + s + "]"
 }
 
 type RBTree struct {
@@ -79,9 +87,58 @@ type RBTree struct {
 	Comparator container.Comparator
 }
 
+func (rbTree *RBTree) String() string {
+	return fmt.Sprintf("%s", rbTree.Root)
+}
+
+func (rbTree *RBTree) value(node *Node, dataSlice *[]interface{}) {
+	if node.value == nil {
+		return
+	}
+	rbTree.value(node.leftTree, dataSlice)
+	*dataSlice = append(*dataSlice, node.value)
+	rbTree.value(node.rightTree, dataSlice)
+}
+
+func (rbTree *RBTree) Values() []interface{} {
+	if rbTree.Root == nil {
+		return nil
+	}
+	var values []interface{}
+	rbTree.value(rbTree.Root, &values)
+	return values
+}
+
+func (rbTree *RBTree) size(node *Node) int {
+	if node == nil || node == NIL {
+		return 0
+	}
+	return rbTree.size(node.leftTree) + 1 + rbTree.size(node.rightTree)
+}
+
+func (rbTree *RBTree) Size() int {
+	return rbTree.size(rbTree.Root)
+}
+
+func (rbTree *RBTree) Empty() bool {
+	return rbTree.Root == nil
+}
+
+func (rbTree *RBTree) minValue(node *Node) interface{} {
+	if node.leftTree == NIL {
+		return node.value
+	}
+	return rbTree.minValue(node.leftTree)
+}
+
+func (rbTree *RBTree) MinValue() interface{} {
+	return rbTree.minValue(rbTree.Root)
+}
+
 func NewRBTree(root *Node, comparator container.Comparator) *RBTree {
 	rbTree := &RBTree{Root: root, Comparator: comparator}
 	rbTree.Root.color = Black
+	rbTree.Root.leftTree, rbTree.Root.rightTree = NIL, NIL
 	return rbTree
 }
 
@@ -106,7 +163,7 @@ func (rbTree *RBTree) rotateLeft(Y *Node) {
 	b := Y.leftTree
 
 	X.rightTree = b
-	if b != nil {
+	if b != NIL {
 		b.parent = X
 	}
 	Y.leftTree = X
@@ -143,7 +200,7 @@ func (rbTree *RBTree) rotateRight(Y *Node) {
 
 	X.leftTree = c
 
-	if c != nil {
+	if c != NIL {
 		c.parent = X
 	}
 	Y.rightTree = X
@@ -161,14 +218,6 @@ func (rbTree *RBTree) rotateRight(Y *Node) {
 			gp.rightTree = Y
 		}
 	}
-}
-
-var NIL = &Node{
-	value:     nil,
-	color:     Black,
-	leftTree:  nil,
-	rightTree: nil,
-	parent:    nil,
 }
 
 /*
@@ -195,7 +244,7 @@ func (rbTree *RBTree) insertCase(Y *Node) {
 	c := Y.rightTree
 
 	if X.color == Red {
-		if Y.uncle().color == Red {
+		if a.color == Red {
 			X.color, a.color = Black, Black
 			gp.color = Red
 			rbTree.insertCase(gp)
@@ -225,7 +274,7 @@ func (rbTree *RBTree) insertCase(Y *Node) {
 
 func (rbTree *RBTree) insert(node *Node, value interface{}) {
 	if rbTree.Comparator(node.value, value) >= 0 {
-		if node.leftTree != nil {
+		if node.leftTree != NIL {
 			rbTree.insert(node.leftTree, value)
 		} else {
 			tmp := NewNode(value)
@@ -235,7 +284,7 @@ func (rbTree *RBTree) insert(node *Node, value interface{}) {
 			rbTree.insertCase(tmp)
 		}
 	} else {
-		if node.rightTree != nil {
+		if node.rightTree != NIL {
 			rbTree.insert(node.rightTree, value)
 		} else {
 			tmp := NewNode(value)
@@ -251,62 +300,82 @@ func (rbTree *RBTree) Insert(value interface{}) {
 	if rbTree.Root == nil {
 		rbTree.Root = NewNode(value)
 		rbTree.Root.color = Black
+		rbTree.Root.leftTree, rbTree.Root.rightTree = NIL, NIL
 	}
 	rbTree.insert(rbTree.Root, value)
 }
 
-func (rbTree *RBTree) minValue(node *Node) interface{} {
-	if node.leftTree == nil {
-		return node.value
+func (rbTree *RBTree) getSmallestChild(root *Node) *Node {
+	if root.leftTree == NIL {
+		return root
 	}
-	return rbTree.minValue(node.leftTree)
+	return rbTree.getSmallestChild(root.leftTree)
 }
 
-func (rbTree *RBTree) MinValue() interface{} {
-	return rbTree.minValue(rbTree.Root)
+func (rbTree *RBTree) deleteChild(node *Node, value interface{}) bool {
+	if rbTree.Comparator(node.value, value) > 0 {
+		if node.leftTree == NIL {
+			return false
+		}
+		return rbTree.deleteChild(node.leftTree, value)
+	} else if rbTree.Comparator(node.value, value) < 0 {
+		if node.rightTree == NIL {
+			return false
+		}
+		return rbTree.deleteChild(node.rightTree, value)
+	} else if rbTree.Comparator(node.value, value) == 0 {
+		if node.rightTree == NIL {
+			rbTree.deleteOneChild(node)
+			return true
+		}
+		smallestNode := rbTree.getSmallestChild(node.rightTree)
+		smallestNode.value, node.value = node.value, smallestNode.value
+		rbTree.deleteOneChild(smallestNode)
+		return true
+	}
+	return false
 }
 
-func (rbTree *RBTree) deleteOneChild(X *Node) {
-	Y, a := NIL, NIL
-	if X.leftTree != nil {
-		Y = X.leftTree
-		a = X.rightTree
+// when Y has at most one non-NIL child
+func (rbTree *RBTree) deleteOneChild(Y *Node) {
+	Child := NIL
+	if Y.leftTree == NIL {
+		Child = Y.rightTree
 	} else {
-		Y = X.rightTree
-		a = X.leftTree
+		Child = Y.leftTree
 	}
 
-	gp := X.parent
+	X := Y.parent
 
-	if gp == nil && Y == NIL && a == nil {
-		X = nil
-		rbTree.Root = X
+	if X == nil && Y.leftTree == NIL && Y.rightTree == NIL {
+		Y = nil
+		rbTree.Root = Y
 		return
 	}
 
-	if gp == nil {
-		X = nil
-		Y.parent = X
-		rbTree.Root = Y
+	if X == nil {
+		Y = nil
+		Child.parent = nil
+		rbTree.Root = Child
 		rbTree.Root.color = Black
 		return
 	}
 
-	if gp.leftTree == X {
-		gp.leftTree = Y
+	if X.leftTree == Y {
+		X.leftTree = Child
 	} else {
-		gp.rightTree = Y
+		X.rightTree = Child
 	}
-	Y.parent = X.parent
+	Child.parent = X
 
-	if X.color == Black {
-		if Y.color == Red {
-			Y.color = Black
+	if Y.color == Black {
+		if Child.color == Red {
+			Child.color = Black
 		} else {
-			rbTree.deleteCase(Y)
+			rbTree.deleteCase(Child)
 		}
 	}
-	X = nil
+	Y = nil
 }
 
 func (rbTree *RBTree) deleteCase(Y *Node) {
@@ -317,8 +386,9 @@ func (rbTree *RBTree) deleteCase(Y *Node) {
 	}
 
 	S := Y.sibling()
+
 	if S.color == Red {
-		Y.parent.color = Red
+		X.color = Red
 		S.color = Black
 		if Y == X.leftTree {
 			rbTree.rotateLeft(X)
@@ -327,46 +397,49 @@ func (rbTree *RBTree) deleteCase(Y *Node) {
 		}
 	}
 
-	if X.color == Black && S.color == Black && S.leftTree.color == Black && S.rightTree.color == Black {
-		S.color = Red
-		rbTree.deleteCase(X)
-	} else if X.color == Red && S.color == Black && S.leftTree.color == Black && S.rightTree.color == Black {
-		S.color = Red
-		X.color = Black
-	} else {
-		if S.color == Black {
-			if Y == X.leftTree && S.leftTree.color == Red && S.rightTree.color == Black {
-				S.color = Red
-				S.leftTree.color = Black
-				rbTree.rotateRight(S.leftTree)
-			} else if Y == X.rightTree && S.leftTree.color == Black && S.rightTree.color == Red {
-				S.color = Red
+	if S != NIL {
+		if X.color == Black && S.color == Black && S.leftTree.color == Black && S.rightTree.color == Black {
+			S.color = Red
+			rbTree.deleteCase(X)
+		} else if X.color == Red && S.color == Black && S.leftTree.color == Black && S.rightTree.color == Black {
+			S.color = Red
+			X.color = Black
+		} else {
+			if S.color == Black {
+				if Y == X.leftTree && S.leftTree.color == Red && S.rightTree.color == Black {
+					S.color = Red
+					S.leftTree.color = Black
+					rbTree.rotateRight(S.leftTree)
+				} else if Y == X.rightTree && S.leftTree.color == Black && S.rightTree.color == Red {
+					S.color = Red
+					S.rightTree.color = Black
+					rbTree.rotateLeft(S.rightTree)
+				}
+			}
+
+			S.color = X.color
+			X.color = Black
+			if Y == X.leftTree {
 				S.rightTree.color = Black
-				rbTree.rotateLeft(S.rightTree)
+				rbTree.rotateLeft(S)
+			} else {
+				S.leftTree.color = Black
+				rbTree.rotateRight(S)
 			}
 		}
-
-		S.color = X.color
-		X.color = Black
-		if Y == X.leftTree {
-			S.rightTree.color = Black
-			rbTree.rotateLeft(S)
-		} else {
-			S.leftTree.color = Black
-			rbTree.rotateRight(S)
+	} else {
+		if X.color == Black {
+			rbTree.deleteCase(X)
+		} else if X.color == Red {
+			X.color = Black
 		}
 	}
 }
 
-func (rbTree *RBTree) deleteTree(node *Node) {
-	if node == nil {
-		return
-	}
-	rbTree.deleteTree(node.leftTree)
-	rbTree.deleteTree(node.rightTree)
-	node = nil
+func (rbTree *RBTree) Delete(value interface{}) bool {
+	return rbTree.deleteChild(rbTree.Root, value)
 }
 
 func (rbTree *RBTree) Clear() {
-	rbTree.deleteTree(rbTree.Root)
+	rbTree.Root = nil
 }
