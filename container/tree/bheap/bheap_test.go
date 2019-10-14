@@ -2,6 +2,8 @@ package bheap
 
 import (
 	"golina/container"
+	"math"
+	"strconv"
 	"testing"
 )
 
@@ -59,5 +61,22 @@ func TestHeap(t *testing.T) {
 	minH.Set(3, -2)
 	if minH.Pop().(int) != -2 {
 		t.Fail()
+	}
+}
+
+func BenchmarkHeap_Push(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			minH := new(MinHeap)
+			minH.Comparator = container.IntComparator
+			minH.Init()
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				for j := 0; j < n; j++ {
+					minH.Push(container.GenerateRandomInt())
+				}
+			}
+		})
 	}
 }

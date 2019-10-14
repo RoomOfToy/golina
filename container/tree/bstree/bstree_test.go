@@ -2,6 +2,8 @@ package bstree
 
 import (
 	"golina/container"
+	"math"
+	"strconv"
 	"testing"
 )
 
@@ -188,5 +190,21 @@ func TestBSTree_IsBST(t *testing.T) {
 	bst.Root.right = NewNode(2)
 	if bst.IsBST(0, 5) {
 		t.Fail()
+	}
+}
+
+func BenchmarkBSTree_Insert(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+			bst := new(BSTree)
+			bst.Comparator = container.IntComparator
+			b.ResetTimer()
+			for i := 1; i < b.N; i++ {
+				for j := 0; j < n; j++ {
+					bst.Insert(container.GenerateRandomInt())
+				}
+			}
+		})
 	}
 }

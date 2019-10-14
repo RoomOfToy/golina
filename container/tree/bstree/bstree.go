@@ -117,6 +117,9 @@ func (bst *BSTree) value(node *Node, dataSlice *[]interface{}) {
 }
 
 func (bst *BSTree) Values() []interface{} {
+	if bst.Root == nil {
+		return nil
+	}
 	var dataSlice []interface{}
 	bst.value(bst.Root, &dataSlice)
 	return dataSlice
