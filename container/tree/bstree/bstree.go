@@ -3,7 +3,6 @@ package bstree
 import (
 	"fmt"
 	"golina/container"
-	"golina/container/tree"
 )
 
 // Binary Search Tree
@@ -12,10 +11,6 @@ type BSTree struct {
 	Root       *Node
 	Comparator container.Comparator
 	Diffidence func(a, b interface{}) interface{}
-}
-
-func treeInterfaceAssertion() {
-	var _ tree.Tree = (*BSTree)(nil)
 }
 
 func NewBSTree() *BSTree {

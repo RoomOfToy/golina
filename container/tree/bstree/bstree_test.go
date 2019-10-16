@@ -2,10 +2,15 @@ package bstree
 
 import (
 	"golina/container"
+	"golina/container/tree"
 	"math"
 	"strconv"
 	"testing"
 )
+
+func TestBSTree_InterfaceAssertion(t *testing.T) {
+	var _ tree.Tree = (*BSTree)(nil)
+}
 
 func TestBSTree_Insert(t *testing.T) {
 	bst := NewBSTree()
