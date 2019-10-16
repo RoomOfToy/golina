@@ -42,6 +42,21 @@ func TestBTree(t *testing.T) {
 		}
 	}
 
+	for _, v := range a[:3] {
+		bTree.Delete(v)
+	}
+
+	for i, v := range bTree.Values() {
+		if v.(string) != fmt.Sprintf("[%s]", strconv.Itoa(a[3:][i])) {
+			fmt.Printf("At index %d, value %s\n", i, v)
+			t.Fail()
+		}
+	}
+
+	if bTree.Size() != 4 {
+		t.Fail()
+	}
+
 	bTree.Clear()
 	if !bTree.Empty() || bTree.Size() != 0 {
 		t.Fail()
