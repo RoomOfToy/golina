@@ -185,18 +185,18 @@ func (bTree *BTree) splitRoot() {
 func (bTree *BTree) splitIntoLR(node *Node, mid int) (leftSubTree, rightSubTree *Node) {
 	// create left, right sub-trees
 	leftSubTree = &Node{
-		Items:    node.Items[:mid],
+		Items:    append([]*Item{}, node.Items[:mid]...), // use append empty slice to ensure result is slice
 		Children: nil,
 		Parent:   nil,
 	}
 	rightSubTree = &Node{
-		Items:    node.Items[mid+1:],
+		Items:    append([]*Item{}, node.Items[mid+1:]...),
 		Children: nil,
 		Parent:   nil,
 	}
 	if len(node.Children) != 0 {
-		leftSubTree.Children = node.Children[:mid+1]
-		rightSubTree.Children = node.Children[mid+1:]
+		leftSubTree.Children = append([]*Node{}, node.Children[:mid+1]...)
+		rightSubTree.Children = append([]*Node{}, node.Children[mid+1:]...)
 		// set subtrees' parent
 		setParent(leftSubTree.Children, leftSubTree)
 		setParent(rightSubTree.Children, rightSubTree)
@@ -421,7 +421,8 @@ func (bTree *BTree) rebalance(node *Node, deletedKey interface{}) {
 
 		// deal with item
 		// append parent's separator item into left sibling items, introduce a tmp items variable to avoid change on ls.Items directly
-		tmpItems := append(ls.Items, node.Parent.Items[separatorIdx])
+		tmpItems := append([]*Item{}, ls.Items...) // ensure result is []*Item
+		tmpItems = append(tmpItems, node.Parent.Items[separatorIdx])
 		// prepend left sibling items into node items
 		node.Items = append(tmpItems, node.Items...)
 		// delete separator item from parent
@@ -430,7 +431,8 @@ func (bTree *BTree) rebalance(node *Node, deletedKey interface{}) {
 
 		// deal with child
 		// prepend left sibling's children into node's children
-		node.Children = append(node.Parent.Children[lsIdx].Children, node.Children...)
+		temChildren := append([]*Node{}, node.Parent.Children[lsIdx].Children...) // ensure result is []*Node
+		node.Children = append(temChildren, node.Children...)
 		// set their parent to node
 		setParent(node.Parent.Children[lsIdx].Children, node)
 		// delete left sibling from parent
