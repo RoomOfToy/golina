@@ -10,13 +10,34 @@ import (
 	"testing"
 )
 
-func BenchmarkTree_Insert(b *testing.B) {
+func BenchmarkTree_InsertOne(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
-		nums := make([]int, n)
-		for i := range nums {
-			nums[i] = container.GenerateRandomInt()
+
+		rbTree := new(rbtree.RBTree)
+		rbTree.Comparator = container.IntComparator
+
+		minH := new(bheap.MinHeap)
+		minH.Comparator = container.IntComparator
+		minH.Init()
+
+		bTree := btree.NewBTree(10, container.IntComparator)
+
+		rn := 0
+		for i := 0; i < n; i++ {
+			rn = container.GenerateRandomInt()
+
+			rbTree.Insert(rn)
+
+			minH.Push(rn)
+
+			bTree.Insert(&btree.Item{
+				Key:   rn,
+				Value: rn,
+			})
 		}
+
+		num := container.GenerateRandomInt()
 		b.ResetTimer()
 
 		/*
@@ -33,38 +54,29 @@ func BenchmarkTree_Insert(b *testing.B) {
 		*/
 
 		b.Run("Red-Black Tree: size-"+strconv.Itoa(n), func(b *testing.B) {
-			rbTree := new(rbtree.RBTree)
-			rbTree.Comparator = container.IntComparator
+
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				for _, num := range nums {
-					rbTree.Insert(num)
-				}
+				rbTree.Insert(num)
 			}
 		})
 
 		b.Run("Binary-Heap: size-"+strconv.Itoa(n), func(b *testing.B) {
-			minH := new(bheap.MinHeap)
-			minH.Comparator = container.IntComparator
-			minH.Init()
+
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				for _, num := range nums {
-					minH.Push(num)
-				}
+				minH.Push(num)
 			}
 		})
 
 		b.Run("B Tree: size-"+strconv.Itoa(n), func(b *testing.B) {
-			rbTree := btree.NewBTree(10, container.IntComparator)
+
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				for _, num := range nums {
-					rbTree.Insert(&btree.Item{
-						Key:   num,
-						Value: num,
-					})
-				}
+				bTree.Insert(&btree.Item{
+					Key:   num,
+					Value: num,
+				})
 			}
 		})
 	}

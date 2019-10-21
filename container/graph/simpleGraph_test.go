@@ -2,6 +2,9 @@ package graph
 
 import (
 	"fmt"
+	"golina/container"
+	"math"
+	"strconv"
 	"testing"
 )
 
@@ -131,5 +134,30 @@ func TestGraph(t *testing.T) {
 	graph.Clear()
 	if !graph.Empty() {
 		t.Fail()
+	}
+}
+
+func BenchmarkGraph_Node(b *testing.B) {
+	for k := 1.0; k <= 3; k++ {
+		n := int(math.Pow(10, k))
+
+		graph := NewGraph()
+		for i := 0; i < n; i++ {
+			graph.AddNode(NewNode(container.GenerateRandomString(100)))
+		}
+
+		s := container.GenerateRandomString(10)
+		b.ResetTimer()
+		b.Run("Add-One when size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				graph.AddNode(NewNode(s))
+			}
+		})
+
+		b.Run("Delete-One when size-"+strconv.Itoa(n), func(b *testing.B) {
+			for i := 1; i < b.N; i++ {
+				graph.DeleteNode(StringID(s))
+			}
+		})
 	}
 }
