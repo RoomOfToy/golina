@@ -10,7 +10,7 @@ import (
 //	reference: https://golang.org/src/runtime/slice.go?h=slice#L13
 const minCap = 8
 
-// deque is implemented on top of ring buffer
+// Deque is implemented on top of ring buffer
 //	see ring buffer in `https://github.com/Harold2017/ringbuffer/ringbuffer.go`
 type Deque struct {
 	buf        []interface{} // []interface{} for generics instead of []byte in ringbuffer
@@ -18,6 +18,7 @@ type Deque struct {
 	head, tail int
 }
 
+// NewDeque returns a pointer of Deque with capacity >= minCap (8)
 func NewDeque(cap int) *Deque {
 	if cap <= minCap {
 		cap = minCap
@@ -110,6 +111,7 @@ func (dq *Deque) PositionsCanPushBack() int {
 	return dq.cap - dq.tail + dq.head
 }
 
+// IsFull returns true if elements num of deque equal to its capacity
 func (dq *Deque) IsFull() bool {
 	return dq.cnt == dq.cap
 }
@@ -175,7 +177,7 @@ func (dq *Deque) PopBack() (elem interface{}, err error) {
 	return
 }
 
-// PopBack returns and delete the first element inside the deque, if deque is empty returns error
+// PopFront returns and delete the first element inside the deque, if deque is empty returns error
 func (dq *Deque) PopFront() (elem interface{}, err error) {
 	if dq.cnt <= 0 {
 		return nil, fmt.Errorf("deque: can NOT PopFront on empty deque")
@@ -212,9 +214,10 @@ func (dq *Deque) Back() (elem interface{}, err error) {
 
 // At returns element at index idx
 func (dq *Deque) At(idx int) interface{} {
-	if idx < 0 || idx > dq.cap {
-		idx = idx & (dq.cap - 1)
+	if idx < 0 {
+		idx = (dq.tail + idx) & (dq.cap - 1)
+	} else {
+		idx = (dq.head + idx) & (dq.cap - 1)
 	}
-	idx = (dq.head + idx) & (dq.cap - 1)
 	return dq.buf[idx]
 }

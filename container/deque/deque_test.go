@@ -14,7 +14,7 @@ func TestDeque(t *testing.T) {
 
 	dq := NewDeque(-10)
 
-	if dq.Cap() != 8 || !dq.Empty() {
+	if dq.Cap() != 8 || !dq.Empty() || dq.Values() != nil {
 		t.Fail()
 	}
 
@@ -72,9 +72,57 @@ func TestDeque(t *testing.T) {
 		t.Fail()
 	}
 
+	for i, v := range dq.Values() {
+		if v.(int) != dq.At(i).(int) {
+			t.Fail()
+		}
+	}
+
+	if dq.At(-1) != 7 || dq.At(-10) != 4 || dq.At(34) != 5 {
+		fmt.Println(dq.At(-1).(int), dq.At(-10).(int), dq.At(34).(int))
+		t.Fail()
+	}
+
+	aReversed := []int{7, 6, 5, 4, 3, 2, 1}
+	for i := range aReversed {
+		v, err := dq.PopBack()
+		if err != nil || v.(int) != aReversed[i] {
+			t.Fail()
+		}
+	}
+	f, _ = dq.Front()
+	b, _ = dq.Back()
+	// size = 13 != 32/4 (8), cap no shrink
+	if dq.Cap() != 32 || dq.Size() != 13 || f != 7 || b != 6 || dq.PositionsCanPushBack() != 19 || dq.PositionsCanPopFront() != 13 {
+		fmt.Println(dq.Cap(), dq.Size(), f, b)
+		t.Fail()
+	}
+
+	// [7, 6, 5, 4, 3, 2, 1] + [0, 2, 3, 4, 5, 6]
+	for i := range aReversed {
+		v, err := dq.PopFront()
+		if err != nil || v.(int) != aReversed[i] {
+			t.Fail()
+		}
+	}
+	f, _ = dq.Front()
+	b, _ = dq.Back()
+	// size = 6 < 32/4 (8), cap shrink
+	if dq.Cap() != 16 || dq.Size() != 6 || f != 0 || b != 6 || dq.PositionsCanPushBack() != 10 || dq.PositionsCanPopFront() != 6 {
+		fmt.Println(dq.Cap(), dq.Size(), f, b)
+		t.Fail()
+	}
+
 	dq.Clear()
 
-	if !dq.Empty() || dq.Cap() != 32 || dq.Size() != 0 || dq.PositionsCanPushBack() != 32 || dq.PositionsCanPopFront() != 0 {
+	if !dq.Empty() || dq.Cap() != 16 || dq.Size() != 0 || dq.PositionsCanPushBack() != 16 || dq.PositionsCanPopFront() != 0 {
+		t.Fail()
+	}
+
+	if f, err = dq.Front(); f != nil || err == nil {
+		t.Fail()
+	}
+	if b, err = dq.Back(); b != nil || err == nil {
 		t.Fail()
 	}
 }
