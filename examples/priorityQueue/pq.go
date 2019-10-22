@@ -5,17 +5,17 @@ import (
 	"golina/container/tree/bheap"
 )
 
-type Item struct {
+type item struct {
 	priority int
 	content  interface{}
 }
 
-type PriorityQueue struct {
+type priorityQueue struct {
 	items *bheap.MaxHeap
 }
 
-func ItemComparator(a, b interface{}) int {
-	itemA, itemB := a.(*Item), b.(*Item)
+func itemComparator(a, b interface{}) int {
+	itemA, itemB := a.(*item), b.(*item)
 	A, B := itemA.priority, itemB.priority
 	if A > B {
 		return 1
@@ -26,40 +26,40 @@ func ItemComparator(a, b interface{}) int {
 	}
 }
 
-func NewPQ() *PriorityQueue {
+func newPQ() *priorityQueue {
 	maxH := bheap.MaxHeap{
-		Comparator: ItemComparator,
+		Comparator: itemComparator,
 	}
 	maxH.Init()
-	return &PriorityQueue{items: &maxH}
+	return &priorityQueue{items: &maxH}
 }
 
-func (pq *PriorityQueue) push(item *Item) {
+func (pq *priorityQueue) push(item *item) {
 	pq.items.Push(item)
 }
 
-func (pq *PriorityQueue) pop() *Item {
-	return pq.items.Pop().(*Item)
+func (pq *priorityQueue) pop() *item {
+	return pq.items.Pop().(*item)
 }
 
-func (pq *PriorityQueue) len() int {
+func (pq *priorityQueue) len() int {
 	return pq.items.Size()
 }
 
-func (pq *PriorityQueue) top() *Item {
-	return pq.items.Values()[0].(*Item)
+func (pq *priorityQueue) top() *item {
+	return pq.items.Values()[0].(*item)
 }
 
-func (pq *PriorityQueue) values() []Item {
-	var items []Item
+func (pq *priorityQueue) values() []item {
+	var items []item
 	for _, v := range pq.items.Values() {
-		items = append(items, *(v.(*Item)))
+		items = append(items, *(v.(*item)))
 	}
 	return items
 }
 
 func main() {
-	items := []Item{
+	items := []item{
 		{
 			priority: 3,
 			content:  "hello",
@@ -74,7 +74,7 @@ func main() {
 		},
 	}
 
-	pq := NewPQ()
+	pq := newPQ()
 	for i := range items {
 		pq.push(&items[i])
 	}

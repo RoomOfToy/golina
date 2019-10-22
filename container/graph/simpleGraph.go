@@ -8,28 +8,35 @@ import (
 	"os"
 )
 
+// NodeNotExistError
 func NodeNotExistError(id ID) error {
 	return fmt.Errorf("node id %s does not exist in the graph", id)
 }
 
+// EdgeNotExistError
 func EdgeNotExistError(idSource, idTarget ID) error {
 	return fmt.Errorf("edge from %s to %s does not exist in the graph", idSource, idTarget)
 }
 
+// OrphanNodeError
 func OrphanNodeError(id ID) error {
 	return fmt.Errorf("node %s has no edges fan in/out in the graph", id)
 }
 
+// InEdgeNotExistError
 func InEdgeNotExistError(id ID) error {
 	return fmt.Errorf("node %s has no edges fan in in the graph", id)
 }
 
+// OutEdgeNotExistError
 func OutEdgeNotExistError(id ID) error {
 	return fmt.Errorf("node %s has no edges fan out in the graph", id)
 }
 
+// StringID: alias of customized string ID
 type StringID string
 
+// String to match ID interface
 func (sid StringID) String() string {
 	return string(sid)
 }
@@ -46,6 +53,7 @@ func (n *node) String() string {
 	return n.id
 }
 
+// NewNode creates a simple node from a string id
 func NewNode(id string) Node {
 	return &node{id}
 }
@@ -71,6 +79,7 @@ func (e edge) String() string {
 	return fmt.Sprintf("%s --> %s (weight: %.6f)\n", e.source, e.target, e.weight)
 }
 
+// NewEdge creates a simple edge from two nodes and their edge weight
 func NewEdge(source, target Node, weight float64) Edge {
 	return &edge{
 		source: source,
@@ -322,6 +331,7 @@ func (g *graph) Values() []interface{} {
 	return values
 }
 
+// NewGraph returns a simple graph which meets the Graph interface
 func NewGraph() Graph {
 	return &graph{
 		// RWMutex: sync.RWMutex{},
@@ -331,6 +341,8 @@ func NewGraph() Graph {
 }
 
 /*
+NewGraphFromJSON creates a simple graph from json file which has the following structure:
+
 {
 	"graph": {
 		"A": {
@@ -346,7 +358,7 @@ func NewGraph() Graph {
 	}
 }
 */
-func NewGraphFromJson(filePath, graphName string) (Graph, error) {
+func NewGraphFromJSON(filePath, graphName string) (Graph, error) {
 	file, err := os.Open(filePath)
 	defer file.Close()
 	if err != nil {

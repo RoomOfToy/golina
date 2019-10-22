@@ -24,6 +24,7 @@ type Node struct {
 	Parent   *Node
 }
 
+// NewNode creates a Node from Item
 func NewNode(item *Item) *Node {
 	return &Node{
 		Items:    []*Item{item},
@@ -32,6 +33,7 @@ func NewNode(item *Item) *Node {
 	}
 }
 
+// BTree data structure
 type BTree struct {
 	Root       *Node
 	Comparator container.Comparator
@@ -39,6 +41,7 @@ type BTree struct {
 	ItemsNum   int // Items number of the tree (include all items on all nodes)
 }
 
+// NewBTree creates a BTree with M (MaxNumOfChildren on each node >= 3), and a Comparator for node comparision
 func NewBTree(M int, comparator container.Comparator) *BTree {
 	if M < 3 {
 		panic("Maximum number of children on each node should be at least 3")
@@ -50,10 +53,12 @@ func NewBTree(M int, comparator container.Comparator) *BTree {
 	}
 }
 
+// Empty returns true if no item inside BTree
 func (bTree *BTree) Empty() bool {
 	return bTree.ItemsNum == 0
 }
 
+// Size returns the number of items inside BTree
 func (bTree *BTree) Size() int {
 	return bTree.ItemsNum
 }
@@ -70,6 +75,7 @@ func (bTree *BTree) requireSplit(node *Node) bool {
 	return len(node.Items) > bTree.M-1
 }
 
+// Insert inserts one item into BTree, if the root of BTree is nil, the newly inserted item's node will be the root
 func (bTree *BTree) Insert(item *Item) {
 	if bTree.Root == nil {
 		bTree.Root = NewNode(item)
@@ -234,6 +240,7 @@ func (bTree *BTree) splitNonRoot(node *Node) {
 	bTree.split(parent)
 }
 
+// Lookup finds whether key inside the tree, it will return the value of the key if found
 func (bTree *BTree) Lookup(key interface{}) (value interface{}, found bool) {
 	node, index, found := bTree.lookupRec(bTree.Root, key)
 	if found {
@@ -259,6 +266,7 @@ func (bTree *BTree) lookupRec(startNode *Node, key interface{}) (node *Node, ind
 	}
 }
 
+// Values returns values of all items inside BTree
 func (bTree *BTree) Values() []interface{} {
 	values := make([]interface{}, bTree.Size())
 	var items []*Item
@@ -287,10 +295,12 @@ func (bTree *BTree) items(node *Node, items *[]*Item) {
 	}
 }
 
+// Clear clears items inside BTree by creating a new BTree with the same M and Comparator
 func (bTree *BTree) Clear() {
 	*bTree = *NewBTree(bTree.M, bTree.Comparator)
 }
 
+// Delete: delete tree node with key
 func (bTree *BTree) Delete(key interface{}) {
 	node, index, found := bTree.lookupRec(bTree.Root, key)
 	if found {
@@ -455,7 +465,7 @@ func (bTree *BTree) rebalance(node *Node, deletedKey interface{}) {
 func (bTree *BTree) rightSibling(node *Node, key interface{}) (sibling *Node, siblingIndex int) {
 	if node.Parent != nil {
 		index, _ := bTree.findPositionByKey(node, key)
-		index += 1 // right sibling index
+		index++ // right sibling index
 		if index < len(node.Parent.Children) {
 			return node.Parent.Children[index], index
 		}
@@ -466,7 +476,7 @@ func (bTree *BTree) rightSibling(node *Node, key interface{}) (sibling *Node, si
 func (bTree *BTree) leftSibling(node *Node, key interface{}) (sibling *Node, siblingIndex int) {
 	if node.Parent != nil {
 		index, _ := bTree.findPositionByKey(node, key)
-		index -= 1 // right sibling index
+		index-- // right sibling index
 		if index >= 0 && index < len(node.Parent.Children) {
 			return node.Parent.Children[index], index
 		}

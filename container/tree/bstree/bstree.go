@@ -5,7 +5,7 @@ import (
 	"golina/container"
 )
 
-// Binary Search Tree
+// BSTree: Binary Search Tree
 //	http://cslibrary.stanford.edu/110/BinaryTrees.html
 type BSTree struct {
 	Root       *Node
@@ -13,6 +13,7 @@ type BSTree struct {
 	Diffidence func(a, b interface{}) interface{}
 }
 
+// NewBSTree create a nil BSTree
 func NewBSTree() *BSTree {
 	return &BSTree{
 		Root:       nil,
@@ -20,11 +21,13 @@ func NewBSTree() *BSTree {
 	}
 }
 
+// Node: node of BSTree
 type Node struct {
 	data        interface{}
 	left, right *Node
 }
 
+// NewNode creates a Node from input data
 func NewNode(data interface{}) *Node {
 	return &Node{
 		data:  data,
@@ -50,6 +53,7 @@ func (bst *BSTree) lookup(node *Node, target interface{}) bool {
 	}
 }
 
+// Lookup returns true if target value stored inside the tree
 func (bst *BSTree) Lookup(target interface{}) bool {
 	return bst.lookup(bst.Root, target)
 }
@@ -68,6 +72,7 @@ func (bst *BSTree) insert(node *Node, data interface{}) *Node {
 	}
 }
 
+// Insert inserts data into the tree
 func (bst *BSTree) Insert(data interface{}) {
 	bst.Root = bst.insert(bst.Root, data)
 }
@@ -81,11 +86,13 @@ func (bst *BSTree) print(node *Node) {
 	bst.print(node.right)
 }
 
+// Print prints the tree with values in increasing order
 func (bst *BSTree) Print() {
 	bst.print(bst.Root)
 	fmt.Println()
 }
 
+// Empty returns true if the tree has no value inside (root is nil)
 func (bst *BSTree) Empty() bool {
 	return bst.Root == nil
 }
@@ -98,6 +105,7 @@ func (bst *BSTree) size(node *Node) int {
 	}
 }
 
+// Size returns the number of nodes inside the tree
 func (bst *BSTree) Size() int {
 	return bst.size(bst.Root)
 }
@@ -111,6 +119,7 @@ func (bst *BSTree) value(node *Node, dataSlice *[]interface{}) {
 	bst.value(node.right, dataSlice)
 }
 
+// Values returns values stored inside the tree in increasing order
 func (bst *BSTree) Values() []interface{} {
 	if bst.Root == nil {
 		return nil
@@ -120,6 +129,7 @@ func (bst *BSTree) Values() []interface{} {
 	return dataSlice
 }
 
+// Clear clears the tree by setting root to nil
 func (bst *BSTree) Clear() {
 	bst.Root = nil
 }
@@ -138,6 +148,7 @@ func (bst *BSTree) maxDepth(node *Node) int {
 	}
 }
 
+// MaxDepth returns the tree height
 func (bst *BSTree) MaxDepth() int {
 	return bst.maxDepth(bst.Root)
 }
@@ -150,6 +161,7 @@ func (bst *BSTree) minValue(node *Node) interface{} {
 	return currentNode.data
 }
 
+// MinValue returns the minimum value stored inside the tree
 func (bst *BSTree) MinValue() interface{} {
 	return bst.minValue(bst.Root)
 }
@@ -163,6 +175,7 @@ func (bst *BSTree) hasPathSum(node *Node, sum interface{}) bool {
 	}
 }
 
+// HasPathSum returns true if there's one path to get the input sum by summing up all values along this path
 func (bst *BSTree) HasPathSum(sum interface{}) bool {
 	if bst.Diffidence == nil {
 		panic("no Difference function for node data")
@@ -195,15 +208,15 @@ func (bst *BSTree) PrintPaths() {
 func (bst *BSTree) mirror(node *Node) {
 	if node == nil {
 		return
-	} else {
-		bst.mirror(node.left)
-		bst.mirror(node.right)
-		// swap
-		node.left, node.right = node.right, node.left
 	}
+
+	bst.mirror(node.left)
+	bst.mirror(node.right)
+	// swap
+	node.left, node.right = node.right, node.left
 }
 
-// in-place change
+// Mirror mirrors the tree (in-place change)
 func (bst *BSTree) Mirror() {
 	bst.mirror(bst.Root)
 }
@@ -221,6 +234,7 @@ func (bst *BSTree) doubleTree(node *Node) {
 	node.left.left = oldLeft
 }
 
+// DoubleTree doubles the tree by duplicating nodes and insert them into the tree
 func (bst *BSTree) DoubleTree() {
 	bst.doubleTree(bst.Root)
 }
@@ -235,10 +249,12 @@ func (bst *BSTree) sameTree(nodeA, nodeB *Node) bool {
 	}
 }
 
+// SameTree returns true if both trees are made of nodes with the same values
 func (bst *BSTree) SameTree(bstB *BSTree) bool {
 	return bst.sameTree(bst.Root, bstB.Root)
 }
 
+// CountTrees counts how many structurally unique binary search trees which can store the given number of distinct values
 func CountTrees(numKeys int) int {
 	if numKeys <= 1 {
 		return 1
@@ -267,6 +283,7 @@ func (bst *BSTree) isBST(node *Node, min, max interface{}) bool {
 	return bst.isBST(node.left, min, node.data) && bst.isBST(node.right, node.data, max)
 }
 
+// IsBST returns true if the tree is binary search tree, its inputs should be the min and max values inside the tree
 func (bst *BSTree) IsBST(min, max interface{}) bool {
 	return bst.isBST(bst.Root, min, max)
 }

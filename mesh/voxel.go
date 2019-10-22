@@ -1,7 +1,7 @@
 package mesh
 
 import (
-	"golina/container"
+	set2 "golina/container/set"
 	"golina/matrix"
 	"math"
 )
@@ -14,7 +14,7 @@ type Voxel struct {
 	PlaneNormal    Point
 	PlaneMSE       float64
 	PlaneCurvature float64
-	NeighborIDs    container.IntSet
+	NeighborIDs    set2.IntSet
 	IsValid        bool
 	IsGood         bool
 }

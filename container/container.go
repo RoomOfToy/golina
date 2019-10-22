@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-// container interface
+// Container interface
 type Container interface {
 	Size() int
 	Empty() bool
@@ -14,13 +14,14 @@ type Container interface {
 	// SortStable()
 }
 
-// comparator for sorting
+// Comparator for sorting
 //	 1 if a > b
 //	 0 if a == b
 //	-1 if a < b
 //	TODO: i think i have to make many type assertions... any better way?
 type Comparator func(a, b interface{}) int
 
+// IntComparator compares two ints
 func IntComparator(a, b interface{}) int {
 	A := a.(int)
 	B := b.(int)
@@ -33,6 +34,7 @@ func IntComparator(a, b interface{}) int {
 	}
 }
 
+// Float64Comparator compares two float64s
 func Float64Comparator(a, b interface{}) int {
 	A := a.(float64)
 	B := b.(float64)
@@ -63,7 +65,7 @@ func (st sortable) Less(i, j int) bool {
 	return st.comparator(st.values[i], st.values[j]) < 0
 }
 
-// use official sort.Sort() for easily implementation
+// Sort: use official sort.Sort() for easily implementation
 //	Sort sorts data. It makes one call to data.Len to determine n, and O(n*log(n)) calls to data.Less and data.Swap.
 //	The sort is not guaranteed to be stable.
 func Sort(values []interface{}, comparator Comparator) {
@@ -73,7 +75,7 @@ func Sort(values []interface{}, comparator Comparator) {
 	})
 }
 
-// use official sort.Stable() for easily implementation
+// SortStable: use official sort.Stable() for easily implementation
 //	Stable sorts data while keeping the original order of equal elements.
 //	It makes one call to data.Len to determine n, O(n*log(n)) calls to data.Less and O(n*log(n)*log(n)) calls to data.Swap.
 func SortStable(values []interface{}, comparator Comparator) {
@@ -83,6 +85,7 @@ func SortStable(values []interface{}, comparator Comparator) {
 	})
 }
 
+// GetSortedValues returns sorted values
 func GetSortedValues(container Container, comparator Comparator, stable bool) []interface{} {
 	values := container.Values()
 	if len(values) < 2 {

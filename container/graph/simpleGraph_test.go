@@ -9,7 +9,7 @@ import (
 )
 
 func TestGraph(t *testing.T) {
-	graph, err := NewGraphFromJson("test.json", "graph")
+	graph, err := NewGraphFromJSON("test.json", "graph")
 	if err != nil {
 		panic(err)
 	}

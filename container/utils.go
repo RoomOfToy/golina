@@ -10,6 +10,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// GenerateRandomInt returns a random int
 func GenerateRandomInt() int {
 	return rand.Int() - rand.Int()
 }
@@ -23,6 +24,7 @@ const (
 
 var src = rand.NewSource(time.Now().UnixNano())
 
+// GenerateRandomString returns a random string consists of alphabets with length of `length`
 func GenerateRandomString(length int) string {
 	// https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
 	s := make([]byte, length)

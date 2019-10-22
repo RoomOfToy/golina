@@ -7,17 +7,20 @@ import (
 
 // https://en.wikipedia.org/wiki/Red%E2%80%93black_tree
 
+// Red, Black color of Red-Black Tree, represented by bool
 const (
 	Red   = false
 	Black = true
 )
 
+// Node struct
 type Node struct {
 	value                       interface{}
 	color                       bool
 	leftTree, rightTree, parent *Node
 }
 
+// NIL represents nil Node, which used for finding leaf
 var NIL = &Node{
 	value:     nil,
 	color:     Black,
@@ -26,6 +29,7 @@ var NIL = &Node{
 	parent:    nil,
 }
 
+// NewNode creates a new Node from value
 func NewNode(value interface{}) *Node {
 	return &Node{
 		value:     value,
@@ -49,9 +53,8 @@ func (node *Node) uncle() *Node {
 	}
 	if node.parent == node.grandparent().rightTree {
 		return node.grandparent().leftTree
-	} else {
-		return node.grandparent().rightTree
 	}
+	return node.grandparent().rightTree
 }
 
 func (node *Node) sibling() *Node {
@@ -82,6 +85,7 @@ func (node *Node) String() string {
 	return "[" + s + "]"
 }
 
+// RBTree struct stands for Red-Black Tree data structure
 type RBTree struct {
 	Root       *Node
 	Comparator container.Comparator
@@ -100,6 +104,7 @@ func (rbTree *RBTree) value(node *Node, dataSlice *[]interface{}) {
 	rbTree.value(node.rightTree, dataSlice)
 }
 
+// Values returns values of all nodes inside the tree
 func (rbTree *RBTree) Values() []interface{} {
 	if rbTree.Root == nil {
 		return nil
@@ -116,10 +121,12 @@ func (rbTree *RBTree) size(node *Node) int {
 	return rbTree.size(node.leftTree) + 1 + rbTree.size(node.rightTree)
 }
 
+// Size returns number of nodes inside the tree
 func (rbTree *RBTree) Size() int {
 	return rbTree.size(rbTree.Root)
 }
 
+// Empty returns true if the tree has no nodes
 func (rbTree *RBTree) Empty() bool {
 	return rbTree.Root == nil
 }
@@ -131,6 +138,7 @@ func (rbTree *RBTree) minValue(node *Node) interface{} {
 	return rbTree.minValue(node.leftTree)
 }
 
+// MinValue returns the minimum value inside nodes of the tree
 func (rbTree *RBTree) MinValue() interface{} {
 	return rbTree.minValue(rbTree.Root)
 }
@@ -296,6 +304,7 @@ func (rbTree *RBTree) insert(node *Node, value interface{}) {
 	}
 }
 
+// Insert inserts value inside the RBTree
 func (rbTree *RBTree) Insert(value interface{}) {
 	if rbTree.Root == nil {
 		rbTree.Root = NewNode(value)
@@ -436,10 +445,12 @@ func (rbTree *RBTree) deleteCase(Y *Node) {
 	}
 }
 
+// Delete returns true if the input value inside the tree's nodes and successfully deleted
 func (rbTree *RBTree) Delete(value interface{}) bool {
 	return rbTree.deleteChild(rbTree.Root, value)
 }
 
+// Clear clears all nodes inside the tree by setting root to nil
 func (rbTree *RBTree) Clear() {
 	rbTree.Root = nil
 }

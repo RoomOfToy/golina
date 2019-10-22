@@ -1,10 +1,15 @@
-package container
+package set
 
 import (
+	"golina/container"
 	"testing"
 )
 
 func TestNewIntSet(t *testing.T) {
+	// containerInterfaceAssertion()
+	var _ container.Container = (*IntSet)(nil)
+	var _ container.Container = (*FloatSet)(nil)
+
 	s := NewIntSet(-2)
 	s.Add(1)
 	s.Add(2)
@@ -39,7 +44,7 @@ func TestIntSet_Clear(t *testing.T) {
 func TestIntSet_Values(t *testing.T) {
 	a := []int{1, 2, 3}
 	s := NewIntSetFromIntArray(a)
-	values := GetSortedValues(s, IntComparator, false)
+	values := container.GetSortedValues(s, container.IntComparator, false)
 	for i, v := range a {
 		if v != values[i].(int) {
 			t.Fail()
@@ -153,7 +158,7 @@ func TestFloatSet_Clear(t *testing.T) {
 func TestFloatSet_Values(t *testing.T) {
 	a := []float64{1, 2, 3}
 	s := NewFloatSetFromFloatArray(a)
-	values := GetSortedValues(s, Float64Comparator, false)
+	values := container.GetSortedValues(s, container.Float64Comparator, false)
 	for i, v := range a {
 		if v != values[i].(float64) {
 			t.Fail()
