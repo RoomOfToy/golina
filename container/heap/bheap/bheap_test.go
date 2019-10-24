@@ -67,16 +67,31 @@ func TestHeap(t *testing.T) {
 func BenchmarkHeap_Push(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
+
+		minH := new(MinHeap)
+		minH.Comparator = container.IntComparator
+		minH.Init()
+
+		rn := 0
+		for i := 0; i < n; i++ {
+			rn = container.GenerateRandomInt()
+			minH.Push(rn)
+		}
+
+		num := container.GenerateRandomInt()
+
+		b.ResetTimer()
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
-			minH := new(MinHeap)
-			minH.Comparator = container.IntComparator
-			minH.Init()
-			b.ResetTimer()
+
 			for i := 1; i < b.N; i++ {
-				for j := 0; j < n; j++ {
-					minH.Push(container.GenerateRandomInt())
-				}
+				minH.Push(num)
 			}
 		})
 	}
 }
+
+/*
+BenchmarkHeap_Push/size-10-8         	10000000	       135 ns/op
+BenchmarkHeap_Push/size-100-8        	10000000	       114 ns/op
+BenchmarkHeap_Push/size-1000-8       	10000000	       114 ns/op
+ */

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"golina/container/tree/bheap"
+	"golina/container/heap/bheap"
 )
 
 type item struct {

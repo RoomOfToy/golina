@@ -201,15 +201,28 @@ func TestBSTree_IsBST(t *testing.T) {
 func BenchmarkBSTree_Insert(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
+
+		bst := new(BSTree)
+		bst.Comparator = container.IntComparator
+		rn := 0
+		for i := 0; i < n; i++ {
+			rn = container.GenerateRandomInt()
+			bst.Insert(rn)
+		}
+
+		num := container.GenerateRandomInt()
+		b.ResetTimer()
+
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
-			bst := new(BSTree)
-			bst.Comparator = container.IntComparator
-			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				for j := 0; j < n; j++ {
-					bst.Insert(container.GenerateRandomInt())
-				}
+				bst.Insert(num)
 			}
 		})
 	}
 }
+
+/*
+BenchmarkBSTree_Insert/size-10-8         	   30000	    222062 ns/op
+BenchmarkBSTree_Insert/size-100-8        	   30000	    221083 ns/op
+BenchmarkBSTree_Insert/size-1000-8       	   30000	    216950 ns/op
+ */

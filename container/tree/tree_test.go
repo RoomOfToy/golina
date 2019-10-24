@@ -2,7 +2,7 @@ package tree
 
 import (
 	"golina/container"
-	"golina/container/tree/bheap"
+	"golina/container/heap/bheap"
 	"golina/container/tree/btree"
 	"golina/container/tree/rbtree"
 	"math"

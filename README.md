@@ -15,17 +15,38 @@ Pure Golang, No Dependencies.
 
 Package structure:
 
-```bash
+```
 .
+├── cluster
+├── container
+│   ├── deque
+│   ├── graph
+│   │   └── algorithm
+│   ├── heap
+│   │   ├── bheap
+│   │   └── fibonacci
+│   ├── set
+│   └── tree
+│       ├── bstree
+│       ├── btree
+│       └── rbtree
+├── examples
+│   ├── fibonacci
+│   ├── ica
+│   ├── kMeans
+│   ├── mesh
+│   └── priorityQueue
 ├── matrix
+├── mesh
 ├── numerical
 ├── spatial
-├── cluster
-├── stats
-└── examples
+└── stats
 ```
 
-Realized functions up to now:
+Container package includes some useful data structures including tree / heap / graph / queue .etc, 
+their benchmark results are inside corresponding testing files.
+
+Realized linear algebra related functions up to now:
 
 - Matrix Operations: `Add`, `AddNum`, `Sub`, `Mul`, `MulVec`, `MulNum`, `Pow`, `Trace`, `T`, `Rank`, `Det`, `Adj`, `Inverse`, 
 `Norm`, `Flat`, `GetSubMatrix`, `SetSubMatrix`, `SumCol`, `SumRow`, `Sum`, `Mean`, `CovMatrix`, `IsSymmetric`, `Unique`, 
@@ -53,13 +74,12 @@ Realized functions up to now:
 - KD-Tree: `Insert`, `Search`, `FindMinValue`, `FindMinNode`, `DeleteNode`
 - Utils Functions: `FloatEqual`, `MEqual`(matrix), `VEqual`(vector), `Ternary`, `String`(matrix, vector pretty-print), 
 `Map`, `Reduce`, `Filter` (`Map`, `Reduce`, `Filter` here are just for tests, if you want to use it, you'd better change 
-them from using `interface` with `reflect` module to `[]float64` for performance, since you have known the data type...), 
-`Load3DToMatrix`, `WriteMatrixToTxt`
+them from using `interface` with `reflect` module to `[]float64` for performance, since you have known the data type...), `Load3DToMatrix`, `WriteMatrixToTxt`
 - Some Optimization Trials: matrix `Mul`, `MatrixChainMultiplication`, vector `Convolve`
 
 Benchmark:
 
-```bash
+```
 CPU, 64-bit Linux
 Intel: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz, 32073 MB, Max threads(8)
 

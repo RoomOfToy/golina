@@ -71,15 +71,29 @@ func TestRBTree(t *testing.T) {
 func BenchmarkRBTree_Insert(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
+
+		rbTree := new(RBTree)
+		rbTree.Comparator = container.IntComparator
+
+		rn := 0
+		for i := 0; i < n; i++ {
+			rn = container.GenerateRandomInt()
+			rbTree.Insert(rn)
+		}
+
+		num := container.GenerateRandomInt()
+		b.ResetTimer()
+
 		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
-			rbTree := new(RBTree)
-			rbTree.Comparator = container.IntComparator
-			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
-				for j := 0; j < n; j++ {
-					rbTree.Insert(container.GenerateRandomInt())
-				}
+				rbTree.Insert(num)
 			}
 		})
 	}
 }
+
+/*
+BenchmarkRBTree_Insert/size-10-8         	 3000000	       450 ns/op
+BenchmarkRBTree_Insert/size-100-8        	 3000000	       452 ns/op
+BenchmarkRBTree_Insert/size-1000-8       	 3000000	       539 ns/op
+ */
