@@ -161,3 +161,12 @@ func BenchmarkGraph_Node(b *testing.B) {
 		})
 	}
 }
+
+/*
+// Graph based on Hashmap
+BenchmarkGraph_Node/Add-One_when_size-10-8                20000000        91 ns/op
+BenchmarkGraph_Node/Add-One_when_size-100-8               20000000        95 ns/op
+BenchmarkGraph_Node/Add-One_when_size-1000-8              20000000        92 ns/op
+BenchmarkGraph_Node/Add-One_when_size-10000-8             20000000       105 ns/op
+BenchmarkGraph_Node/Add-One_when_size-100000-8            20000000       109 ns/op
+ */

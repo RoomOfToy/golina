@@ -63,7 +63,7 @@ func (h *Heap) set(i int, v interface{}) {
 	h.values[i] = v
 }
 
-// MinHeap: heap stored minimum value in its root
+// MinHeap heap stored minimum value in its root
 type MinHeap struct {
 	heap       *Heap
 	Comparator container.Comparator
@@ -119,7 +119,7 @@ func (h *MinHeap) Values() []interface{} {
 	return h.heap.values
 }
 
-// MaxHeap: heap stored maximum value in its root
+// MaxHeap heap stored maximum value in its root
 type MaxHeap struct {
 	heap       *Heap
 	Comparator container.Comparator

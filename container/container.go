@@ -65,7 +65,7 @@ func (st sortable) Less(i, j int) bool {
 	return st.comparator(st.values[i], st.values[j]) < 0
 }
 
-// Sort: use official sort.Sort() for easily implementation
+// Sort use official sort.Sort() for easily implementation
 //	Sort sorts data. It makes one call to data.Len to determine n, and O(n*log(n)) calls to data.Less and data.Swap.
 //	The sort is not guaranteed to be stable.
 func Sort(values []interface{}, comparator Comparator) {
@@ -75,7 +75,7 @@ func Sort(values []interface{}, comparator Comparator) {
 	})
 }
 
-// SortStable: use official sort.Stable() for easily implementation
+// SortStable use official sort.Stable() for easily implementation
 //	Stable sorts data while keeping the original order of equal elements.
 //	It makes one call to data.Len to determine n, O(n*log(n)) calls to data.Less and O(n*log(n)*log(n)) calls to data.Swap.
 func SortStable(values []interface{}, comparator Comparator) {

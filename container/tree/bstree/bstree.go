@@ -21,7 +21,7 @@ func NewBSTree() *BSTree {
 	}
 }
 
-// Node: node of BSTree
+// Node node of BSTree
 type Node struct {
 	data        interface{}
 	left, right *Node

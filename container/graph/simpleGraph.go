@@ -8,32 +8,32 @@ import (
 	"os"
 )
 
-// NodeNotExistError
+// NodeNotExistError returns error if node not exist
 func NodeNotExistError(id ID) error {
 	return fmt.Errorf("node id %s does not exist in the graph", id)
 }
 
-// EdgeNotExistError
+// EdgeNotExistError returns error if edge not exist
 func EdgeNotExistError(idSource, idTarget ID) error {
 	return fmt.Errorf("edge from %s to %s does not exist in the graph", idSource, idTarget)
 }
 
-// OrphanNodeError
+// OrphanNodeError returns error if node has no in / out edge
 func OrphanNodeError(id ID) error {
 	return fmt.Errorf("node %s has no edges fan in/out in the graph", id)
 }
 
-// InEdgeNotExistError
+// InEdgeNotExistError returns error if node has no in edge
 func InEdgeNotExistError(id ID) error {
 	return fmt.Errorf("node %s has no edges fan in in the graph", id)
 }
 
-// OutEdgeNotExistError
+// OutEdgeNotExistError returns error if node has no out edge
 func OutEdgeNotExistError(id ID) error {
 	return fmt.Errorf("node %s has no edges fan out in the graph", id)
 }
 
-// StringID: alias of customized string ID
+// StringID alias of customized string ID
 type StringID string
 
 // String to match ID interface

@@ -2,7 +2,7 @@ package set
 
 type void struct{}
 
-// IntSet: int set
+// IntSet int set
 type IntSet map[int]void
 
 // NewIntSet returns a new IntSet with capacity of `capacity`
@@ -108,7 +108,7 @@ func (s *IntSet) Difference(s1 *IntSet) *IntSet {
 	return ns
 }
 
-// FloatSet: float set
+// FloatSet float set
 type FloatSet map[float64]void
 
 // NewFloatSet returns a new set consists of float64s

@@ -300,7 +300,7 @@ func (bTree *BTree) Clear() {
 	*bTree = *NewBTree(bTree.M, bTree.Comparator)
 }
 
-// Delete: delete tree node with key
+// Delete delete tree node with key
 func (bTree *BTree) Delete(key interface{}) {
 	node, index, found := bTree.lookupRec(bTree.Root, key)
 	if found {

@@ -6,7 +6,7 @@ import (
 	"math"
 )
 
-// FibonacciHeap
+// Heap (Fibonacci Heap)
 //	https://en.wikipedia.org/wiki/Fibonacci_heap
 //	https://www.cnblogs.com/skywang12345/p/3659060.html
 //	minimum heap (consist of a series of minimum ordered tree)
@@ -191,19 +191,13 @@ func (h *Heap) insert(nNode, root *node) {
 	root.left = nNode
 }
 
-// deleteNode deletes node from heap and returns its item
-//	1. decrease node's item to a value less than min (root's item)
-//	2. call DeleteMin
-// this function need to define how to decrease item, so ignored here
-
 // DecreaseKey decrease input node's item to nItem
 //	1. cut decreased node from its heap and add this node (single node or root of a sub-tree) to roots list
 //	2. cascading cut on decreased node's parent node to ensure the min heap property
 //	3. update heap root (min)
-func (h *Heap) DecreaseKey(n *node, nItem heap.Item) {
+func (h *Heap) DecreaseKey(n *node, nItem heap.Item) error {
 	if nItem.Compare(n.item) >= 0 {
-		fmt.Printf("decrease failed: the new item(%+v) is no smaller than current item(%+v)\n", nItem, n.item)
-		return
+		return fmt.Errorf("decrease failed: the new item(%+v) is no smaller than current item(%+v)", nItem, n.item)
 	}
 
 	n.item = nItem
@@ -216,6 +210,7 @@ func (h *Heap) DecreaseKey(n *node, nItem heap.Item) {
 	if n.item.Compare(h.root.item) < 0 {
 		h.root = n
 	}
+	return nil
 }
 
 // cut node from its parent
@@ -239,16 +234,18 @@ func (h *Heap) cut(n, p *node) {
 
 // cascadingCut recursively cut nodes starting from the root of tree whose child has been cut
 func (h *Heap) cascadingCut(n *node) {
-	if p := n.parent; p != nil {
+	p := n.parent
+
+	if p != nil {
 		return
+	}
+
+	if n.isMarked == false {
+		// n has been cut a child
+		n.isMarked = true
 	} else {
-		if n.isMarked == false {
-			// n has been cut a child
-			n.isMarked = true
-		} else {
-			h.cut(n, p)
-			h.cascadingCut(p)
-		}
+		h.cut(n, p)
+		h.cascadingCut(p)
 	}
 }
 
@@ -256,31 +253,32 @@ func (h *Heap) cascadingCut(n *node) {
 //	1. add increased node's children (child and child's siblings) into roots list
 //	2. cut (cut and cascadingCut) increased node and add it into roots list
 //	3. update heap root (min) if n is root
-func (h *Heap) IncreaseKey(n *node, nItem heap.Item) {
+func (h *Heap) IncreaseKey(n *node, nItem heap.Item) error {
 	if nItem.Compare(n.item) <= 0 {
-		fmt.Printf("decrease failed: the new item(%+v) is no larger than current item(%+v)\n", nItem, n.item)
-		return
+		return fmt.Errorf("increase failed: the new item(%+v) is no larger than current item(%+v)", nItem, n.item)
 	}
 
 	for {
-		if child := n.child; child == nil {
+		child := n.child
+
+		if child == nil {
 			break
-		} else {
-			// remove child from children list
-			child.left.right = child.right
-			child.right.left = child.left
-
-			// update n.child
-			if child.right == child {
-				n.child = nil
-			} else {
-				n.child = child.right
-			}
-
-			// add child into roots list
-			h.insert(child, h.root)
-			child.parent = nil
 		}
+
+		// remove child from children list
+		child.left.right = child.right
+		child.right.left = child.left
+
+		// update n.child
+		if child.right == child {
+			n.child = nil
+		} else {
+			n.child = child.right
+		}
+
+		// add child into roots list
+		h.insert(child, h.root)
+		child.parent = nil
 	}
 
 	// add node into roots list
@@ -301,10 +299,32 @@ func (h *Heap) IncreaseKey(n *node, nItem heap.Item) {
 			}
 		}
 	}
+	return nil
 }
 
-// Meld returns union of two heaps (notice: in place change)
+// Update returns true if input node is successfully updated
+func (h *Heap) Update(n *node, item heap.Item) bool {
+	if item.Compare(n.item) < 0 {
+		if err := h.DecreaseKey(n, item); err != nil {
+			fmt.Println(err)
+			return false
+		}
+		return true
+	} else if item.Compare(n.item) > 0 {
+		if err := h.IncreaseKey(n, item); err != nil {
+			fmt.Println(err)
+			return false
+		}
+		return true
+	} else {
+		fmt.Println("no need to update")
+		return false
+	}
+}
+
+// Meld returns union of two heaps (notice: in place change, input heaps may be changed)
 //	for efficiency consideration, add to heap which has larger maxDegree to achieve less operations
+//	TODO: copy better than in-place change?
 func (h *Heap) Meld(ah *Heap) *Heap {
 	if h.root == nil {
 		return ah
@@ -324,7 +344,8 @@ func (h *Heap) Meld(ah *Heap) *Heap {
 		h1.root = h2.root
 	}
 	h1.itemNum += h2.itemNum
-	return h1
+	*h = *h1
+	return h
 }
 
 // cat append n2 to n1
@@ -343,6 +364,62 @@ func (h *Heap) maxDegree() int {
 	return int(math.Log2(float64(h.itemNum))) + 1 // ceil
 }
 
+// Search returns true if input item is found
+//	recursively
+func (h *Heap) Search(item heap.Item) bool {
+	if h.search(h.root, item) != nil {
+		return true
+	}
+	return false
+}
+
+// search item in sub-tree
+//	returns node which contains the item or nil
+func (h *Heap) search(r *node, item heap.Item) *node {
+	if r == nil || r.item == item {
+		return r
+	}
+
+	n := r.right
+
+	// search in the doubly linked list
+	for n != r {
+		if n.item == item {
+			return n
+		} else {
+			// search in sub-sub-tree
+			if x := h.search(n.child, item); x != nil {
+				return x
+			}
+			n = n.right
+		}
+	}
+	return nil
+}
+
+// Delete deletes item from heap and return it
+//	need input an additional itemMinimum (minimum value of item type) to assist deletion
+func (h *Heap) Delete(item, itemMinimum heap.Item) heap.Item {
+	if n := h.search(h.root, item); n != nil {
+		return h.delete(n, item, itemMinimum)
+	}
+	// item not stored inside the heap
+	return item
+}
+
+// delete deletes node from heap and returns its item
+//	1. decrease node's item to a value less than min (root's item)
+//	2. call DeleteMin
+// this function need to define a itemMinimum
+func (h *Heap) delete(n *node, item, itemMinimum heap.Item) heap.Item {
+	err := h.DecreaseKey(n, itemMinimum)
+	if err != nil {
+		return nil
+	}
+	h.DeleteMin()
+	return item
+}
+
 // Size returns item number inside the heap
 func (h *Heap) Size() int {
 	return h.itemNum
@@ -359,16 +436,98 @@ func (h *Heap) Clear() {
 	h.itemNum = 0
 }
 
-// Values returns values inside the heap by recursively call DeleteMin
-//	Warning: after call this method, the heap will be cleared!
-//	TODO: other way to traverse
+// Values returns values inside the heap
 func (h *Heap) Values() []interface{} {
+	nodes := make([]*node, 0, h.itemNum)
+	h.traverse(h.root, &nodes)
+	values := make([]interface{}, h.itemNum)
+	for i, n := range nodes {
+		values[i] = n.item
+	}
+	return values
+}
+
+// PopAllItems pops all items out the heap with ascending order
+//	Notice: the heap will be cleared after calling this method
+func (h *Heap) PopAllItems() []heap.Item {
 	num := h.itemNum
-	var res []interface{}
+	var res []heap.Item
 	for i := 0; i < num; i++ {
 		res = append(res, h.DeleteMin())
 	}
 	return res
 }
 
-// TODO: Search, Update, Delete
+// traverse sub-tree
+//	store nodes into array
+func (h *Heap) traverse(startNode *node, nodes *[]*node) {
+	if startNode == nil {
+		return
+	}
+	n := startNode
+	for {
+		*nodes = append(*nodes, n)
+		// traverse in its sub-tree
+		if x := n.child; x != nil {
+			h.traverse(x, nodes)
+		}
+		// sibling
+		n = n.right
+		if n == startNode {
+			break
+		}
+	}
+}
+
+// Print prints heap items
+func (h *Heap) Print() {
+	fmt.Println("***  Fibonacci Heap  ***")
+	if h.root == nil {
+		fmt.Println("empty heap")
+		return
+	}
+
+	// print roots list
+	r := h.root
+	for {
+		fmt.Println()
+		fmt.Printf("%+v(%+v) is heap's root\n", r.item, r.degree)
+		h.print(r.child, r, 0)
+
+		r = r.right
+		if r == h.root {
+			break
+		}
+	}
+	fmt.Println()
+}
+
+// print prints node sub-tree
+// direction: child (0) / sibling (1)
+func (h *Heap) print(startNode, prevNode *node, direction int) {
+	if startNode == nil {
+		return
+	}
+	n := startNode
+	for {
+		if direction == 0 {
+			fmt.Printf("%+v(%+v) is %+v's child\n", n.item, n.degree, prevNode.item)
+		} else {
+			fmt.Printf("%+v(%+v) is %+v's next\n", n.item, n.degree, prevNode.item)
+		}
+
+		// print sub-tree
+		if child := n.child; child != nil {
+			h.print(child, n, 0)
+		}
+
+		// sibling
+		prevNode = n
+		n = n.right
+		direction = 1
+
+		if n == startNode {
+			break
+		}
+	}
+}

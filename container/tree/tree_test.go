@@ -83,13 +83,24 @@ func BenchmarkTree_InsertOne(b *testing.B) {
 }
 
 /*
-BenchmarkTree_Insert/Red-Black_Tree:_size-10-8         	  500000	      4970 ns/op
-BenchmarkTree_Insert/Binary-Heap:_size-10-8            	 1000000	      1608 ns/op
-BenchmarkTree_Insert/B_Tree:_size-10-8                 	 1000000	      1093 ns/op
-BenchmarkTree_Insert/Red-Black_Tree:_size-100-8        	   30000	     50811 ns/op
-BenchmarkTree_Insert/Binary-Heap:_size-100-8           	  100000	     15996 ns/op
-BenchmarkTree_Insert/B_Tree:_size-100-8                	  100000	     15300 ns/op
-BenchmarkTree_Insert/Red-Black_Tree:_size-1000-8       	    3000	    604496 ns/op
-BenchmarkTree_Insert/Binary-Heap:_size-1000-8          	   10000	    164097 ns/op
-BenchmarkTree_Insert/B_Tree:_size-1000-8               	   10000	    210689 ns/op
+// Heap based on dynamic array
+BenchmarkTree_InsertOne/Binary-Heap:_size-10-8            10000000       141 ns/op
+BenchmarkTree_InsertOne/Binary-Heap:_size-100-8           10000000       127 ns/op
+BenchmarkTree_InsertOne/Binary-Heap:_size-1000-8          20000000       118 ns/op
+BenchmarkTree_InsertOne/Binary-Heap:_size-10000-8         10000000       102 ns/op
+BenchmarkTree_InsertOne/Binary-Heap:_size-100000-8        20000000       113 ns/op
+
+// Red-Black Tree based on double linked list
+BenchmarkTree_InsertOne/Red-Black_Tree:_size-10-8          3000000       468 ns/op
+BenchmarkTree_InsertOne/Red-Black_Tree:_size-100-8         3000000       501 ns/op
+BenchmarkTree_InsertOne/Red-Black_Tree:_size-1000-8        3000000       525 ns/op
+BenchmarkTree_InsertOne/Red-Black_Tree:_size-10000-8       3000000       637 ns/op
+BenchmarkTree_InsertOne/Red-Black_Tree:_size-100000-8      2000000       946 ns/op
+
+// B Tree with M = 10
+BenchmarkTree_InsertOne/B_Tree:_size-10-8                 20000000        96 ns/op
+BenchmarkTree_InsertOne/B_Tree:_size-100-8                10000000       125 ns/op
+BenchmarkTree_InsertOne/B_Tree:_size-1000-8               10000000       152 ns/op
+BenchmarkTree_InsertOne/B_Tree:_size-10000-8              10000000       185 ns/op
+BenchmarkTree_InsertOne/B_Tree:_size-100000-8             10000000       223 ns/op
 */
