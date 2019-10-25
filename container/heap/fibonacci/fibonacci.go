@@ -303,6 +303,7 @@ func (h *Heap) IncreaseKey(n *node, nItem heap.Item) error {
 }
 
 // Update returns true if input node is successfully updated
+//	TODO: need to refactor (with Search method) for better encapsulation
 func (h *Heap) Update(n *node, item heap.Item) bool {
 	if item.Compare(n.item) < 0 {
 		if err := h.DecreaseKey(n, item); err != nil {
@@ -366,11 +367,11 @@ func (h *Heap) maxDegree() int {
 
 // Search returns true if input item is found
 //	recursively
-func (h *Heap) Search(item heap.Item) bool {
-	if h.search(h.root, item) != nil {
-		return true
+func (h *Heap) Search(item heap.Item) (*node, bool) {
+	if n := h.search(h.root, item); n != nil {
+		return n, true
 	}
-	return false
+	return nil, false
 }
 
 // search item in sub-tree

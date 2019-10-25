@@ -63,7 +63,7 @@ func TestHeap(t *testing.T) {
 	}
 
 	for _, v := range h.Values() {
-		if !h.Search(v.(item)) {
+		if _, found := h.Search(v.(item)); !found {
 			t.Fail()
 		}
 	}
@@ -95,7 +95,7 @@ func TestHeap(t *testing.T) {
 	}
 
 	for _, v := range c {
-		if !h3.Search(v) {
+		if _, found := h3.Search(v); !found {
 			t.Fail()
 		}
 	}
@@ -117,11 +117,11 @@ func TestHeap(t *testing.T) {
 	if h3.FindMin().(item) != -1 {
 		t.Fail()
 	}
-	if h3.Search(item(100)) {
+	if _, found := h3.Search(item(100)); found {
 		t.Fail()
 	}
 	for _, v := range cRevised {
-		if !h3.Search(v) {
+		if _, found := h3.Search(v); !found {
 			t.Fail()
 		}
 	}
