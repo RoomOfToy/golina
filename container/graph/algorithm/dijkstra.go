@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"fmt"
 	"golina/container/graph"
 	"golina/container/heap"
 	"golina/container/heap/fibonacci"
@@ -13,7 +14,7 @@ import (
 //	use priority queue (minimum heap) (fibonacci heap: https://github.com/Harold2017/golina/tree/master/container/queue/prque/pqfibo)
 func Dijkstra(g graph.Graph, source, target graph.ID) ([]graph.ID, map[graph.ID]float64, error) {
 	// Q (dist queue): set of all vertices
-	Q := priorityQueue{dists: fibonacci.NewHeap()}
+	Q := newPQFib()
 	// map to store all distances
 	dist := make(map[graph.ID]*item)
 	dist[source] = &item{
@@ -61,11 +62,16 @@ func Dijkstra(g graph.Graph, source, target graph.ID) ([]graph.ID, map[graph.ID]
 			// compare with v
 			if dist[v].dist > nd {
 				// update distance (this will update Q as well)
-				dist[v].dist = nd
+				it := dist[v]
+				nit := &item{
+					id:   it.id,
+					dist: nd,
+				}
+				dist[v] = nit
 				// update prev vertex map
 				prev[v] = u.id
 				// update Q
-				// Q.update(dist[v], nd)
+				Q.update(it, nit)
 			}
 		}
 	}
@@ -123,12 +129,12 @@ func (pq *priorityQueue) pop() *item {
 	return pq.dists.DeleteMin().(*item)
 }
 
-func (pq *priorityQueue) update(it *item, dist float64) {
-	n, _ := pq.dists.Search(it)
-	pq.dists.Update(n, &item{
-		id:   it.id,
-		dist: dist,
-	})
+func (pq *priorityQueue) update(it, nit *item) {
+	n, found := pq.dists.Search(it)
+	if !found {
+		fmt.Println("not found", it)
+	}
+	pq.dists.Update(n, nit)
 }
 
 func (pq *priorityQueue) empty() bool {
@@ -142,6 +148,7 @@ type item struct {
 	dist float64
 }
 
+// Compare to meet heap.Item interface
 func (it *item) Compare(ait heap.Item) int {
 	if it.dist > ait.(*item).dist {
 		return 1

@@ -196,6 +196,9 @@ func (h *Heap) insert(nNode, root *node) {
 //	2. cascading cut on decreased node's parent node to ensure the min heap property
 //	3. update heap root (min)
 func (h *Heap) DecreaseKey(n *node, nItem heap.Item) error {
+	if n == nil {
+		return nil
+	}
 	if nItem.Compare(n.item) >= 0 {
 		return fmt.Errorf("decrease failed: the new item(%+v) is no smaller than current item(%+v)", nItem, n.item)
 	}
@@ -213,27 +216,45 @@ func (h *Heap) DecreaseKey(n *node, nItem heap.Item) error {
 	return nil
 }
 
+func renewDegree(parent *node, degree int) {
+	parent.degree -= degree
+	if parent.parent != nil {
+		renewDegree(parent.parent, degree)
+	}
+}
+
 // cut node from its parent
 func (h *Heap) cut(n, p *node) {
+	if n == nil || p == nil {
+		return
+	}
 	// remove node from its parent's children list and decrease its parent's degree
+	// remove node
+	n.right.left = n.left
+	n.left.right = n.right
+	// renew degree
+	renewDegree(p, n.degree)
 	if n.right == n {
 		// no sibling
 		p.child = nil
 	} else {
 		p.child = n.right
-		n.right.left = n.left
-		n.left.right = n.right
 	}
-	p.degree--
-	// add n to roots list
-	h.insert(n, h.root)
 
 	n.parent = nil
+	n.left, n.right = n, n
 	n.isMarked = false
+
+	// add n to roots list
+	h.insert(n, h.root)
 }
 
 // cascadingCut recursively cut nodes starting from the root of tree whose child has been cut
 func (h *Heap) cascadingCut(n *node) {
+	if n == nil {
+		return
+	}
+
 	p := n.parent
 
 	if p != nil {
@@ -305,6 +326,10 @@ func (h *Heap) IncreaseKey(n *node, nItem heap.Item) error {
 // Update returns true if input node is successfully updated
 //	TODO: need to refactor (with Search method) for better encapsulation
 func (h *Heap) Update(n *node, item heap.Item) bool {
+	if n == nil {
+		fmt.Printf("input node is nil and item is %+v", item)
+		return false
+	}
 	if item.Compare(n.item) < 0 {
 		if err := h.DecreaseKey(n, item); err != nil {
 			fmt.Println(err)
@@ -381,21 +406,26 @@ func (h *Heap) search(r *node, item heap.Item) *node {
 		return r
 	}
 
-	n := r.right
+	n := r
+	var p *node
 
 	// search in the doubly linked list
-	for n != r {
+	for {
 		if n.item == item {
-			return n
+			p = n
+			break
 		} else {
 			// search in sub-sub-tree
-			if x := h.search(n.child, item); x != nil {
-				return x
+			if p = h.search(n.child, item); p != nil {
+				break
 			}
-			n = n.right
+		}
+		n = n.right
+		if n == r {
+			break
 		}
 	}
-	return nil
+	return p
 }
 
 // Delete deletes item from heap and return it
