@@ -64,7 +64,45 @@ func TestHeap(t *testing.T) {
 	}
 }
 
+// BenchmarkHeap_Push-8   	10000000	       163 ns/op
 func BenchmarkHeap_Push(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+
+	minH := new(MinHeap)
+	minH.Comparator = container.IntComparator
+	minH.Init()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		minH.Push(data[i])
+	}
+}
+
+// BenchmarkHeap_Pop-8   	 1000000	      1706 ns/op
+func BenchmarkHeap_Pop(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+
+	minH := new(MinHeap)
+	minH.Comparator = container.IntComparator
+	minH.Init()
+
+	for i := 0; i < b.N; i++ {
+		minH.Push(data[i])
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		minH.Pop()
+	}
+}
+
+func BenchmarkHeap(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
 
@@ -81,17 +119,31 @@ func BenchmarkHeap_Push(b *testing.B) {
 		num := container.GenerateRandomInt()
 
 		b.ResetTimer()
-		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
+
+		b.Run("Push: size-"+strconv.Itoa(n), func(b *testing.B) {
+
+			for i := 1; i < b.N; i++ {
+				minH.Pop()
+				minH.Push(num)
+			}
+		})
+
+		b.Run("Pop: size-"+strconv.Itoa(n), func(b *testing.B) {
 
 			for i := 1; i < b.N; i++ {
 				minH.Push(num)
+				minH.Pop()
 			}
 		})
 	}
 }
 
 /*
-BenchmarkHeap_Push/size-10-8         	10000000	       135 ns/op
-BenchmarkHeap_Push/size-100-8        	10000000	       114 ns/op
-BenchmarkHeap_Push/size-1000-8       	10000000	       114 ns/op
- */
+BenchmarkHeap/Push:_size-10-8         	20000000	        99.9 ns/op
+BenchmarkHeap/Push:_size-100-8        	20000000	        65.1 ns/op
+BenchmarkHeap/Push:_size-1000-8       	20000000	        64.8 ns/op
+
+BenchmarkHeap/Pop:_size-10-8          	20000000	        64.2 ns/op
+BenchmarkHeap/Pop:_size-100-8         	20000000	        64.3 ns/op
+BenchmarkHeap/Pop:_size-1000-8        	20000000	        64.1 ns/op
+*/

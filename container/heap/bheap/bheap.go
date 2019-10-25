@@ -32,6 +32,8 @@ func (h *Heap) Push(v interface{}) {
 func (h *Heap) Pop() interface{} {
 	size := len(h.values)
 	lastNode := h.values[size-1]
+	// avoid memory leak
+	h.values[size-1] = nil
 	h.values = h.values[:size-1]
 	return lastNode
 }

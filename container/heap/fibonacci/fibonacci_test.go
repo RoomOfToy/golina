@@ -155,6 +155,38 @@ func TestHeap(t *testing.T) {
 	}
 }
 
+// BenchmarkHeap_Insert-8   	10000000	       124 ns/op
+func BenchmarkHeap_Insert(b *testing.B) {
+	data := make([]item, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = item(container.GenerateRandomInt())
+	}
+	b.ResetTimer()
+
+	h := NewHeap()
+	for i := 0; i < b.N; i++ {
+		h.Insert(data[i])
+	}
+}
+
+// BenchmarkHeap_DeleteMin-8   	 1000000	      5881 ns/op
+func BenchmarkHeap_DeleteMin(b *testing.B) {
+	data := make([]item, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = item(container.GenerateRandomInt())
+	}
+
+	h := NewHeap()
+	for i := 0; i < b.N; i++ {
+		h.Insert(data[i])
+	}
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		h.DeleteMin()
+	}
+}
+
 func BenchmarkHeap(b *testing.B) {
 	for k := 1.0; k <= 5; k++ {
 		n := int(math.Pow(10, k))
@@ -167,7 +199,6 @@ func BenchmarkHeap(b *testing.B) {
 			h.Insert(item(rn))
 		}
 
-		num := item(container.GenerateRandomInt())
 		b.ResetTimer()
 
 		b.Run("Fibonacci Heap FindMin: size-"+strconv.Itoa(n), func(b *testing.B) {
@@ -176,15 +207,10 @@ func BenchmarkHeap(b *testing.B) {
 			}
 		})
 
-		b.Run("Fibonacci Heap DeleteMin: size-"+strconv.Itoa(n), func(b *testing.B) {
+		b.Run("Fibonacci Heap DeleteMin + Insert (min): size-"+strconv.Itoa(n), func(b *testing.B) {
 			for i := 1; i < b.N; i++ {
-				h.DeleteMin()
-			}
-		})
-
-		b.Run("Fibonacci Heap Insert: size-"+strconv.Itoa(n), func(b *testing.B) {
-			for i := 1; i < b.N; i++ {
-				h.Insert(num)
+				min := h.DeleteMin()
+				h.Insert(min)
 			}
 		})
 
@@ -197,27 +223,21 @@ func BenchmarkHeap(b *testing.B) {
 }
 
 /*
-BenchmarkHeap/Fibonacci_Heap_FindMin:_size-10-8         	2000000000	         0.28 ns/op
-BenchmarkHeap/Fibonacci_Heap_FindMin:_size-100-8        	2000000000	         0.26 ns/op
-BenchmarkHeap/Fibonacci_Heap_FindMin:_size-1000-8       	2000000000	         0.26 ns/op
-BenchmarkHeap/Fibonacci_Heap_FindMin:_size-10000-8      	2000000000	         0.26 ns/op
-BenchmarkHeap/Fibonacci_Heap_FindMin:_size-100000-8     	2000000000	         0.26 ns/op
+BenchmarkHeap/Fibonacci_Heap_FindMin:_size-10-8         	                2000000000	         0.28 ns/op
+BenchmarkHeap/Fibonacci_Heap_FindMin:_size-100-8                         	2000000000	         0.28 ns/op
+BenchmarkHeap/Fibonacci_Heap_FindMin:_size-1000-8                        	2000000000	         0.29 ns/op
+BenchmarkHeap/Fibonacci_Heap_FindMin:_size-10000-8                       	2000000000	         0.28 ns/op
+BenchmarkHeap/Fibonacci_Heap_FindMin:_size-100000-8                      	2000000000	         0.28 ns/op
 
-BenchmarkHeap/Fibonacci_Heap_DeleteMin:_size-10-8       	1000000000	         2.38 ns/op
-BenchmarkHeap/Fibonacci_Heap_DeleteMin:_size-100-8      	1000000000	         2.31 ns/op
-BenchmarkHeap/Fibonacci_Heap_DeleteMin:_size-1000-8     	1000000000	         2.30 ns/op
-BenchmarkHeap/Fibonacci_Heap_DeleteMin:_size-10000-8    	1000000000	         2.30 ns/op
-BenchmarkHeap/Fibonacci_Heap_DeleteMin:_size-100000-8   	1000000000	         2.31 ns/op
+BenchmarkHeap/Fibonacci_Heap_DeleteMin_+_Insert_(min):_size-10-8         	10000000	          194 ns/op
+BenchmarkHeap/Fibonacci_Heap_DeleteMin_+_Insert_(min):_size-100-8        	5000000	              287 ns/op
+BenchmarkHeap/Fibonacci_Heap_DeleteMin_+_Insert_(min):_size-1000-8       	3000000	              500 ns/op
+BenchmarkHeap/Fibonacci_Heap_DeleteMin_+_Insert_(min):_size-10000-8      	3000000	              508 ns/op
+BenchmarkHeap/Fibonacci_Heap_DeleteMin_+_Insert_(min):_size-100000-8     	1000000	             1189 ns/op
 
-BenchmarkHeap/Fibonacci_Heap_Insert:_size-10-8          	10000000	          123 ns/op
-BenchmarkHeap/Fibonacci_Heap_Insert:_size-100-8         	10000000	          107 ns/op
-BenchmarkHeap/Fibonacci_Heap_Insert:_size-1000-8        	20000000	          114 ns/op
-BenchmarkHeap/Fibonacci_Heap_Insert:_size-10000-8       	20000000	          112 ns/op
-BenchmarkHeap/Fibonacci_Heap_Insert:_size-100000-8      	10000000	          134 ns/op
-
-BenchmarkHeap/Fibonacci_Heap_Meld:_size-10-8            	100000000	         19.5 ns/op
-BenchmarkHeap/Fibonacci_Heap_Meld:_size-100-8           	100000000	         19.5 ns/op
-BenchmarkHeap/Fibonacci_Heap_Meld:_size-1000-8          	100000000	         19.4 ns/op
-BenchmarkHeap/Fibonacci_Heap_Meld:_size-10000-8         	100000000	         19.5 ns/op
-BenchmarkHeap/Fibonacci_Heap_Meld:_size-100000-8        	100000000	         19.4 ns/op
- */
+BenchmarkHeap/Fibonacci_Heap_Meld:_size-10-8                             	50000000	         21.8 ns/op
+BenchmarkHeap/Fibonacci_Heap_Meld:_size-100-8                            	50000000	         22.0 ns/op
+BenchmarkHeap/Fibonacci_Heap_Meld:_size-1000-8                           	50000000	         22.4 ns/op
+BenchmarkHeap/Fibonacci_Heap_Meld:_size-10000-8                          	100000000	         21.5 ns/op
+BenchmarkHeap/Fibonacci_Heap_Meld:_size-100000-8                         	50000000	         22.5 ns/op
+*/

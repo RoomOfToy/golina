@@ -3,8 +3,6 @@ package bstree
 import (
 	"golina/container"
 	"golina/container/tree"
-	"math"
-	"strconv"
 	"testing"
 )
 
@@ -198,31 +196,17 @@ func TestBSTree_IsBST(t *testing.T) {
 	}
 }
 
+// BenchmarkBSTree_Insert-8   	 1000000	      1353 ns/op
 func BenchmarkBSTree_Insert(b *testing.B) {
-	for k := 1.0; k <= 3; k++ {
-		n := int(math.Pow(10, k))
+	bst := new(BSTree)
+	bst.Comparator = container.IntComparator
+	data := make([]int, b.N)
+	for i := 0; i < b.N; i++ {
+		data[i] = container.GenerateRandomInt()
+	}
 
-		bst := new(BSTree)
-		bst.Comparator = container.IntComparator
-		rn := 0
-		for i := 0; i < n; i++ {
-			rn = container.GenerateRandomInt()
-			bst.Insert(rn)
-		}
-
-		num := container.GenerateRandomInt()
-		b.ResetTimer()
-
-		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
-			for i := 1; i < b.N; i++ {
-				bst.Insert(num)
-			}
-		})
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		bst.Insert(data[i])
 	}
 }
-
-/*
-BenchmarkBSTree_Insert/size-10-8         	   30000	    222062 ns/op
-BenchmarkBSTree_Insert/size-100-8        	   30000	    221083 ns/op
-BenchmarkBSTree_Insert/size-1000-8       	   30000	    216950 ns/op
- */

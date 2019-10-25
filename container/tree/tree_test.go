@@ -5,11 +5,11 @@ import (
 	"golina/container/heap/bheap"
 	"golina/container/tree/btree"
 	"golina/container/tree/rbtree"
-	"math"
-	"strconv"
 	"testing"
 )
 
+/*
+// this benchmark way is wrong!!!
 func BenchmarkTree_InsertOne(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
@@ -40,19 +40,6 @@ func BenchmarkTree_InsertOne(b *testing.B) {
 		num := container.GenerateRandomInt()
 		b.ResetTimer()
 
-		/*
-			b.Run("BST: size-"+strconv.Itoa(n), func(b *testing.B) {
-				rbTree := new(bstree.BSTree)
-				rbTree.Comparator = container.IntComparator
-				b.ResetTimer()
-				for i := 1; i < b.N; i++ {
-					for _, num := range nums {
-						rbTree.Insert(num)
-					}
-				}
-			})
-		*/
-
 		b.Run("Red-Black Tree: size-"+strconv.Itoa(n), func(b *testing.B) {
 
 			b.ResetTimer()
@@ -79,28 +66,62 @@ func BenchmarkTree_InsertOne(b *testing.B) {
 				})
 			}
 		})
+		fmt.Println(rbTree.Size(), minH.Size(), bTree.Size())
+		// only bTree's size is as expected, this is due to its `insertInternal` method,
+		// which will not increase item num with the same key
 	}
 }
-
-/*
-// Heap based on dynamic array
-BenchmarkTree_InsertOne/Binary-Heap:_size-10-8            10000000       141 ns/op
-BenchmarkTree_InsertOne/Binary-Heap:_size-100-8           10000000       127 ns/op
-BenchmarkTree_InsertOne/Binary-Heap:_size-1000-8          20000000       118 ns/op
-BenchmarkTree_InsertOne/Binary-Heap:_size-10000-8         10000000       102 ns/op
-BenchmarkTree_InsertOne/Binary-Heap:_size-100000-8        20000000       113 ns/op
-
-// Red-Black Tree based on double linked list
-BenchmarkTree_InsertOne/Red-Black_Tree:_size-10-8          3000000       468 ns/op
-BenchmarkTree_InsertOne/Red-Black_Tree:_size-100-8         3000000       501 ns/op
-BenchmarkTree_InsertOne/Red-Black_Tree:_size-1000-8        3000000       525 ns/op
-BenchmarkTree_InsertOne/Red-Black_Tree:_size-10000-8       3000000       637 ns/op
-BenchmarkTree_InsertOne/Red-Black_Tree:_size-100000-8      2000000       946 ns/op
-
-// B Tree with M = 10
-BenchmarkTree_InsertOne/B_Tree:_size-10-8                 20000000        96 ns/op
-BenchmarkTree_InsertOne/B_Tree:_size-100-8                10000000       125 ns/op
-BenchmarkTree_InsertOne/B_Tree:_size-1000-8               10000000       152 ns/op
-BenchmarkTree_InsertOne/B_Tree:_size-10000-8              10000000       185 ns/op
-BenchmarkTree_InsertOne/B_Tree:_size-100000-8             10000000       223 ns/op
 */
+
+// the following should be correct but not as expected....
+
+func BenchmarkTree_InsertOne(b *testing.B) {
+	b.Run("Red-Black Tree: ", func(b *testing.B) {
+		rbTree := new(rbtree.RBTree)
+		rbTree.Comparator = container.IntComparator
+		data := make([]int, b.N)
+		for i := 0; i < b.N; i++ {
+			data[i] = container.GenerateRandomInt()
+		}
+
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			rbTree.Insert(data[i])
+		}
+	})
+
+	b.Run("Binary-Heap: ", func(b *testing.B) {
+		minH := new(bheap.MinHeap)
+		minH.Comparator = container.IntComparator
+		minH.Init()
+		data := make([]int, b.N)
+		for i := 0; i < b.N; i++ {
+			data[i] = container.GenerateRandomInt()
+		}
+
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			minH.Push(data[i])
+		}
+	})
+
+	b.Run("B Tree: ", func(b *testing.B) {
+		bTree := btree.NewBTree(10, container.IntComparator)
+		data := make([]int, b.N)
+		for i := 0; i < b.N; i++ {
+			data[i] = container.GenerateRandomInt()
+		}
+
+		b.ResetTimer()
+		for i := 0; i < b.N; i++ {
+			bTree.Insert(&btree.Item{
+				Key:   data[i],
+				Value: data[i],
+			})
+		}
+	})
+}
+
+// BenchmarkTree_InsertOne/Red-Black_Tree:_-8         	 1000000	      1475 ns/op
+// BenchmarkTree_InsertOne/Binary-Heap:_-8            	10000000	       139 ns/op
+// BenchmarkTree_InsertOne/B_Tree:_-8                 	 1000000	      1560 ns/op

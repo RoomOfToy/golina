@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"golina/container"
 	"golina/container/tree"
-	"math"
 	"strconv"
 	"testing"
 )
@@ -64,37 +63,19 @@ func TestBTree(t *testing.T) {
 	}
 }
 
+// BenchmarkBTree_Insert-8   	 1000000	      1940 ns/op
 func BenchmarkBTree_Insert(b *testing.B) {
-	for k := 1.0; k <= 3; k++ {
-		n := int(math.Pow(10, k))
+	bTree := NewBTree(10, container.IntComparator)
+	data := make([]int, b.N)
+	for i := 0; i < b.N; i++ {
+		data[i] = container.GenerateRandomInt()
+	}
 
-		bTree := NewBTree(10, container.IntComparator)
-
-		rn := 0
-		for i := 0; i < n; i++ {
-			rn = container.GenerateRandomInt()
-			bTree.Insert(&Item{
-				Key:   rn,
-				Value: rn,
-			})
-		}
-
-		num := container.GenerateRandomInt()
-		b.ResetTimer()
-
-		b.Run("size-"+strconv.Itoa(n), func(b *testing.B) {
-			for i := 1; i < b.N; i++ {
-				bTree.Insert(&Item{
-					Key:   num,
-					Value: num,
-				})
-			}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		bTree.Insert(&Item{
+			Key:   data[i],
+			Value: data[i],
 		})
 	}
 }
-
-/*
-BenchmarkBTree_Insert/size-10-8         	20000000	        99.9 ns/op
-BenchmarkBTree_Insert/size-100-8        	20000000	       110 ns/op
-BenchmarkBTree_Insert/size-1000-8       	10000000	       146 ns/op
- */

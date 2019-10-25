@@ -127,6 +127,102 @@ func TestDeque(t *testing.T) {
 	}
 }
 
+// BenchmarkDeque_PushBack-8   	50000000	        24.2 ns/op
+func BenchmarkDeque_PushBack(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+	b.ResetTimer()
+
+	dq := NewDeque(b.N)
+	for i := 0; i < b.N; i++ {
+		dq.PushBack(data[i])
+	}
+}
+
+// BenchmarkDeque_PushFront-8   50000000	        26.4 ns/op
+func BenchmarkDeque_PushFront(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+	b.ResetTimer()
+
+	dq := NewDeque(b.N)
+	for i := 0; i < len(data); i++ {
+		dq.PushFront(data[i])
+	}
+}
+
+// BenchmarkDeque_PopFront-8   	100000000	        18.8 ns/op
+func BenchmarkDeque_PopFront(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+	dq := NewDeque(b.N)
+	for i := 0; i < b.N; i++ {
+		dq.PushBack(data[i])
+	}
+	b.ResetTimer()
+
+	for i := 0; i < len(data); i++ {
+		_, _ = dq.PopFront()
+	}
+}
+
+// BenchmarkDeque_PopBack-8   	100000000	        20.0 ns/op
+func BenchmarkDeque_PopBack(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+	dq := NewDeque(b.N)
+	for i := 0; i < b.N; i++ {
+		dq.PushBack(data[i])
+	}
+	b.ResetTimer()
+
+	for i := 0; i < len(data); i++ {
+		_, _ = dq.PopBack()
+	}
+}
+
+// BenchmarkDeque_Front-8   	1000000000	        3.00 ns/op
+func BenchmarkDeque_Front(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+	dq := NewDeque(b.N)
+	for i := 0; i < b.N; i++ {
+		dq.PushBack(data[i])
+	}
+	b.ResetTimer()
+
+	for i := 0; i < len(data); i++ {
+		_, _ = dq.Front()
+	}
+}
+
+// BenchmarkDeque_Back-8   		1000000000	        3.01 ns/op
+func BenchmarkDeque_Back(b *testing.B) {
+	data := make([]int, b.N)
+	for i := 0; i < len(data); i++ {
+		data[i] = container.GenerateRandomInt()
+	}
+	dq := NewDeque(b.N)
+	for i := 0; i < b.N; i++ {
+		dq.PushBack(data[i])
+	}
+	b.ResetTimer()
+
+	for i := 0; i < len(data); i++ {
+		_, _ = dq.Back()
+	}
+}
+
 func BenchmarkDeque(b *testing.B) {
 	for k := 1.0; k <= 3; k++ {
 		n := int(math.Pow(10, k))
@@ -141,6 +237,7 @@ func BenchmarkDeque(b *testing.B) {
 			num := container.GenerateRandomInt()
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
+				_, _ = dq.PopBack()
 				dq.PushBack(num)
 			}
 		})
@@ -155,6 +252,7 @@ func BenchmarkDeque(b *testing.B) {
 			num := container.GenerateRandomInt()
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
+				_, _ = dq.PopFront()
 				dq.PushFront(num)
 			}
 		})
@@ -168,6 +266,7 @@ func BenchmarkDeque(b *testing.B) {
 			}
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
+				dq.PushBack(rn)
 				_, _ = dq.PopBack()
 			}
 		})
@@ -181,6 +280,7 @@ func BenchmarkDeque(b *testing.B) {
 			}
 			b.ResetTimer()
 			for i := 1; i < b.N; i++ {
+				dq.PushBack(rn)
 				_, _ = dq.PopFront()
 			}
 		})
@@ -214,27 +314,27 @@ func BenchmarkDeque(b *testing.B) {
 }
 
 /*
-BenchmarkDeque/Deque_PushBack:_size-10-8         	20000000	         51.4 ns/op
-BenchmarkDeque/Deque_PushBack:_size-100-8        	30000000	         45.4 ns/op
-BenchmarkDeque/Deque_PushBack:_size-1000-8       	30000000	         36.5 ns/op
+BenchmarkDeque/Deque_PushBack:_size-10-8         	50000000	        28.2 ns/op
+BenchmarkDeque/Deque_PushBack:_size-100-8        	50000000	        28.1 ns/op
+BenchmarkDeque/Deque_PushBack:_size-1000-8       	50000000	        28.2 ns/op
 
-BenchmarkDeque/Deque_PushFront:_size-10-8        	30000000	         55.5 ns/op
-BenchmarkDeque/Deque_PushFront:_size-100-8       	30000000	         50.6 ns/op
-BenchmarkDeque/Deque_PushFront:_size-1000-8      	30000000	         36.9 ns/op
+BenchmarkDeque/Deque_PushFront:_size-10-8        	50000000	        27.7 ns/op
+BenchmarkDeque/Deque_PushFront:_size-100-8       	50000000	        27.5 ns/op
+BenchmarkDeque/Deque_PushFront:_size-1000-8      	50000000	        27.8 ns/op
 
-BenchmarkDeque/Deque_PopBack:_size-10-8          	10000000	          118 ns/op
-BenchmarkDeque/Deque_PopBack:_size-100-8         	10000000	          121 ns/op
-BenchmarkDeque/Deque_PopBack:_size-1000-8        	10000000	          121 ns/op
+BenchmarkDeque/Deque_PopBack:_size-10-8          	50000000	        27.8 ns/op
+BenchmarkDeque/Deque_PopBack:_size-100-8         	50000000	        28.6 ns/op
+BenchmarkDeque/Deque_PopBack:_size-1000-8        	50000000	        28.0 ns/op
 
-BenchmarkDeque/Deque_PopFront:_size-10-8         	10000000	          122 ns/op
-BenchmarkDeque/Deque_PopFront:_size-100-8        	10000000	          123 ns/op
-BenchmarkDeque/Deque_PopFront:_size-1000-8       	10000000	          123 ns/op
+BenchmarkDeque/Deque_PopFront:_size-10-8         	50000000	        27.6 ns/op
+BenchmarkDeque/Deque_PopFront:_size-100-8        	50000000	        27.4 ns/op
+BenchmarkDeque/Deque_PopFront:_size-1000-8       	50000000	        27.6 ns/op
 
-BenchmarkDeque/Deque_Front:_size-10-8            	1000000000	         2.69 ns/op
-BenchmarkDeque/Deque_Front:_size-100-8           	1000000000	         2.68 ns/op
-BenchmarkDeque/Deque_Front:_size-1000-8          	1000000000	         2.71 ns/op
+BenchmarkDeque/Deque_Front:_size-10-8            	500000000	        2.94 ns/op
+BenchmarkDeque/Deque_Front:_size-100-8           	500000000	        2.95 ns/op
+BenchmarkDeque/Deque_Front:_size-1000-8          	500000000	        2.95 ns/op
 
-BenchmarkDeque/Deque_Back:_size-10-8             	500000000	         3.10 ns/op
-BenchmarkDeque/Deque_Back:_size-100-8            	500000000	         3.11 ns/op
-BenchmarkDeque/Deque_Back:_size-1000-8           	500000000	         3.08 ns/op
+BenchmarkDeque/Deque_Back:_size-10-8             	500000000	        3.38 ns/op
+BenchmarkDeque/Deque_Back:_size-100-8            	500000000	        3.34 ns/op
+BenchmarkDeque/Deque_Back:_size-1000-8           	500000000	        3.32 ns/op
 */
