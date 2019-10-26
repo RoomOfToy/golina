@@ -63,7 +63,7 @@ func TestHeap(t *testing.T) {
 	}
 
 	for _, v := range h.Values() {
-		if _, found := h.Search(v.(item)); !found {
+		if !h.Search(v.(item)) {
 			t.Fail()
 		}
 	}
@@ -95,7 +95,7 @@ func TestHeap(t *testing.T) {
 	}
 
 	for _, v := range c {
-		if _, found := h3.Search(v); !found {
+		if !h3.Search(v) {
 			t.Fail()
 		}
 	}
@@ -117,11 +117,11 @@ func TestHeap(t *testing.T) {
 	if h3.FindMin().(item) != -1 {
 		t.Fail()
 	}
-	if _, found := h3.Search(item(100)); found {
+	if h3.Search(item(100)) {
 		t.Fail()
 	}
 	for _, v := range cRevised {
-		if _, found := h3.Search(v); !found {
+		if !h3.Search(v) {
 			t.Fail()
 		}
 	}
@@ -130,19 +130,11 @@ func TestHeap(t *testing.T) {
 		t.Fail()
 	}
 
-	n := h3.search(h3.root, item(41))
-	if n == nil {
-		t.Fail()
-	}
-	if !h3.Update(n, item(16)) {
+	if !h3.Update(item(41), item(16)) {
 		t.Fail()
 	}
 
-	n = h3.search(h3.root, item(24))
-	if n == nil {
-		t.Fail()
-	}
-	if !h3.Update(n, item(58)) {
+	if !h3.Update(item(24), item(58)) {
 		t.Fail()
 	}
 

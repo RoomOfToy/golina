@@ -1,7 +1,6 @@
 package algorithm
 
 import (
-	"fmt"
 	"golina/container/graph"
 	"golina/container/heap"
 	"golina/container/heap/fibonacci"
@@ -130,11 +129,7 @@ func (pq *priorityQueue) pop() *item {
 }
 
 func (pq *priorityQueue) update(it, nit *item) {
-	n, found := pq.dists.Search(it)
-	if !found {
-		fmt.Println("not found", it)
-	}
-	pq.dists.Update(n, nit)
+	pq.dists.Update(it, nit)
 }
 
 func (pq *priorityQueue) empty() bool {

@@ -59,24 +59,20 @@ func (h *Heap) DeleteMin() heap.Item {
 			// sibling
 			if x.right != x {
 				r.child = x.right
-				x.right.left = x.left
-				x.left.right = x.right
+				// cut x from r, then add it to roots list (the following code)
+				remove(x)
 			} else {
 				r.child = nil
 			}
-			// add x to root doubly linked list (h.insert)
-			x.left = r.left
-			x.right = r
-			r.left.right = x
-			r.left = x
+			// add x to root doubly linked list (insert)
+			insert(x, r)
 		} else {
 			break
 		}
 	}
 
 	// remove r from heap's root doubly linked list
-	r.left.right = r.right
-	r.right.left = r.left
+	remove(r)
 
 	// check roots after removal
 	if r == r.right {
@@ -108,7 +104,7 @@ func (h *Heap) consolidate() {
 				if y.item.Compare(x.item) < 0 {
 					x, y = y, x
 				}
-				h.link(y, x)
+				link(y, x)
 				delete(degreeMap, deg)
 				deg++
 			}
@@ -128,11 +124,10 @@ func (h *Heap) consolidate() {
 	}
 }
 
-// link node to root
-func (h *Heap) link(n, r *node) {
+// link node `n` to root `r`
+func link(n, r *node) {
 	// remove node n from heap's root list
-	n.right.left = n.left
-	n.left.right = n.right
+	remove(n)
 	// link n to r (n as r's child and increase r's degree)
 	n.parent = r
 	r.degree++
@@ -144,7 +139,7 @@ func (h *Heap) link(n, r *node) {
 		n.right = n
 	} else {
 		// insert to r's children doubly linked list
-		h.insert(n, r.child)
+		insert(n, r.child)
 	}
 	// isMarked indicates whether current node lost first child from last time when it became another node's child
 	// here n just becomes r's child, so set n.isMarked to false
@@ -175,20 +170,44 @@ func (h *Heap) insertNode(nNode *node) {
 		return
 	}
 	// insert node before root
-	h.insert(nNode, h.root)
+	insert(nNode, h.root)
 	// if the item less than min, replace the min (root)
 	if nNode.item.Compare(h.root.item) < 0 {
 		h.root = nNode
 	}
 }
 
-// insert node into heap's root list
 //	insert node before root, which means the `tail` of doubly linked list
-func (h *Heap) insert(nNode, root *node) {
+func insert(nNode, root *node) {
 	nNode.left = root.left
 	root.left.right = nNode
 	nNode.right = root
 	root.left = nNode
+}
+
+// cat is different from `insert`, it appends n2 to n1
+//	notice: n1 and n2 are doubly linked list node
+func cat(n1, n2 *node) {
+	var tmp *node
+	tmp = n1.right
+	n1.right = n2.right
+	n2.right.left = n1
+	n2.right = tmp
+	tmp.left = n2
+}
+
+// remove node from its sibling list
+func remove(n *node) {
+	n.right.left = n.left
+	n.left.right = n.right
+}
+
+// renew parent node's degree after cutting its child
+func renewDegree(parent *node, degree int) {
+	parent.degree -= degree
+	if parent.parent != nil {
+		renewDegree(parent.parent, degree)
+	}
 }
 
 // DecreaseKey decrease input node's item to nItem
@@ -216,22 +235,14 @@ func (h *Heap) DecreaseKey(n *node, nItem heap.Item) error {
 	return nil
 }
 
-func renewDegree(parent *node, degree int) {
-	parent.degree -= degree
-	if parent.parent != nil {
-		renewDegree(parent.parent, degree)
-	}
-}
-
-// cut node from its parent
+// cut node from its parent and add to the heap's roots list
 func (h *Heap) cut(n, p *node) {
 	if n == nil || p == nil {
 		return
 	}
 	// remove node from its parent's children list and decrease its parent's degree
 	// remove node
-	n.right.left = n.left
-	n.left.right = n.right
+	remove(n)
 	// renew degree
 	renewDegree(p, n.degree)
 	if n.right == n {
@@ -246,7 +257,7 @@ func (h *Heap) cut(n, p *node) {
 	n.isMarked = false
 
 	// add n to roots list
-	h.insert(n, h.root)
+	insert(n, h.root)
 }
 
 // cascadingCut recursively cut nodes starting from the root of tree whose child has been cut
@@ -287,8 +298,7 @@ func (h *Heap) IncreaseKey(n *node, nItem heap.Item) error {
 		}
 
 		// remove child from children list
-		child.left.right = child.right
-		child.right.left = child.left
+		remove(child)
 
 		// update n.child
 		if child.right == child {
@@ -298,7 +308,7 @@ func (h *Heap) IncreaseKey(n *node, nItem heap.Item) error {
 		}
 
 		// add child into roots list
-		h.insert(child, h.root)
+		insert(child, h.root)
 		child.parent = nil
 	}
 
@@ -323,21 +333,21 @@ func (h *Heap) IncreaseKey(n *node, nItem heap.Item) error {
 	return nil
 }
 
-// Update returns true if input node is successfully updated
-//	TODO: need to refactor (with Search method) for better encapsulation
-func (h *Heap) Update(n *node, item heap.Item) bool {
+// Update returns true if `item` is successfully replaced by `nItem`
+func (h *Heap) Update(item, nItem heap.Item) bool {
+	n := h.search(h.root, item)
 	if n == nil {
-		fmt.Printf("input node is nil and item is %+v", item)
+		fmt.Printf("input node is nil and item is %+v", nItem)
 		return false
 	}
-	if item.Compare(n.item) < 0 {
-		if err := h.DecreaseKey(n, item); err != nil {
+	if nItem.Compare(n.item) < 0 {
+		if err := h.DecreaseKey(n, nItem); err != nil {
 			fmt.Println(err)
 			return false
 		}
 		return true
-	} else if item.Compare(n.item) > 0 {
-		if err := h.IncreaseKey(n, item); err != nil {
+	} else if nItem.Compare(n.item) > 0 {
+		if err := h.IncreaseKey(n, nItem); err != nil {
 			fmt.Println(err)
 			return false
 		}
@@ -365,24 +375,13 @@ func (h *Heap) Meld(ah *Heap) *Heap {
 		h1, h2 = h2, h1
 	}
 
-	h.cat(h2.root, h1.root)
+	cat(h2.root, h1.root)
 	if h2.root.item.Compare(h1.root.item) < 0 {
 		h1.root = h2.root
 	}
 	h1.itemNum += h2.itemNum
 	*h = *h1
 	return h
-}
-
-// cat append n2 to n1
-//	notice: n1 and n2 are doubly linked list node, this method is different from insert
-func (h *Heap) cat(n1, n2 *node) {
-	var tmp *node
-	tmp = n1.right
-	n1.right = n2.right
-	n2.right.left = n1
-	n2.right = tmp
-	tmp.left = n2
 }
 
 // maxDegree estimates max degree of heap
@@ -392,11 +391,11 @@ func (h *Heap) maxDegree() int {
 
 // Search returns true if input item is found
 //	recursively
-func (h *Heap) Search(item heap.Item) (*node, bool) {
+func (h *Heap) Search(item heap.Item) bool {
 	if n := h.search(h.root, item); n != nil {
-		return n, true
+		return true
 	}
-	return nil, false
+	return false
 }
 
 // search item in sub-tree
