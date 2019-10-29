@@ -5,12 +5,14 @@ import (
 	"sync"
 )
 
+// DequeRW is implemented on top of deque
+//	see it in `https://github.com/Harold2017/golina/tree/master/container/queue/deque`
 type DequeRW struct {
 	dq   *deque.Deque
 	lock sync.RWMutex
 }
 
-// NewDeque returns a pointer of Deque with capacity >= minCap (8) (defined in deque.deque)
+// NewDequeRW returns a pointer of Deque with capacity >= minCap (8) (defined in deque.deque)
 func NewDequeRW(cap int) *DequeRW {
 	return &DequeRW{
 		dq:   deque.NewDeque(cap),
