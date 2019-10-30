@@ -6,11 +6,11 @@ import (
 	"strconv"
 )
 
-// Matrix Chain Multiplication
+// ChainMultiplication does matrix chain multiplication optimization
 //	https://en.wikipedia.org/wiki/Matrix_chain_multiplication
 //	Now use the naive O(n^3) way
 //	TODO: try Hu & Shing O(nlogn) way
-func MatrixChainMultiplication(matrices ...*Matrix) *Matrix {
+func ChainMultiplication(matrices ...*Matrix) *Matrix {
 	switch len(matrices) {
 	case 0:
 		panic("not enough matrices for calculation")

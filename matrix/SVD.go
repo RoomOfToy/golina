@@ -4,6 +4,7 @@ import (
 	"math"
 )
 
+// SVD singular value decomposition
 // https://en.wikipedia.org/wiki/Singular_value_decomposition
 // 	A: m * n (m >= n)
 // 	U: m * n orthogonal matrix, U * U.T() = Im

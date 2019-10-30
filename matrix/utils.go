@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// simple function for simulating ternary operator
+// Ternary simple function for simulating ternary operator
 func Ternary(statement bool, a, b interface{}) interface{} {
 	if statement {
 		return a
@@ -16,6 +16,7 @@ func Ternary(statement bool, a, b interface{}) interface{} {
 	return b
 }
 
+// AbsInt returns absolute value of input int
 func AbsInt(n int) int {
 	if n < 0 {
 		return -n
@@ -23,14 +24,17 @@ func AbsInt(n int) int {
 	return n
 }
 
+// MinInt returns minimum value of input two ints
 func MinInt(x, y int) int {
 	return Ternary(x > y, y, x).(int)
 }
 
+// MaxInt returns maximum value of input two ints
 func MaxInt(x, y int) int {
 	return Ternary(x > y, x, y).(int)
 }
 
+// GetFloat64 transfers input golang number type into float64
 func GetFloat64(x interface{}) float64 {
 	switch x := x.(type) {
 	case uint8:
@@ -59,11 +63,13 @@ func GetFloat64(x interface{}) float64 {
 	panic("invalid numeric type of input")
 }
 
+// SortPair struct for sorting according to value
 type SortPair struct {
 	Key   int
 	Value float64
 }
 
+// SortPairSlice slice of SortPair
 type SortPairSlice []SortPair
 
 func (sps SortPairSlice) Swap(i, j int) {
@@ -78,7 +84,7 @@ func (sps SortPairSlice) Less(i, j int) bool {
 	return sps[i].Value < sps[j].Value
 }
 
-// check whether two float numbers are equal, defined by threshold EPS
+// FloatEqual checks whether two float numbers are equal, defined by threshold EPS
 // https://floating-point-gui.de/errors/comparison/
 func FloatEqual(x, y float64) bool {
 	diff := math.Abs(x - y)
@@ -94,7 +100,7 @@ func FloatEqual(x, y float64) bool {
 	}
 }
 
-// check whether two vector are equal, based on `FloatEqual`
+// VEqual checks whether two vector are equal, based on `FloatEqual`
 func VEqual(v1, v2 *Vector) bool {
 	if len(*v1) != len(*v2) {
 		return false
@@ -107,7 +113,7 @@ func VEqual(v1, v2 *Vector) bool {
 	return true
 }
 
-// check whether two matrix are equal, based on `VEqual`
+// MEqual checks whether two matrix are equal, based on `VEqual`
 func MEqual(mat1, mat2 *Matrix) bool {
 	row1, col1 := mat1.Dims()
 	row2, col2 := mat2.Dims()
@@ -122,11 +128,13 @@ func MEqual(mat1, mat2 *Matrix) bool {
 	return true
 }
 
+// GenerateRandomFloat generates a random float64
 func GenerateRandomFloat() float64 {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Float64() - rand.Float64()
 }
 
+// GenerateRandomVector generates a vector with random float64
 func GenerateRandomVector(size int) *Vector {
 	slice := make(Vector, size, size)
 	rand.Seed(time.Now().UnixNano())
@@ -136,6 +144,7 @@ func GenerateRandomVector(size int) *Vector {
 	return &slice
 }
 
+// GenerateRandomSymmetric33Matrix generates a 3 x 3 matrix with random float64
 func GenerateRandomSymmetric33Matrix() *Matrix {
 	entries := *GenerateRandomVector(6)
 	m := ZeroMatrix(3, 3)
@@ -151,10 +160,12 @@ func GenerateRandomSymmetric33Matrix() *Matrix {
 	return m
 }
 
+// GenerateRandomSquareMatrix generates a `size x size` square matrix with random float64
 func GenerateRandomSquareMatrix(size int) *Matrix {
 	return GenerateRandomMatrix(size, size)
 }
 
+// GenerateRandomMatrix generates a `row x col` matrix with random float64
 func GenerateRandomMatrix(row, col int) *Matrix {
 	rows := make(Data, row)
 	for i := range rows {
@@ -164,6 +175,7 @@ func GenerateRandomMatrix(row, col int) *Matrix {
 	return m
 }
 
+// GenerateRandomSparseMatrix generates a `rows x cols` sparse matrix with `entriesNum` elements
 func GenerateRandomSparseMatrix(rows, cols, entriesNum int) *SparseMatrix {
 	nsm := ZeroSparseMatrix(rows, cols)
 	rand.Seed(time.Now().UnixNano())
@@ -238,7 +250,7 @@ func getFileSize(filename string) int64 {
 	return fileSize
 }
 
-// Read 3D data into matrix
+// Load3DToMatrix reads 3D data into matrix
 func Load3DToMatrix(path string) (*Matrix, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -261,7 +273,7 @@ func Load3DToMatrix(path string) (*Matrix, error) {
 	return new(Matrix).Init(lines), err
 }
 
-// Read 2D data into matrix
+// Load2DToMatrix reads 2D data into matrix
 func Load2DToMatrix(path string) (*Matrix, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -284,7 +296,7 @@ func Load2DToMatrix(path string) (*Matrix, error) {
 	return new(Matrix).Init(lines), err
 }
 
-// WriteMatrixToTxt matrix data into file
+// WriteMatrixToTxt writes matrix data into file
 func WriteMatrixToTxt(path string, t *Matrix) error {
 	file, err := os.Create(path)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-// Eigen33 Decompose
+// EigenDecompose does Eigen decomposition of matrix
 // 	code translated from Jama: https://github.com/fiji/Jama/blob/master/src/main/java/Jama/EigenvalueDecomposition.java
 // For squared matrix A
 // 	A = V * D * V.Inverse()
@@ -818,27 +818,27 @@ func cdiv(xr float64, xi float64, yr float64, yi float64) (cdivr float64, cdivi 
 	return
 }
 
-// Eigenvalues and Eigenvectors
+// Eigen33 returns Eigenvalues and Eigenvectors
 // 	https://en.wikipedia.org/wiki/Eigenvalue_algorithm
 // 	this is for 3 x 3 symmetric matrix only now
-func Eigen33(t *Matrix) (eig_val *Vector, eig_vec *Matrix) {
+func Eigen33(t *Matrix) (eigVal *Vector, eigVec *Matrix) {
 	// Eigenvalues
-	eig_val = EigenValues33(t)
+	eigVal = EigenValues33(t)
 
 	// Eigenvectors
-	// eig_vec.Sub(IdentityMatrix(3).MulNum((*eig_val)[1]))
+	// eigVec.Sub(IdentityMatrix(3).MulNum((*eigVal)[1]))
 	if t.Data[0][1]*t.Data[0][1]+t.Data[0][2]*t.Data[0][2]+t.Data[1][2]*t.Data[1][2] == 0 {
-		eig_vec = IdentityMatrix(3)
+		eigVec = IdentityMatrix(3)
 		return
 	}
-	eig_vec = EigenVector33(t, eig_val)
+	eigVec = EigenVector33(t, eigVal)
 	return
 }
 
-// Eigenvalues of 3 X 3 matrix
+// EigenValues33 of 3 X 3 matrix
 // eigen values in ascending order
 // eigen vector in row-wise
-func EigenValues33(t *Matrix) (eig_val *Vector) {
+func EigenValues33(t *Matrix) (eigVal *Vector) {
 	// Eigenvalues
 	eig0, eig1, eig2 := 0., 0., 0.
 	// upper triangle
@@ -869,19 +869,19 @@ func EigenValues33(t *Matrix) (eig_val *Vector) {
 		eig0 = q + 2*p*math.Cos(phi+(2*math.Pi/3))
 		eig1 = 3*q - eig0 - eig2 // since t.Trace() = eig0 + eig1 + eig2
 	}
-	eig_val = &Vector{eig0, eig1, eig2}
+	eigVal = &Vector{eig0, eig1, eig2}
 	return
 }
 
 // EigenVector33 of 3 X 3 matrix, based on `EigenValues33`
-func EigenVector33(t *Matrix, eig_val *Vector) (eig_vec *Matrix) {
-	eig_vec = ZeroMatrix(3, 3)
+func EigenVector33(t *Matrix, eigVal *Vector) (eigVec *Matrix) {
+	eigVec = ZeroMatrix(3, 3)
 	// algebraic multiplicity 1
-	eig_vec.Data[2] = *computeEigenVector0(Copy(t), (*eig_val)[2])
+	eigVec.Data[2] = *computeEigenVector0(Copy(t), (*eigVal)[2])
 	// algebraic multiplicity 2
-	eig_vec.Data[1] = *computeEigenVector1(Copy(t), &eig_vec.Data[2], (*eig_val)[1])
+	eigVec.Data[1] = *computeEigenVector1(Copy(t), &eigVec.Data[2], (*eigVal)[1])
 	// TODO: the sign does not matter, but can it be decided?
-	eig_vec.Data[0] = *(eig_vec.Row(2).Cross(eig_vec.Row(1)))
+	eigVec.Data[0] = *(eigVec.Row(2).Cross(eigVec.Row(1)))
 	return
 }
 
@@ -920,7 +920,7 @@ func computeEigenVector0(t *Matrix, val0 float64) (vec0 *Vector) {
 	return
 }
 
-// decompose vector into two orthogonal sub-vectors
+// ComputeOrthogonalComplement decomposes vector into two orthogonal sub-vectors
 func ComputeOrthogonalComplement(W *Vector) (U, V *Vector) {
 	invLength := 0.
 	if math.Abs((*W)[0]) > math.Abs((*W)[1]) {

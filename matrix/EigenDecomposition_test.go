@@ -46,10 +46,10 @@ func TestEigenVector33(t *testing.T) {
 	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
 	matA := new(Matrix).Init(a)
 	b := Data{{-0.06193087, -0.76241474, 0.64411826}, {0.9184855, -0.29608033, -0.26214659}, {0.39057517, 0.57537831, 0.71860339}}
-	eig_vec := EigenVector33(matA, EigenValues33(matA))
+	eigVec := EigenVector33(matA, EigenValues33(matA))
 	for i := range b {
-		if !VEqual(&(b[i]), eig_vec.Row(i)) && !VEqual(&(b[i]), eig_vec.Row(i).MulNum(-1)) { // Discard sign difference
-			fmt.Println(&(b[i]), eig_vec.Row(i))
+		if !VEqual(&(b[i]), eigVec.Row(i)) && !VEqual(&(b[i]), eigVec.Row(i).MulNum(-1)) { // Discard sign difference
+			fmt.Println(&(b[i]), eigVec.Row(i))
 			t.Fail()
 		}
 	}
@@ -59,13 +59,13 @@ func TestEigen33(t *testing.T) {
 	a := Data{{1, 3, 4}, {3, 2, 7}, {4, 7, 5}}
 	matA := new(Matrix).Init(a)
 	b := Data{{-0.06193087, -0.76241474, 0.64411826}, {0.9184855, -0.29608033, -0.26214659}, {0.39057517, 0.57537831, 0.71860339}}
-	eig_val, eig_vec := Eigen33(matA)
-	if !VEqual(eig_val, &Vector{-3.67018839, -1.10871847, 12.77890686}) {
+	eigVal, eigVec := Eigen33(matA)
+	if !VEqual(eigVal, &Vector{-3.67018839, -1.10871847, 12.77890686}) {
 		t.Fail()
 	}
 
 	for i := range b {
-		if !VEqual(&(b[i]), eig_vec.Row(i)) && !VEqual(&(b[i]), eig_vec.Row(i).MulNum(-1)) {
+		if !VEqual(&(b[i]), eigVec.Row(i)) && !VEqual(&(b[i]), eigVec.Row(i).MulNum(-1)) {
 			t.Fail()
 		}
 	}

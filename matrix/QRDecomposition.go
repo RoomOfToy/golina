@@ -1,5 +1,6 @@
 package matrix
 
+// Sign returns sign (float64) of input number (float64)
 func Sign(a float64) float64 {
 	if a > 0 {
 		return 1
@@ -9,14 +10,16 @@ func Sign(a float64) float64 {
 	return 0
 }
 
+// UnitVector returns unit vector as a new matrix
+//	notice: it is used for arithmetic between it and matrix
 func UnitVector(n, i int) *Matrix {
 	v := ZeroMatrix(n, 1)
 	v.Set(0, i, 1)
 	return v
 }
 
-// Householder
-// https://en.wikipedia.org/wiki/QR_decomposition
+// Householder matrix representation
+//	https://en.wikipedia.org/wiki/QR_decomposition
 func Householder(t *Matrix) *Matrix {
 	m, _ := t.Dims()
 	s := Sign(t.At(0, 0))
@@ -30,7 +33,7 @@ func Householder(t *Matrix) *Matrix {
 	return IdentityMatrix(m).Sub(prod.MulNum(beta))
 }
 
-// QR-Decomposition based on `Householder`
+// QRDecomposition does QR-Decomposition based on `Householder`
 func QRDecomposition(t *Matrix) (*Matrix, *Matrix) {
 	// TODO: need optimize, many `Mul` -> optimize `Mul` to run in parallel
 	m, n := t.Dims()

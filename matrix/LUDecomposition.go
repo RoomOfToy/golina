@@ -4,7 +4,8 @@ import (
 	"math"
 )
 
-// https://en.wikipedia.org/wiki/LU_decomposition
+// LUPDecompose does LUP decomposition of matrix
+//	https://en.wikipedia.org/wiki/LU_decomposition
 /* INPUT: t - array of pointers to rows of a square matrix having dimension N
  *        Tol - small tolerance number to detect failure when the matrix is near degenerate
  * OUTPUT: New Matrix nt, it contains both matrices L-E and U as nt=(L-E)+U such that P*nt=L*U.
@@ -16,7 +17,7 @@ func LUPDecompose(t *Matrix, N int, Tol float64) (*Matrix, *[]int) {
 	nt := Copy(t)
 	P := make([]int, N+1)
 	imax := 0
-	max_t := 0.
+	maxT := 0.
 	i, j, k := 0, 0, 0
 	tmp := Vector{}
 
@@ -26,13 +27,13 @@ func LUPDecompose(t *Matrix, N int, Tol float64) (*Matrix, *[]int) {
 	for i = 0; i < N; i++ {
 		imax = i
 		for k = i; k < N; k++ {
-			if a := math.Abs(nt.At(k, i)); a > max_t {
-				max_t = a
+			if a := math.Abs(nt.At(k, i)); a > maxT {
+				maxT = a
 				imax = k
 			}
 		}
 
-		if max_t < Tol { //failure, matrix is degenerate
+		if maxT < Tol { //failure, matrix is degenerate
 			return nil, nil
 		}
 
@@ -62,6 +63,7 @@ func LUPDecompose(t *Matrix, N int, Tol float64) (*Matrix, *[]int) {
 	return nt, &P
 }
 
+// LUPSolve LUP decomposition and solve equations
 /* INPUT: A,P filled in LUPDecompose; b - rhs vector; N - dimension
  * OUTPUT: x - solution vector of A*x=b
  */
@@ -84,6 +86,7 @@ func LUPSolve(t *Matrix, P *[]int, N int, b *Vector) *Vector {
 	return &x
 }
 
+// LUPInvert returns inverse matrix
 /* INPUT: A,P filled in LUPDecompose; N - dimension
  * OUTPUT: IA is the inverse of the initial matrix
  */
@@ -112,6 +115,7 @@ func LUPInvert(t *Matrix, P *[]int, N int) *Matrix {
 	return nt
 }
 
+// LUPDeterminant returns determinant of matrix
 func LUPDeterminant(t *Matrix, P *[]int, N int) float64 {
 	det := t.At(0, 0)
 
@@ -121,11 +125,11 @@ func LUPDeterminant(t *Matrix, P *[]int, N int) float64 {
 
 	if ((*P)[N]-N)%2 == 0 {
 		return det
-	} else {
-		return -det
 	}
+	return -det
 }
 
+// LUPRank returns rank of matrix
 func LUPRank(t *Matrix, N int) int {
 	rank := 0
 	for i := 0; i < N; i++ {

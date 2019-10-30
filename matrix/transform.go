@@ -7,7 +7,8 @@ import (
 var cos = math.Cos
 var sin = math.Sin
 
-// Affine transformations
+// TransformOnRow transforms original matrix with input matrix and returns a new matrix
+//	notice: affine transformations
 // https://en.wikipedia.org/wiki/Affine_transformation
 func TransformOnRow(t, transMat *Matrix) *Matrix {
 	row, col := t.Dims()
@@ -20,6 +21,7 @@ func TransformOnRow(t, transMat *Matrix) *Matrix {
 	return resMat
 }
 
+// Stretch stretches matrix along input coordinates
 // if not use transform matrix, scale can be simply done by t.T().Row(i).MulNum(coordinates[i])
 // 	squeeze: just x = k, y = 1 / k for stretch
 func Stretch(t *Matrix, coordinates ...float64) *Matrix {
@@ -36,7 +38,8 @@ func Stretch(t *Matrix, coordinates ...float64) *Matrix {
 	return TransformOnRow(t, transMat)
 }
 
-// 2D, rotation angle θ in counter-clockwise
+// Rotate2D rotates matrix in 2D
+//	notice: rotation angle θ in counter-clockwise
 func Rotate2D(t *Matrix, angle float64) *Matrix {
 	_, col := t.Dims()
 	if col != 2 {
@@ -47,7 +50,8 @@ func Rotate2D(t *Matrix, angle float64) *Matrix {
 	return TransformOnRow(t, rotMat)
 }
 
-// 3D, rotation angle θ in counter-clockwise with vector axis
+// Rotate3D rotates matrix in 3D
+//	notice: rotation angle θ in counter-clockwise with vector axis
 func Rotate3D(t *Matrix, angle float64, axis *Vector) *Matrix {
 	row, col := t.Dims()
 	if col != 3 {
@@ -63,6 +67,7 @@ func Rotate3D(t *Matrix, angle float64, axis *Vector) *Matrix {
 	return resMat
 }
 
+// Translate translates matrix along input coordinates
 func Translate(t *Matrix, coordinates ...float64) *Matrix {
 	cl := len(coordinates)
 	if cl == 0 {
@@ -77,7 +82,7 @@ func Translate(t *Matrix, coordinates ...float64) *Matrix {
 	return TransformOnRow(t, transMat)
 }
 
-// Shear2D
+// Shear2D 2D shear function
 // 	hx: parallel to x, hy: parallel to y
 // 	x1 = x + hx * y
 // 	y1 = y + hy * x
@@ -101,7 +106,7 @@ func Shear2D(t *Matrix, coordinates ...float64) *Matrix {
 	return TransformOnRow(t, transMat)
 }
 
-// Shear3D
+// Shear3D 3D shear function
 // 	hxy, hxz, hyx, hyz, hzx, hzy
 // 	x1 = x + hxy * y + hxz * z
 // 	y1 = hyx * x + y + hyz * z
@@ -148,8 +153,9 @@ func Shear3D(t *Matrix, coordinates ...float64) *Matrix {
 	return TransformOnRow(t, transMat)
 }
 
-// Calculate Superimpose Rotation Matrix (Kabsch Algorithm)
-// https://en.wikipedia.org/wiki/Kabsch_algorithm
+// Kabsch calculates superimpose rotation matrix (Kabsch Algorithm) and returns two matrices,
+// one represents linear transformation, and the other represents translation
+//	https://en.wikipedia.org/wiki/Kabsch_algorithm
 func Kabsch(P, Q *Matrix) (linear *Matrix, translation *Vector) { // X -> AX + B, A: linear transformation, B: translation
 	rp, cp := P.Dims()
 	rq, cq := Q.Dims()
@@ -190,6 +196,7 @@ func Kabsch(P, Q *Matrix) (linear *Matrix, translation *Vector) { // X -> AX + B
 	return
 }
 
+// ToAffineMatrix transforms matrix into affine matrix
 func ToAffineMatrix(t *Matrix) *Matrix {
 	row, col := t.Dims()
 	nt := ZeroMatrix(row+1, col+1)

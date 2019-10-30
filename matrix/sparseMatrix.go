@@ -4,7 +4,7 @@ import (
 	"math"
 )
 
-// Sparse Matrix
+// SparseMatrix struct
 //	https://en.wikipedia.org/wiki/Sparse_matrix
 //	Dictionary of keys (DOK)
 //	Row-wise
@@ -14,6 +14,7 @@ type SparseMatrix struct {
 	Offset     int             // start position
 }
 
+// ZeroSparseMatrix returns a sparse matrix with all elements equal to zero
 func ZeroSparseMatrix(rows, cols int) *SparseMatrix {
 	return &SparseMatrix{
 		Rows:   rows,
@@ -23,6 +24,7 @@ func ZeroSparseMatrix(rows, cols int) *SparseMatrix {
 	}
 }
 
+// NewSparseMatrix generates a new sparse matrix with input data and dims
 func NewSparseMatrix(data map[int]float64, rows, cols int) *SparseMatrix {
 	return &SparseMatrix{
 		Rows:   rows,
@@ -32,14 +34,17 @@ func NewSparseMatrix(data map[int]float64, rows, cols int) *SparseMatrix {
 	}
 }
 
+// RowColToIndex transfers row, col idx into internal data map idx
 func (sm *SparseMatrix) RowColToIndex(row, col int) (idx int) {
 	return row*sm.Cols + col - sm.Offset + sm.Offset%sm.Cols + sm.Offset/sm.Cols
 }
 
+// IndexToRowCol transfers internal data map idx into row, col idx
 func (sm *SparseMatrix) IndexToRowCol(idx int) (row, col int) {
 	return (idx + sm.Offset - sm.Offset/sm.Cols - sm.Offset%sm.Cols) / sm.Cols, (idx + sm.Offset - sm.Offset/sm.Cols - sm.Offset%sm.Cols) % sm.Cols
 }
 
+// At returns elements value at row, col idx
 func (sm *SparseMatrix) At(row, col int) float64 {
 	entry, ok := sm.Data[sm.RowColToIndex(row, col)]
 	if !ok {
@@ -51,6 +56,7 @@ func (sm *SparseMatrix) At(row, col int) float64 {
 	return entry
 }
 
+// AtIndex returns elements value at internal data map idx
 func (sm *SparseMatrix) AtIndex(idx int) float64 {
 	entry, ok := sm.Data[idx]
 	if !ok {
@@ -62,7 +68,8 @@ func (sm *SparseMatrix) AtIndex(idx int) float64 {
 	return entry
 }
 
-// value == 0. indicates deletion
+// Set sets value at row, col idx
+//	notice: value == 0. indicates deletion
 func (sm *SparseMatrix) Set(row, col int, value float64) {
 	if value == 0. {
 		delete(sm.Data, sm.RowColToIndex(row, col))
@@ -71,6 +78,8 @@ func (sm *SparseMatrix) Set(row, col int, value float64) {
 	}
 }
 
+// SetIndex sets value at internal data map idx
+//	notice: value == 0. indicates deletion
 func (sm *SparseMatrix) SetIndex(idx int, value float64) {
 	if value == 0. {
 		delete(sm.Data, idx)
@@ -79,8 +88,8 @@ func (sm *SparseMatrix) SetIndex(idx int, value float64) {
 	}
 }
 
-// map is unordered
-// need sort.Ints(idxes) if want to keep ascending order
+// GetAllIndexes returns all idx
+//	notice: since map is unordered, it needs sort.Ints(idxes) if wants to keep ascending order
 func (sm *SparseMatrix) GetAllIndexes() (idxes []int) {
 	idxes = make([]int, len(sm.Data))
 	i := 0
@@ -91,6 +100,7 @@ func (sm *SparseMatrix) GetAllIndexes() (idxes []int) {
 	return
 }
 
+// Row constructs and returns a row vector
 func (sm *SparseMatrix) Row(n int) *Vector {
 	v := make(Vector, sm.Cols)
 	for i := 0; i < sm.Cols; i++ {
@@ -104,6 +114,7 @@ func (sm *SparseMatrix) Row(n int) *Vector {
 	return &v
 }
 
+// Col constructs and returns a column vector
 func (sm *SparseMatrix) Col(n int) *Vector {
 	v := make(Vector, sm.Cols)
 	for i := 0; i < sm.Cols; i++ {
@@ -117,6 +128,7 @@ func (sm *SparseMatrix) Col(n int) *Vector {
 	return &v
 }
 
+// FindFirstNonZeroInSubMatrix returns the first sub-matrix starts with non-zero value, it searches with a input starting idx
 func (sm *SparseMatrix) FindFirstNonZeroInSubMatrix(startIdx int) (idx int) {
 	row, col := sm.IndexToRowCol(startIdx)
 	for i := row; i < sm.Rows; i++ {
@@ -130,6 +142,7 @@ func (sm *SparseMatrix) FindFirstNonZeroInSubMatrix(startIdx int) (idx int) {
 	return -1
 }
 
+// GetSubSparseMatrix returns a sub-sparse-matrix with input idx and dims
 func (sm *SparseMatrix) GetSubSparseMatrix(i, j, rows, cols int) *SparseMatrix {
 	if i < 0 || j < 0 || i+rows > sm.Rows || j+cols > sm.Cols {
 		i = MaxInt(0, i)
@@ -146,6 +159,7 @@ func (sm *SparseMatrix) GetSubSparseMatrix(i, j, rows, cols int) *SparseMatrix {
 	}
 }
 
+// Copy returns a deep copy of sparse matrix
 func (sm *SparseMatrix) Copy() *SparseMatrix {
 	nsm := ZeroSparseMatrix(sm.Rows, sm.Cols)
 	for idx, value := range sm.Data {
@@ -154,6 +168,7 @@ func (sm *SparseMatrix) Copy() *SparseMatrix {
 	return nsm
 }
 
+// ToMatrix transfers sparse matrix into matrix (dense)
 func (sm *SparseMatrix) ToMatrix() *Matrix {
 	nm := ZeroMatrix(sm.Rows, sm.Cols)
 	for idx, value := range sm.Data {
@@ -163,6 +178,7 @@ func (sm *SparseMatrix) ToMatrix() *Matrix {
 	return nm
 }
 
+// T returns a sparse transpose matrix
 func (sm *SparseMatrix) T() *SparseMatrix {
 	nsm := ZeroSparseMatrix(sm.Cols, sm.Rows)
 	for idx, value := range sm.Data {
@@ -172,6 +188,7 @@ func (sm *SparseMatrix) T() *SparseMatrix {
 	return nsm
 }
 
+// Add sums two sparse matrices and returns a new sparse matrix
 func (sm *SparseMatrix) Add(sm2 *SparseMatrix) *SparseMatrix {
 	if sm.Rows != sm2.Rows || sm.Cols != sm2.Cols {
 		panic("Dimension mismatch")
@@ -187,6 +204,7 @@ func (sm *SparseMatrix) Add(sm2 *SparseMatrix) *SparseMatrix {
 	return nsm
 }
 
+// AddNum adds input number to all elements inside the sparse matrix and returns a new sparse matrix
 func (sm *SparseMatrix) AddNum(n float64) *SparseMatrix {
 	nsm := ZeroSparseMatrix(sm.Rows, sm.Cols)
 	for idx, value := range sm.Data {
@@ -197,7 +215,7 @@ func (sm *SparseMatrix) AddNum(n float64) *SparseMatrix {
 	return nsm
 }
 
-// Sparse Matrix Multiplication
+// Mul does sparse matrix multiplication
 //	TODO: Need Optimize
 func (sm *SparseMatrix) Mul(sm2 *SparseMatrix) *SparseMatrix {
 	if sm.Cols != sm2.Rows {
@@ -216,6 +234,7 @@ func (sm *SparseMatrix) Mul(sm2 *SparseMatrix) *SparseMatrix {
 	return nsm
 }
 
+// MulVec multiplies sparse matrix with input vector and returns a new vector
 func (sm *SparseMatrix) MulVec(v *Vector) *Vector {
 	if sm.Cols != v.Length() {
 		panic("Dimension mismatch")
@@ -228,6 +247,7 @@ func (sm *SparseMatrix) MulVec(v *Vector) *Vector {
 	return &nVec
 }
 
+// MulNum multiplies sparse matrix elements with input number (float64) and returns a new sparse matrix
 func (sm *SparseMatrix) MulNum(n float64) *SparseMatrix {
 	nsm := ZeroSparseMatrix(sm.Rows, sm.Cols)
 	if n == 0. {
@@ -239,7 +259,7 @@ func (sm *SparseMatrix) MulNum(n float64) *SparseMatrix {
 	return nsm
 }
 
-// Determinant of Sparse Matrix
+// Det returns determinant of sparse matrix
 //	transfer to dense matrix and use LUP decomposition
 //	Notice: easy OOM and slow...
 //	TODO: Any better way???

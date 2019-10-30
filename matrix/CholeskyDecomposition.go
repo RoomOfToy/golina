@@ -4,7 +4,8 @@ import (
 	"math"
 )
 
-// https://en.wikipedia.org/wiki/Cholesky_decomposition
+// CholeskyDecomposition does Cholesky decomposition of matrix
+//	https://en.wikipedia.org/wiki/Cholesky_decomposition
 // 	A = L.Mul(L.T())
 // 	Ljj = sqrt(Ajj - sum((Ljk) ** 2)_from_k=1_to_j-1)
 // 	Lij = (1 / Ljj) * (Aij - sum(Lik * Ljk)_from_k=1_to_j-1)

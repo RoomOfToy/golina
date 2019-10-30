@@ -18,9 +18,10 @@ func init() {
 // EPS for float number comparision
 const EPS float64 = 1E-6
 
-type Data []Vector // 2D array -> backend of Matrix
+// Data 2D array -> backend of Matrix
+type Data []Vector
 
-// matrix entry
+// Entry matrix entry
 type Entry struct {
 	Value    float64
 	Row, Col int
@@ -62,27 +63,27 @@ type Matrix struct {
 	Data    Data // row-wise
 }
 
-// generate matrix struct from 2D array
+// Init generates matrix struct from 2D array
 func (t *Matrix) Init(array Data) *Matrix {
 	return &Matrix{Data: array}
 }
 
-// matrix dimensions in row, col
+// Dims returns matrix dimensions in row, col
 func (t *Matrix) Dims() (row, col int) {
 	return len(t.Data), len(t.Data[0])
 }
 
-// get element at row i, column j of matrix
+// At returns element value (float64) at row i, column j of matrix
 func (t *Matrix) At(i, j int) float64 {
 	return t.Data[i][j]
 }
 
-// set element at row i, column j of matrix
+// Set sets element with value at row i, column j of matrix
 func (t *Matrix) Set(i, j int, value float64) {
 	t.Data[i][j] = value
 }
 
-// transpose matrix
+// T transposes matrix
 func (t *Matrix) T() *Matrix {
 	row, col := t.Dims()
 	ntArray := make(Data, col)
@@ -96,7 +97,8 @@ func (t *Matrix) T() *Matrix {
 	return nt
 }
 
-// row vector of matrix row m
+// Row returns m-th row vector of matrix
+//	notice: matrix dims starts from 0
 func (t *Matrix) Row(m int) *Vector {
 	row, _ := t.Dims()
 	if m > -1 && m < row {
@@ -105,7 +107,8 @@ func (t *Matrix) Row(m int) *Vector {
 	panic("row index out of range")
 }
 
-// column vector of matrix column n
+// Col returns n-th column vector of matrix
+//	notice: matrix dims starts from 0
 func (t *Matrix) Col(n int) *Vector {
 	_, col := t.Dims()
 	if n > -1 && n < col {
@@ -114,7 +117,7 @@ func (t *Matrix) Col(n int) *Vector {
 	panic("column index out of range")
 }
 
-// make a copy of matrix
+// Copy returns a deep copy of matrix
 func Copy(t *Matrix) *Matrix {
 	nt := Matrix{Data: make([]Vector, len(t.Data))}
 	for i := range t.Data {
@@ -124,7 +127,7 @@ func Copy(t *Matrix) *Matrix {
 	return &nt
 }
 
-// empty matrix
+// Empty returns a new empty matrix with the same dimensions of original matrix
 // 	golang make slice has zero value in default, so empty matrix == zero matrix
 func Empty(t *Matrix) *Matrix {
 	row, col := t.Dims()
@@ -135,7 +138,7 @@ func Empty(t *Matrix) *Matrix {
 	return &nt // nt is a zero matrix
 }
 
-// generate matrix with all elements are zero
+// ZeroMatrix generates matrix with all elements are zero
 func ZeroMatrix(row, col int) *Matrix {
 	nt := Matrix{Data: make([]Vector, row)}
 	for i := range nt.Data {
@@ -144,7 +147,7 @@ func ZeroMatrix(row, col int) *Matrix {
 	return &nt
 }
 
-// generate matrix with all elements are one
+// OneMatrix generates matrix with all elements are one
 func OneMatrix(row, col int) *Matrix {
 	nt := Matrix{Data: make([]Vector, row)}
 	r := make(Vector, col)
@@ -158,7 +161,7 @@ func OneMatrix(row, col int) *Matrix {
 	return &nt
 }
 
-// generate diagonal matrix with ones as diagonal elements, like `eye` in other libs
+// IdentityMatrix generates diagonal matrix with ones as diagonal elements, like `eye` in other libs
 func IdentityMatrix(n int) *Matrix {
 	nt := ZeroMatrix(n, n)
 	for i := 0; i < n; i++ {
@@ -167,7 +170,7 @@ func IdentityMatrix(n int) *Matrix {
 	return nt
 }
 
-// find the first max entry
+// Max returns the first max entry
 func (t *Matrix) Max() *Entry {
 	// TODO: how to find all max or min?
 	entry := Entry{}
@@ -183,7 +186,7 @@ func (t *Matrix) Max() *Entry {
 	return &entry
 }
 
-// find the first min entry
+// Min returns the first min entry
 func (t *Matrix) Min() *Entry {
 	entry := Entry{}
 	entry.Value = math.Inf(1)
@@ -198,7 +201,7 @@ func (t *Matrix) Min() *Entry {
 	return &entry
 }
 
-// get matrix rank through Gaussian elimination (row echelon form)
+// Rank returns matrix rank through Gaussian elimination (row echelon form)
 func (t *Matrix) Rank() (rank int) {
 	mat := Copy(t)
 	rowN, colN := mat.Dims()
@@ -253,12 +256,12 @@ func (t *Matrix) Rank() (rank int) {
 	return rank
 }
 
-// swap two rows
+// SwapRow swaps two rows
 func SwapRow(t *Matrix, row1, row2 int) {
 	t.Data[row1], t.Data[row2] = *t.Row(row2), *t.Row(row1)
 }
 
-// Determinant of N x N matrix based on LU Decomposition
+// Det returns determinant of N x N matrix based on LU Decomposition
 func (t *Matrix) Det() float64 {
 	row, col := t.Dims()
 	if row != col {
@@ -271,6 +274,7 @@ func (t *Matrix) Det() float64 {
 	return LUPDeterminant(nt, P, row)
 }
 
+// Inverse returns inverse matrix of original matrix
 func (t *Matrix) Inverse() *Matrix {
 	row, col := t.Dims()
 	if row != col {
@@ -283,7 +287,8 @@ func (t *Matrix) Inverse() *Matrix {
 	return LUPInvert(nt, P, row)
 }
 
-// Determinant of N x N matrix recursively
+// NaiveDet returns determinant of N x N matrix recursively
+//	notice: it is much slower than Det()
 func NaiveDet(t *Matrix) float64 {
 	row, col := t.Dims()
 	if row != col {
@@ -335,8 +340,9 @@ func getCoeff(t, matTmp *Matrix, p, q, n int) {
 	}
 }
 
-// Adjugate Matrix
-// https://en.wikipedia.org/wiki/Adjugate_matrix
+// NaiveAdj returns adjugate matrix
+//	https://en.wikipedia.org/wiki/Adjugate_matrix
+//	it is very slow due to its recursive mechanism
 func NaiveAdj(t *Matrix) (adj *Matrix) {
 	row, col := t.Dims()
 	if row != col {
@@ -367,8 +373,9 @@ func NaiveAdj(t *Matrix) (adj *Matrix) {
 	return
 }
 
-// Inverse Matrix
+// NaiveInverse returns inverse matrix
 // 	inverse(t) = adj(t) / det(t)
+//	notice: it is slower than Inverse()
 func NaiveInverse(t *Matrix) *Matrix {
 	det := NaiveDet(t)
 	if det == 0 {
@@ -385,7 +392,7 @@ func NaiveInverse(t *Matrix) *Matrix {
 	return inverse
 }
 
-// Add two matrices
+// Add sums two matrices and returns a new matrix
 func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 	row1, col1 := t.Dims()
 	row2, col2 := mat2.Dims()
@@ -401,7 +408,8 @@ func (t *Matrix) Add(mat2 *Matrix) *Matrix {
 	return nt
 }
 
-// Add number
+// AddNum adds number to all elements in matrix and returns a new matrix
+//	notice: it will accept all valid golang number type and transfer them into float64 for sum
 func (t *Matrix) AddNum(n interface{}) *Matrix {
 	nt := Empty(t)
 	for r, i := range t.Data {
@@ -412,7 +420,7 @@ func (t *Matrix) AddNum(n interface{}) *Matrix {
 	return nt
 }
 
-// Subtract matrix
+// Sub subtract two matrix and returns a new matrix
 func (t *Matrix) Sub(mat2 *Matrix) *Matrix {
 	row1, col1 := t.Dims()
 	row2, col2 := mat2.Dims()
@@ -428,7 +436,7 @@ func (t *Matrix) Sub(mat2 *Matrix) *Matrix {
 	return nt
 }
 
-// Matrix multiplication (dot | inner)
+// Mul does matrix multiplication (dot | inner) and return a new matrix
 // https://en.wikipedia.org/wiki/Matrix_multiplication
 func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 	// TODO: need optimize
@@ -473,11 +481,14 @@ func (t *Matrix) Mul(mat2 *Matrix) *Matrix {
 	return out
 }
 
-// matrix multiply vector, please notice all vectors in this package is row vector
+// MulVec does multiplication between matrix and vector and returns a new vector
+//	notice: all vectors in this package is row vector
 func (t *Matrix) MulVec(v *Vector) *Vector {
 	return t.Mul(new(Matrix).Init(Data{*v}).T()).T().Row(0)
 }
 
+// MulNum does multiplication between matrix and number and returns a new matrix
+//	notice: it will accept all valid golang number type and transfer them into float64 for multiplication
 func (t *Matrix) MulNum(n interface{}) *Matrix {
 	multiplier := GetFloat64(n)
 	row, col := t.Dims()
@@ -490,6 +501,7 @@ func (t *Matrix) MulNum(n interface{}) *Matrix {
 	return out
 }
 
+// GetDiagonalElements returns a new vector consists of matrix's diagonal elements
 func (t *Matrix) GetDiagonalElements() *Vector {
 	row, _ := t.Dims()
 	v := make(Vector, row)
@@ -499,8 +511,8 @@ func (t *Matrix) GetDiagonalElements() *Vector {
 	return &v
 }
 
-// Matrix Power of square matrix
-// 	Precondition: n >= 0
+// Pow computes matrix power of square matrix and returns a new matrix
+// 	notice: n >= 0 (precondition)
 func (t *Matrix) Pow(n int) *Matrix {
 	// TODO: need deal with negative condition (invertible)
 	row, col := t.Dims()
@@ -520,7 +532,8 @@ func (t *Matrix) Pow(n int) *Matrix {
 	}
 }
 
-// ten times slower than LUDecompose + EigenDecompose ways for 100 x 100 matrix
+// NaivePow computes matrix power of square matrix and returns a new matrix
+//	notice: it is ten times slower than Pow() which uses LUDecompose + EigenDecompose ways for 100 x 100 matrix
 func NaivePow(t *Matrix, n int) *Matrix {
 	row, col := t.Dims()
 	if row != col {
@@ -540,7 +553,7 @@ func NaivePow(t *Matrix, n int) *Matrix {
 	}
 }
 
-// Trace: sum of all diagonal values
+// Trace returns sum of all diagonal values
 // https://en.wikipedia.org/wiki/Trace_(linear_algebra)
 func (t *Matrix) Trace() float64 {
 	row, col := t.Dims()
@@ -554,7 +567,7 @@ func (t *Matrix) Trace() float64 {
 	return res
 }
 
-// Frobenius norm
+// Norm returns Frobenius norm
 func (t *Matrix) Norm() float64 {
 	fr := 0.
 	for _, i := range t.Data {
@@ -563,7 +576,7 @@ func (t *Matrix) Norm() float64 {
 	return math.Sqrt(fr)
 }
 
-// matrix to row vector
+// Flat transfers matrix to row vector
 func (t *Matrix) Flat() *Vector {
 	m, n := t.Dims()
 	v := make(Vector, m*n)
@@ -573,7 +586,7 @@ func (t *Matrix) Flat() *Vector {
 	return &v
 }
 
-// Get a sub-matrix starting at i, j with rows rows and cols columns.
+// GetSubMatrix returns a new sub-matrix starting at i, j with rows rows and cols columns
 func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
 	nt := ZeroMatrix(rows, cols)
 	for k := range nt.Data {
@@ -582,7 +595,7 @@ func (t *Matrix) GetSubMatrix(i, j, rows, cols int) *Matrix {
 	return nt
 }
 
-// Set a sub-matrix starting at i, j with input matrix, please take care the dimension matching conditions
+// SetSubMatrix sets a sub-matrix starting at i, j with input matrix, please take care the dimension matching conditions
 // 	notice: in-place change
 func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix) {
 	m, n := mat.Dims()
@@ -593,7 +606,7 @@ func (t *Matrix) SetSubMatrix(i, j int, mat *Matrix) {
 	}
 }
 
-// sum one column of matrix
+// SumCol sums one column of matrix
 func (t *Matrix) SumCol(col int) float64 {
 	s := 0.
 	for _, e := range *(t.Col(col)) {
@@ -602,7 +615,7 @@ func (t *Matrix) SumCol(col int) float64 {
 	return s
 }
 
-// sum one row of matrix
+// SumRow sums one row of matrix
 func (t *Matrix) SumRow(row int) float64 {
 	s := 0.
 	for _, e := range *(t.Row(row)) {
@@ -611,7 +624,7 @@ func (t *Matrix) SumRow(row int) float64 {
 	return s
 }
 
-// sum the matrix along certain dimension, 0 -> sum all rows into one vector, 1 -> sum all columns into one vector
+// Sum sums the matrix along certain dimension, 0 -> sum all rows into one vector, 1 -> sum all columns into one vector
 func (t *Matrix) Sum(dim int) *Vector {
 	row, col := t.Dims()
 	switch dim {
@@ -635,7 +648,7 @@ func (t *Matrix) Sum(dim int) *Vector {
 	}
 }
 
-// mean vector of matrix along certain dimension, 0 -> row, 1 -> column
+// Mean returns mean vector of matrix along certain dimension, 0 -> row, 1 -> column
 func (t *Matrix) Mean(dim int) *Vector {
 	row, col := t.Dims()
 	switch dim {
@@ -650,7 +663,8 @@ func (t *Matrix) Mean(dim int) *Vector {
 	}
 }
 
-// dim: 0 -> |, 1 -> -, -1 -> all
+// Variance returns variance vector along input dim
+//	dim: 0 -> |, 1 -> -, -1 -> all
 func (t *Matrix) Variance(dim int) *Vector {
 	row, col := t.Dims()
 	switch dim {
@@ -682,6 +696,8 @@ func (t *Matrix) Variance(dim int) *Vector {
 	}
 }
 
+// StandardDeviation returns standardDeviation vector along input dim
+//	dim: 0 -> |, 1 -> -, -1 -> all
 func (t *Matrix) StandardDeviation(dim int) *Vector {
 	v := t.Variance(dim)
 	nv := make(Vector, v.Length())
@@ -691,7 +707,7 @@ func (t *Matrix) StandardDeviation(dim int) *Vector {
 	return &nv
 }
 
-// covariance matrix
+// CovMatrix returns covariance matrix
 func (t *Matrix) CovMatrix() *Matrix {
 	row, col := t.Dims()
 	x := t.Sub(t.Mean(0).Tile(0, row))
@@ -699,7 +715,7 @@ func (t *Matrix) CovMatrix() *Matrix {
 	return cov
 }
 
-// cross covariance matrix
+// CrossCovMatrix returns cross covariance matrix of two matrices
 // 	https://en.wikipedia.org/wiki/Cross-covariance
 // 	https://en.wikipedia.org/wiki/Cross-covariance_matrix
 func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix {
@@ -711,7 +727,7 @@ func CrossCovMatrix(mat1, mat2 *Matrix) *Matrix {
 	return mat1.Sub(mat1.Mean(0).Tile(0, r1)).T().Mul(mat2.Sub(mat2.Mean(0).Tile(0, r1))).MulNum(1. / float64(c1-1))
 }
 
-// check whether matrix is symmetric
+// IsSymmetric checks whether matrix is symmetric
 func (t *Matrix) IsSymmetric() bool {
 	m, n := t.Dims()
 	if m != n {
@@ -727,7 +743,7 @@ func (t *Matrix) IsSymmetric() bool {
 	return true
 }
 
-// get unique elements in matrix
+// Unique returns a vector consists of all unique elements in matrix
 //	it need to loop the whole matrix
 func (t *Matrix) Unique() *Vector {
 	uSet := map[float64]bool{}
@@ -745,6 +761,7 @@ func (t *Matrix) Unique() *Vector {
 	return &uv
 }
 
+// UniqueWithCount a hash map consists of all unique elements in matrix and its quantity
 func (t *Matrix) UniqueWithCount() map[float64]int {
 	uSet := map[float64]int{}
 	for _, r := range t.Data {
@@ -759,6 +776,8 @@ func (t *Matrix) UniqueWithCount() map[float64]int {
 	return uSet
 }
 
+// Concatenate concatenates input matrix into original one along input dim and returns a new matrix
+//	notice: matrices should have the same dim in the concatenation direction or it will panic
 func (t *Matrix) Concatenate(mat *Matrix, dim int) *Matrix {
 	rt, ct := t.Dims()
 	rm, cm := mat.Dims()
@@ -784,12 +803,13 @@ func (t *Matrix) Concatenate(mat *Matrix, dim int) *Matrix {
 	}
 }
 
+// ElementsNum returns elements number of matrix
 func (t *Matrix) ElementsNum() int {
 	r, c := t.Dims()
 	return r * c
 }
 
-// pretty-print for matrix
+// String for pretty-print of matrix
 func (t *Matrix) String() string {
 	if t == nil {
 		return "{nil}"
