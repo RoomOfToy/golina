@@ -396,3 +396,25 @@ func NewGraphFromJSON(filePath, graphName string) (Graph, error) {
 	}
 	return graph, nil
 }
+
+// Copy returns a copy of graph
+//	deep copy
+func (g *graph) Copy() Graph {
+	nodes := make(map[ID]Node, g.NodeNum())
+	edges := make(map[ID]map[ID]float64, g.EdgeNum())
+	for k, v := range g.nodes {
+		nodes[k] = NewNode(v.ID().String())
+	}
+	for k, v := range g.edges {
+		edge := make(map[ID]float64, len(v))
+		for kk, vv := range v {
+			edge[kk] = vv
+		}
+		edges[k] = edge
+	}
+	return &graph{
+		// RWMutex: sync.RWMutex{},
+		nodes: nodes,
+		edges: edges,
+	}
+}

@@ -131,8 +131,14 @@ func TestGraph(t *testing.T) {
 		t.Fail()
 	}
 
+	gCopy := graph.Copy()
+
 	graph.Clear()
 	if !graph.Empty() {
+		t.Fail()
+	}
+
+	if gCopy.Empty() {
 		t.Fail()
 	}
 }
@@ -170,4 +176,4 @@ BenchmarkGraph_Node/Add-One_when_size-1000-8       	20000000	        89.1 ns/op
 BenchmarkGraph_Node/Delete-One_when_size-10-8      	30000000	        50.1 ns/op
 BenchmarkGraph_Node/Delete-One_when_size-100-8     	30000000	        50.6 ns/op
 BenchmarkGraph_Node/Delete-One_when_size-1000-8    	30000000	        47.3 ns/op
- */
+*/

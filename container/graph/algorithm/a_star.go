@@ -19,7 +19,7 @@ func AStar(g graph.Graph, source, target graph.ID) ([]graph.ID, map[graph.ID]flo
 	dist := make(map[graph.ID]float64)
 	// initialize
 	prev[source] = nil
-	Q.Push(source, 0.0)
+	Q.push(source, 0.0)
 	dist[source] = 0.
 
 	for !Q.empty() {
@@ -46,7 +46,7 @@ func AStar(g graph.Graph, source, target graph.ID) ([]graph.ID, map[graph.ID]flo
 			_, found := prev[v]
 			if !found || nd < dist[v] {
 				dist[v] = nd
-				Q.Push(v, nd + heuristic(target, v))
+				Q.push(v, nd+heuristic(target, v))
 				prev[v] = uid
 			}
 		}
@@ -99,7 +99,7 @@ func itemComparator(a, b interface{}) int {
 	}
 }
 
-func (pq *pQueue) Push(id graph.ID, dist float64) {
+func (pq *pQueue) push(id graph.ID, dist float64) {
 	pq.items.Push(newItem(id, dist))
 }
 

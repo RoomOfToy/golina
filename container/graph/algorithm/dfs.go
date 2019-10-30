@@ -5,7 +5,7 @@ import (
 	"golina/container/graph"
 )
 
-// DFS: depth first search
+// DFS depth first search
 //	https://en.wikipedia.org/wiki/Depth-first_search
 //	time complexity: O(|V| + |E|), O(|E|): O(1) - O(|V|^2)
 func DFS(g graph.Graph, startVertex graph.ID) ([]graph.Node, error) {

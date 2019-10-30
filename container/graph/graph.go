@@ -71,4 +71,6 @@ type Graph interface {
 	Empty() bool
 	Clear()
 	Values() []interface{} // here define value = node
+
+	Copy() Graph // return a deep copy of graph
 }

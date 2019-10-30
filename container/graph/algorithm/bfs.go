@@ -5,7 +5,7 @@ import (
 	"golina/container/graph"
 )
 
-// BFS: breadth first search
+// BFS breadth first search
 //	https://en.wikipedia.org/wiki/Breadth-first_search
 //	time complexity: O(|V| + |E|), O(|E|): O(1) - O(|V|^2)
 func BFS(g graph.Graph, startVertex graph.ID) ([]graph.Node, error) {
