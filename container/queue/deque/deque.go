@@ -23,6 +23,7 @@ func NewDeque(cap int) *Deque {
 	if cap <= minCap {
 		cap = minCap
 	}
+	cap = nextPowerOfTwo(cap)
 	return &Deque{
 		buf:  make([]interface{}, cap),
 		cap:  cap,
@@ -220,4 +221,20 @@ func (dq *Deque) At(idx int) interface{} {
 		idx = (dq.head + idx) & (dq.cap - 1)
 	}
 	return dq.buf[idx]
+}
+
+func nextPowerOfTwo(n int) int {
+	// https://www.geeksforgeeks.org/smallest-power-of-2-greater-than-or-equal-to-n/
+	if n > 0 && n&(n-1) == 0 {
+		return n
+	}
+	n--
+	n |= n >> 1
+	n |= n >> 2
+	n |= n >> 4
+	n |= n >> 8
+	n |= n >> 16
+	n |= n >> 32
+	n++
+	return n
 }

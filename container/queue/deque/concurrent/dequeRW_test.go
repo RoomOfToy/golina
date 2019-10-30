@@ -19,14 +19,14 @@ func TestNewDequeRW(t *testing.T) {
 }
 
 func TestDequeRW_Cap(t *testing.T) {
-	dq := NewDequeRW(100)
-	if dq.Cap() != 100 || dq.PositionsCanPushBack() != 100 {
+	dq := NewDequeRW(100) // 128
+	if dq.Cap() != 128 || dq.PositionsCanPushBack() != 128 {
 		t.Fail()
 	}
 }
 
 func TestDequeRW_At_Front_Back(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	a := []int{0, 1, 2}
 	for i := range a {
 		dq.PushBack(i)
@@ -57,17 +57,23 @@ func TestDequeRW_At_Front_Back(t *testing.T) {
 }
 
 func TestDequeRW_IsFull(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	for i := 0; i < 20; i++ {
 		dq.PushBack(i)
 	}
-	if !dq.IsFull() {
+	if dq.IsFull() || dq.Size() != 20 {
+		t.Fail()
+	}
+	for i := 0; i < 12; i++ {
+		dq.PushBack(i)
+	}
+	if !dq.IsFull() || dq.Size() != 32 {
 		t.Fail()
 	}
 }
 
 func TestDequeRW_CC_PB(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	a := []int{0, 1, 2}
 	wg := sync.WaitGroup{}
 	for i := range a {
@@ -78,14 +84,14 @@ func TestDequeRW_CC_PB(t *testing.T) {
 		}(dq, i)
 	}
 	wg.Wait()
-	if dq.Size() != 3 || dq.PositionsCanPushBack() != 17 || dq.PositionsCanPopFront() != 3 {
+	if dq.Size() != 3 || dq.PositionsCanPushBack() != 29 || dq.PositionsCanPopFront() != 3 {
 		fmt.Println(dq)
 		t.Fail()
 	}
 }
 
 func TestDequeRW_CC_PF(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	a := []int{0, 1, 2}
 	wg := sync.WaitGroup{}
 	for i := range a {
@@ -97,14 +103,14 @@ func TestDequeRW_CC_PF(t *testing.T) {
 	}
 	wg.Wait()
 
-	if dq.Size() != 3 || dq.PositionsCanPushBack() != 17 || dq.PositionsCanPopFront() != 3 {
+	if dq.Size() != 3 || dq.PositionsCanPushBack() != 29 || dq.PositionsCanPopFront() != 3 {
 		fmt.Println(dq)
 		t.Fail()
 	}
 }
 
 func TestDequeRW_CC_PB_PF(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	a := []int{0, 1, 2}
 	wg := sync.WaitGroup{}
 	for i := range a {
@@ -122,14 +128,14 @@ func TestDequeRW_CC_PB_PF(t *testing.T) {
 	}
 	wg.Wait()
 
-	if dq.Size() != 6 || dq.PositionsCanPushBack() != 14 || dq.PositionsCanPopFront() != 6 {
+	if dq.Size() != 6 || dq.PositionsCanPushBack() != 26 || dq.PositionsCanPopFront() != 6 {
 		fmt.Println(dq)
 		t.Fail()
 	}
 }
 
 func TestDequeRW_CC_PPPB(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	a := []int{0, 1, 2}
 	wg := sync.WaitGroup{}
 	for i := range a {
@@ -154,14 +160,14 @@ func TestDequeRW_CC_PPPB(t *testing.T) {
 	}
 	wg.Wait()
 
-	if dq.Size() != 0 || dq.PositionsCanPushBack() != 20 || dq.PositionsCanPopFront() != 0 {
+	if dq.Size() != 0 || dq.PositionsCanPushBack() != 32 || dq.PositionsCanPopFront() != 0 {
 		fmt.Println(dq)
 		t.Fail()
 	}
 }
 
 func TestDequeRW_CC_PPPF(t *testing.T) {
-	dq := NewDequeRW(20)
+	dq := NewDequeRW(20) // 32
 	a := []int{0, 1, 2}
 	wg := sync.WaitGroup{}
 	for i := range a {
@@ -186,7 +192,7 @@ func TestDequeRW_CC_PPPF(t *testing.T) {
 	}
 	wg.Wait()
 
-	if dq.Size() != 0 || dq.PositionsCanPushBack() != 20 || dq.PositionsCanPopFront() != 0 {
+	if dq.Size() != 0 || dq.PositionsCanPushBack() != 32 || dq.PositionsCanPopFront() != 0 {
 		fmt.Println(dq)
 		t.Fail()
 	}
