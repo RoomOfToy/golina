@@ -1,4 +1,4 @@
-package topological_sort
+package topologicalSort
 
 import (
 	"fmt"

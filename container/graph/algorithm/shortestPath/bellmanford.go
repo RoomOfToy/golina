@@ -1,4 +1,4 @@
-package shortest_path
+package shortestPath
 
 import (
 	"fmt"

@@ -233,8 +233,8 @@ func nextPowerOfTwo(n int) int {
 	n |= n >> 2
 	n |= n >> 4
 	n |= n >> 8
-	n |= n >> 16
-	n |= n >> 32
+	n |= n >> 16  // 32 bit OS, runtime.GOARCH
+	n |= n >> 32  // 64 bit OS
 	n++
 	return n
 }

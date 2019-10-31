@@ -1,4 +1,4 @@
-package shortest_path
+package shortestPath
 
 import (
 	"fmt"
@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestDijkstra(t *testing.T) {
+func TestGreedyBestFirstSearch(t *testing.T) {
 	g, err := graph.NewGraphFromJSON("../../test.json", "graph")
 	if err != nil {
 		panic(err)
 	}
-	path, distance, err := Dijkstra(g, graph.StringID("A"), graph.StringID("E"))
+	path, distance, err := GreedyBestFirstSearch(g, graph.StringID("A"), graph.StringID("E"))
 	if err != nil {
 		panic(err)
 	}
@@ -21,7 +21,8 @@ func TestDijkstra(t *testing.T) {
 	}
 	fmt.Println(ts)
 
-	if len(path) != 3 || path[1] != graph.StringID("D") {
+	if len(path) != 3 || path[1] != graph.StringID("B") {
 		t.Fail()
 	}
+	// notice the result is  different from Dijkstra algorithm
 }
