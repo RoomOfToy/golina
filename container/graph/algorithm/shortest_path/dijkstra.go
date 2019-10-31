@@ -1,4 +1,4 @@
-package algorithm
+package shortest_path
 
 import (
 	"golina/container/graph"

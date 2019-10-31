@@ -1,4 +1,4 @@
-package algorithm
+package shortest_path
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestYenKSP(t *testing.T) {
-	g, err := graph.NewGraphFromJSON("../test.json", "graph_yen")
+	g, err := graph.NewGraphFromJSON("../../test.json", "graph_yen")
 	if err != nil {
 		panic(err)
 	}

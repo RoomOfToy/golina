@@ -1,4 +1,4 @@
-package algorithm
+package traversal
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestDFS(t *testing.T) {
-	g, err := graph.NewGraphFromJSON("../test.json", "graph")
+	g, err := graph.NewGraphFromJSON("../../test.json", "graph")
 	if err != nil {
 		panic(err)
 	}

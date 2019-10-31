@@ -1,4 +1,4 @@
-package algorithm
+package shortest_path
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestBellmanFord(t *testing.T) {
-	g, err := graph.NewGraphFromJSON("../test.json", "graph_n")
+	g, err := graph.NewGraphFromJSON("../../test.json", "graph_n")
 	if err != nil {
 		panic(err)
 	}
@@ -34,7 +34,7 @@ func TestBellmanFord(t *testing.T) {
 	}
 
 	// negative cycle E(0.00) -> B(6.00) -> D(2.00) -> E(-1.00)
-	g, err = graph.NewGraphFromJSON("../test.json", "graph_nc")
+	g, err = graph.NewGraphFromJSON("../../test.json", "graph_nc")
 	if err != nil {
 		panic(err)
 	}

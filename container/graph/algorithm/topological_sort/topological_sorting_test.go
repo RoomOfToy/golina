@@ -1,4 +1,4 @@
-package algorithm
+package topological_sort
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestKahn(t *testing.T) {
-	g, err := graph.NewGraphFromJSON("../test.json", "graph_topo")
+	g, err := graph.NewGraphFromJSON("../../test.json", "graph_topo")
 	if err != nil {
 		panic(err)
 	}
@@ -53,7 +53,7 @@ func TestKahn(t *testing.T) {
 }
 
 func TestDFSTopo(t *testing.T) {
-	g, err := graph.NewGraphFromJSON("../test.json", "graph_topo")
+	g, err := graph.NewGraphFromJSON("../../test.json", "graph_topo")
 	if err != nil {
 		panic(err)
 	}
