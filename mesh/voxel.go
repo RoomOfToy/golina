@@ -1,8 +1,8 @@
 package mesh
 
 import (
-	set2 "golina/container/set"
 	"golina/matrix"
+	set2 "golina/mesh/set"
 	"math"
 )
 

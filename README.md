@@ -18,24 +18,11 @@ Package structure:
 ```
 .
 ├── cluster
-├── container
-│   ├── deque
-│   ├── graph
-│   │   └── algorithm
-│   ├── heap
-│   │   ├── bheap
-│   │   └── fibonacci
-│   ├── set
-│   └── tree
-│       ├── bstree
-│       ├── btree
-│       └── rbtree
 ├── examples
 │   ├── fibonacci
 │   ├── ica
 │   ├── kMeans
-│   ├── mesh
-│   └── priorityQueue
+│   └── mesh
 ├── matrix
 ├── mesh
 ├── numerical
