@@ -93,7 +93,7 @@ func (v *Vector) OuterProduct(v1 *Vector) *Matrix {
 	res := ZeroMatrix(row, col)
 	for i := range res.Data {
 		for j := range res.Data[i] {
-			res.Set(i, j, (*v)[i]*(*v)[j])
+			res.Set(i, j, (*v)[i]*(*v1)[j])
 		}
 	}
 	return res

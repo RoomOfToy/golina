@@ -66,7 +66,7 @@ func TestVector_Dot(t *testing.T) {
 func TestVector_OuterProduct(t *testing.T) {
 	v1 := &Vector{1, 2, 3}
 	v2 := &Vector{4, 5}
-	a := Data{{1, 2}, {2, 4}, {3, 6}}
+	a := Data{{4, 5}, {8, 10}, {12, 15}}
 	if !MEqual(v1.OuterProduct(v2), new(Matrix).Init(a)) {
 		t.Fail()
 	}
